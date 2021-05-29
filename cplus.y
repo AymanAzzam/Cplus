@@ -14,12 +14,15 @@ void yyerror(const char *);
     bool b;
 }
 
-%token <i> INTEGER SNGL_OPR
+%token <i> INTEGER
 %token <f> FLOAT
 %token <c> CHAR
 %token <b> BOOL
-%token <s> ARTH_OPR IDENTIFIER
-%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL
+%token <s> IDENTIFIER
+%token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL
+%token CONST
+%token ADD SUB MUL DIV REM
+%token INC_OPR DEC_OPR
 %token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
 %token BIT_AND BIT_OR BIT_XOR BIT_NOT SHL SHR
 %token FOR WHILE DO BREAK CONTINUE
@@ -33,11 +36,10 @@ void yyerror(const char *);
 %left "==" "!="
 %left "<" ">" "<=" ">="
 %left SHL SHR
-%left '+' '-'
-%left '*' '/' '%'
-%right BIT_NOT LOGICAL_NOT
-%right PRE_SNGL "+" "-" //unary+-, prefix inc/dec  xd
-%left POST_SNGL          //         postfix inc/dec xddd
+%left ADD SUB
+%left MUL DIV REM
+%right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
+%left POST_SNGL     // postfix inc/dec xddd
 
 %%
 
@@ -46,6 +48,7 @@ program: program stmt
 
 stmt:   variable_declaration
     |   variable_init
+    |   const_init
     |   expr ';'
     |   WHILE '(' expr ')' stmt
     |   DO stmt WHILE '(' expr ')' ';'
@@ -56,36 +59,54 @@ stmt:   variable_declaration
 
 // master expression
 expr:   '(' expr ')'
+    |   ADD expr %prec U_PLUS
+    |   SUB expr %prec U_MINUS
     |   single_opr_expr
     |   logic_expr
     |   bit_expr
-    |   INTEGER
-    |   BOOL
-    |   FLOAT
-    |   CHAR
-    ;    
-
- /* data types */
-data_type: TYPE_INT
-         | TYPE_FLOAT
-         | TYPE_DOUBLE
-         | TYPE_CHAR
-         | TYPE_BOOL
-         ;
+    |   arithmetic_expr
+    |   IDENTIFIER
+    |   literal
+    ;     
 
  /* variables & constants */
-variable_declaration: data_type IDENTIFIER ';'              {printf("\t~~~~~~~~~declaration(%s)\n", $2);}
+variable_declaration: data_type IDENTIFIER ';'
                     ;
-variable_init: data_type IDENTIFIER EQ expr ';'            {printf("\t~~~~~~~~~initialization(%s→)\n", $2);}
+
+variable_init: data_type IDENTIFIER EQ expr ';'
+                    | data_type IDENTIFIER '(' expr ')' ';'
+                    ;
+
+const_init: CONST data_type IDENTIFIER EQ expr ';'
+                    | CONST data_type IDENTIFIER '(' expr ')' ';'
                     ;
 
  /* arithmetic operators */
-
+arithmetic_expr:    expr ADD expr
+                |   expr SUB expr
+                |   expr MUL expr
+                |   expr DIV expr
+                |   expr REM expr
+                ;
 
  /* single operators */
-single_opr_expr: SNGL_OPR IDENTIFIER %prec PRE_SNGL          {printf("\t~~~~~~~~~pre-(%d)\n", $1);}
-                | IDENTIFIER SNGL_OPR %prec POST_SNGL        {printf("\t~~~~~~~~~post-(%d)\n", $2);}
+single_opr_expr: INC_OPR IDENTIFIER %prec PRE_SNGL
+                | IDENTIFIER INC_OPR %prec POST_SNGL
+                | DEC_OPR IDENTIFIER %prec PRE_SNGL
+                | IDENTIFIER DEC_OPR %prec POST_SNGL
                 ;
+
+literal: INTEGER
+        | FLOAT
+        | BOOL
+        | CHAR
+        ;
+
+data_type: TYPE_INT
+        |  TYPE_FLOAT
+        |  TYPE_CHAR
+        |  TYPE_BOOL
+        ;
 
 // logical operators
 logic_expr:     expr LOGICAL_AND expr           ; // {$$ = $1 && $3}
@@ -104,10 +125,9 @@ bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
 
 %%
 
-// const_init: "const" data_type IDENTIFIER '=' expr ';'       {printf("constant initialized with vlaue\n")} /*{addSymValue($3, $2, $5, true);}*/
-                    // ;
+void yyerror(const char *s) {
 
-void yyerror(char *s) {
+// void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
 
