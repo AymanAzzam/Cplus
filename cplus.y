@@ -81,14 +81,15 @@ stmt_list:
 if_stmt:          IF '(' cond_expr ')' stmt %prec IFX
                 | IF '(' cond_expr ')' stmt ELSE stmt;
 
-switch_stmt:    SWITCH '(' cond_expr ')' '{' cases '}';
+switch_stmt:      SWITCH '(' cond_expr ')' '{' cases '}'
+                | SWITCH '(' cond_expr ')' '{' cases default_case cases'}';
 
-case:     CASE expr ':' stmt;
+case:     CASE expr ':' stmt
+        | CASE expr ':' case;
 
 default_case:   DEFAULT ':' stmt;
 
 cases:    cases case
-        | cases default_case
         |
         ;
 
