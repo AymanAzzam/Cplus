@@ -42,24 +42,28 @@ void yyerror(const char *);
 %%
 
 program: program stmt
-        |
         ;
 
-stmt: variable_declaration
-        | variable_init
-        | expr ';'
-        ;
+stmt:   variable_declaration
+    |   variable_init
+    |   expr ';'
+    |   WHILE '(' expr ')' stmt
+    |   DO stmt WHILE '(' expr ')' ';'
+    |   FOR '(' expr ')' stmt
+    |   BREAK ';'
+    |   CONTINUE ';'
+    ;
 
 // master expression
-expr:     '(' expr ')'
-        |       single_opr_expr
-        |       logic_expr
-        |       bit_expr
-        |       INTEGER
-        |       BOOL
-        |       FLOAT
-        |       CHAR
-        ;    
+expr:   '(' expr ')'
+    |   single_opr_expr
+    |   logic_expr
+    |   bit_expr
+    |   INTEGER
+    |   BOOL
+    |   FLOAT
+    |   CHAR
+    ;    
 
  /* data types */
 data_type: TYPE_INT
@@ -97,8 +101,6 @@ bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
         |       expr SHR expr               ; // {$$ = $1 >> $3}
         |       expr SHL expr               ; // {$$ = $1 << $3}
         ;     
-
-// loops
 
 %%
 

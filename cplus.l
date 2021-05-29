@@ -48,6 +48,12 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "<<"            return SHR;
 "="             return EQ;
 
+ /* loops */
+"for"           return FOR;
+"while"         return WHILE;
+"do"            return DO;
+"break"         return BREAK;
+"continue"      return CONTINUE;
  /* ... */ 
 
  /* ignore whitespace */
