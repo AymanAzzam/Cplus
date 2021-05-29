@@ -38,6 +38,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "const"         return CONST;
 "return"        return RETURN;
 
+    /* operators */
 "++"            return INC_OPR;
 "--"            return DEC_OPR;
 
@@ -53,6 +54,19 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "^"             return BIT_XOR;
 "~"             return BIT_NOT;
 
+"=="            return IS_EQ;
+"!="            return NOT_EQ;
+">"             return GT;
+"<"             return LT;
+">="            return GTE;
+"<="            return LTE;
+
+"+"             return ADD;
+"-"             return SUB;
+"*"             return MUL;
+"/"             return DIV;
+"%"             return REM;
+
 "="             return EQ;
 "+="            return PLUS_EQ;
 "-="            return MINUS_EQ;
@@ -60,12 +74,8 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "*="            return MULT_EQ;
 "%="            return MOD_EQ;
 
-"=="            return IS_EQ;
-"!="            return NOT_EQ;
-">"             return GT;
-"<"             return LT;
-">="            return GTE;
-"<="            return LTE;
+    /* reserved words */
+"const"         return CONST;
 
 "if"            return IF;
 "else"          return ELSE;
@@ -77,13 +87,6 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "do"            return DO;
 "break"         return BREAK;
 "continue"      return CONTINUE;
-
-    /* operators */
-"+"             return ADD;
-"-"             return SUB;
-"*"             return MUL;
-"/"             return DIV;
-"%"             return REM;
 
     /* ignore whitespace */
 [ \t]+          ;

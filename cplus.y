@@ -10,7 +10,6 @@ void yyerror(const char *);
     char c;
     char* s;
     float f;
-    double d;
     bool b;
 }
 
@@ -54,7 +53,9 @@ program: program stmt
         |
         ;
 
-stmt:   variable_declaration ';'
+stmt:   multi_var_definition ';'
+    |   multi_const_init ';'
+    |   variable_declaration ';'
     |   variable_init ';'
     |   const_init ';'
     |   expr ';'
@@ -95,15 +96,32 @@ expr:     '(' expr ')'
 
  /* variables & constants */
 variable_declaration: data_type IDENTIFIER
-                    ;
+                ;
 
 variable_init: data_type IDENTIFIER EQ expr
-                    | data_type IDENTIFIER '(' expr ')'
-                    ;
+        | data_type IDENTIFIER '(' expr ')'
+        ;
 
 const_init: CONST data_type IDENTIFIER EQ expr
-                    | CONST data_type IDENTIFIER '(' expr ')'
+        | CONST data_type IDENTIFIER '(' expr ')'
+        ;
+
+additional_declaration: ',' IDENTIFIER
                     ;
+
+additional_var_init: ',' IDENTIFIER EQ expr
+                | ',' IDENTIFIER '(' expr ')'
+                ;
+
+multi_var_definition: multi_var_definition additional_declaration
+                | multi_var_definition additional_var_init
+                | variable_declaration
+                | variable_init
+                ;
+
+multi_const_init: multi_const_init additional_var_init
+                | const_init
+                ;        
 
  /* arithmetic operators */
 arithmetic_expr:    expr ADD expr
