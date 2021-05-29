@@ -34,10 +34,6 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "bool"          return TYPE_BOOL;
 "void"          return TYPE_VOID;
 
-    /* reserved words */
-"const"         return CONST;
-"return"        return RETURN;
-
     /* operators */
 "++"            return INC_OPR;
 "--"            return DEC_OPR;
@@ -76,6 +72,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 
     /* reserved words */
 "const"         return CONST;
+"return"        return RETURN;
 
 "if"            return IF;
 "else"          return ELSE;
