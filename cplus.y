@@ -65,6 +65,17 @@ stmt_list:
           stmt
         | stmt_list stmt
         ;
+stmt:   variable_declaration
+    |   variable_init
+    |   const_init
+    |   expr ';'
+    |   WHILE '(' expr ')' stmt
+    |   DO stmt WHILE '(' expr ')' ';'
+    |   FOR '(' expr ')' stmt
+    |   BREAK ';'
+    |   CONTINUE ';'
+    |   ';'
+    ;
 
 if_stmt:          IF '(' expr ')' stmt %prec IFX
                 | IF '(' expr ')' stmt ELSE stmt;
@@ -144,8 +155,6 @@ rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
         |       expr GTE expr               ; // {$$ = $1 >= $3}
         |       expr LTE expr               ; // {$$ = $1 <= $3}
         ;      
-
-// loops
 
 %%
 

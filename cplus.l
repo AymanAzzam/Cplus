@@ -63,6 +63,13 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "else"          return ELSE;
 "switch"        return SWITCH;
 
+ /* loops */
+"for"           return FOR;
+"while"         return WHILE;
+"do"            return DO;
+"break"         return BREAK;
+"continue"      return CONTINUE;
+
     /* operators */
 "+"             return ADD;
 "-"             return SUB;
