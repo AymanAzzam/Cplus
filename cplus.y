@@ -27,12 +27,12 @@ void yyerror(const char *);
 %token BIT_AND BIT_OR BIT_XOR BIT_NOT SHL SHR
 %token FOR WHILE DO BREAK CONTINUE
 %token IS_EQ NOT_EQ GT LT GTE LTE
+%token EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ
 %token IF ELSE SWITCH CASE DEFAULT
-
 
 %nonassoc IFX
 %nonassoc ELSE
-%right EQ "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
+%right EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ //"<<=" ">>=" "&="" "^=" "|="
 %left LOGICAL_OR
 %left LOGICAL_AND
 %left BIT_OR
@@ -53,18 +53,20 @@ program: program stmt
         |
         ;
 
-stmt:   variable_declaration
-    |   variable_init
-    |   const_init
+stmt:   variable_declaration ';'
+    |   variable_init ';'
+    |   const_init ';'
     |   expr ';'
-    |   WHILE '(' expr ')' stmt
-    |   DO stmt WHILE '(' expr ')' ';'
-    |   FOR '(' expr ')' stmt
+    |   WHILE '(' cond_expr ')' stmt
+    |   DO stmt WHILE '(' cond_expr ')' ';'
+    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt
+    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
     |   BREAK ';'
     |   CONTINUE ';'
     |   if_stmt
     |   switch_stmt
     |   '{' stmt_list '}'
+    |   '{' '}'
     |   ';'
     ;
 
@@ -73,10 +75,10 @@ stmt_list:
         | stmt_list stmt
         ;
 
-if_stmt:          IF '(' expr ')' stmt %prec IFX
-                | IF '(' expr ')' stmt ELSE stmt;
+if_stmt:          IF '(' cond_expr ')' stmt %prec IFX
+                | IF '(' cond_expr ')' stmt ELSE stmt;
 
-switch_stmt:    SWITCH '(' expr ')' '{' cases '}';
+switch_stmt:    SWITCH '(' cond_expr ')' '{' cases '}';
 
 case:   CASE expr ':' stmt
         | DEFAULT ':' stmt;
@@ -96,18 +98,19 @@ expr:     '(' expr ')'
         |       IDENTIFIER
         |       literal
         |       rel_expr
+        |       assign_expr
         ;    
 
  /* variables & constants */
-variable_declaration: data_type IDENTIFIER ';'
+variable_declaration: data_type IDENTIFIER
                     ;
 
-variable_init: data_type IDENTIFIER EQ expr ';'
-                    | data_type IDENTIFIER '(' expr ')' ';'
+variable_init: data_type IDENTIFIER EQ expr
+                    | data_type IDENTIFIER '(' expr ')'
                     ;
 
-const_init: CONST data_type IDENTIFIER EQ expr ';'
-                    | CONST data_type IDENTIFIER '(' expr ')' ';'
+const_init: CONST data_type IDENTIFIER EQ expr
+                    | CONST data_type IDENTIFIER '(' expr ')'
                     ;
 
  /* arithmetic operators */
@@ -159,8 +162,30 @@ rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
         |       expr LT expr                ; // {$$ = $1 < $3}
         |       expr GTE expr               ; // {$$ = $1 >= $3}
         |       expr LTE expr               ; // {$$ = $1 <= $3}
-        ;      
+        ;     
 
+// assignment operators
+assign_expr:    expr EQ expr               	
+	|	expr PLUS_EQ expr          	
+	|       expr MINUS_EQ expr          
+	|	expr DIV_EQ expr            
+	|	expr MULT_EQ expr          	
+	|	expr MOD_EQ expr           	
+        ;
+
+cond_expr:   expr
+        |   variable_init
+        |   const_init
+        ;
+
+eps_expr: expr 
+        |
+        ;
+
+for_expr:   eps_expr
+        |   variable_init
+        |   const_init
+        ;
 %%
 
 void yyerror(const char *s) {
