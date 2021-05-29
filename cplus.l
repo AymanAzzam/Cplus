@@ -62,6 +62,9 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "if"            return IF;
 "else"          return ELSE;
 "switch"        return SWITCH;
+"case"          return CASE;
+"default"       return DEFAULT;
+
 
  /* loops */
 "for"           return FOR;
@@ -79,8 +82,8 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 
     /* ignore whitespace */
 [ \t]+          ;
-\n              ;
-;|\(|\)|\{|\}|,               return *yytext;
+\n              ;   
+[;(){},:]   return *yytext;
 
 
     /* matched literals */

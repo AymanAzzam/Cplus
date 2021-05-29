@@ -27,7 +27,8 @@ void yyerror(const char *);
 %token BIT_AND BIT_OR BIT_XOR BIT_NOT SHL SHR
 %token FOR WHILE DO BREAK CONTINUE
 %token IS_EQ NOT_EQ GT LT GTE LTE
-%token IF ELSE SWITCH
+%token IF ELSE SWITCH CASE DEFAULT
+
 
 %nonassoc IFX
 %nonassoc ELSE
@@ -62,6 +63,7 @@ stmt:   variable_declaration
     |   BREAK ';'
     |   CONTINUE ';'
     |   if_stmt
+    |   switch_stmt
     |   '{' stmt_list '}'
     |   ';'
     ;
@@ -73,6 +75,15 @@ stmt_list:
 
 if_stmt:          IF '(' expr ')' stmt %prec IFX
                 | IF '(' expr ')' stmt ELSE stmt;
+
+switch_stmt:    SWITCH '(' expr ')' '{' cases '}';
+
+case:   CASE expr ':' stmt
+        | DEFAULT ':' stmt;
+
+cases:  cases case
+        |
+        ;
 
 // master expression
 expr:     '(' expr ')'
