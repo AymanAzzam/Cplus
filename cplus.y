@@ -242,9 +242,6 @@ return_stmt:    RETURN expr
         ;
 
 
-while_expr:   expr
-
-
 eps_expr: expr 
         |
         ;
