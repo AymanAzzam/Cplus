@@ -52,6 +52,12 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "~"             return BIT_NOT;
 
 "="             return EQ;
+"+="            return PLUS_EQ;
+"-="            return MINUS_EQ;
+"/="            return DIV_EQ;
+"*="            return MULT_EQ;
+"%="            return MOD_EQ;
+
 "=="            return IS_EQ;
 "!="            return NOT_EQ;
 ">"             return GT;

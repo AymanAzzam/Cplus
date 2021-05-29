@@ -28,10 +28,11 @@ void yyerror(const char *);
 %token FOR WHILE DO BREAK CONTINUE
 %token IS_EQ NOT_EQ GT LT GTE LTE
 %token IF ELSE SWITCH
+%token EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ
 
 %nonassoc IFX
 %nonassoc ELSE
-%right EQ "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
+%right EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ //"<<=" ">>=" "&="" "^=" "|="
 %left LOGICAL_OR
 %left LOGICAL_AND
 %left BIT_OR
@@ -88,6 +89,7 @@ expr:     '(' expr ')'
         |       IDENTIFIER
         |       literal
         |       rel_expr
+        |       assign_expr
         ;    
 
  /* variables & constants */
@@ -168,7 +170,16 @@ rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
         |       expr LT expr                ; // {$$ = $1 < $3}
         |       expr GTE expr               ; // {$$ = $1 >= $3}
         |       expr LTE expr               ; // {$$ = $1 <= $3}
-        ;      
+        ;     
+
+// assignment operators
+assign_expr:    expr EQ expr               	
+	|	expr PLUS_EQ expr          	
+	|       expr MINUS_EQ expr          
+	|	expr DIV_EQ expr            
+	|	expr MULT_EQ expr          	
+	|	expr MOD_EQ expr           	
+        ;
 
 while_expr:   expr
         |   variable_init
