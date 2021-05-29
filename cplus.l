@@ -52,6 +52,16 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "~"             return BIT_NOT;
 
 "="             return EQ;
+"=="            return IS_EQ;
+"!="            return NOT_EQ;
+">"             return GT;
+"<"             return LT;
+">="            return GTE;
+"<="            return LTE;
+
+"if"            return IF;
+"else"          return ELSE;
+"switch"        return SWITCH;
 
  /* loops */
 "for"           return FOR;
