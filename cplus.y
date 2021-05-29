@@ -47,13 +47,14 @@ program: program stmt
         |
         ;
 
-stmt:   variable_declaration
-    |   variable_init
-    |   const_init
+stmt:   variable_declaration ';'
+    |   variable_init ';'
+    |   const_init ';'
     |   expr ';'
-    |   WHILE '(' expr ')' stmt
-    |   DO stmt WHILE '(' expr ')' ';'
-    |   FOR '(' expr ')' stmt
+    |   WHILE '(' while_expr ')' stmt
+    |   DO stmt WHILE '(' while_expr ')' ';'
+    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt
+    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
     |   BREAK ';'
     |   CONTINUE ';'
     |   ';'
@@ -72,15 +73,15 @@ expr:   '(' expr ')'
     ;     
 
  /* variables & constants */
-variable_declaration: data_type IDENTIFIER ';'
+variable_declaration: data_type IDENTIFIER
                     ;
 
-variable_init: data_type IDENTIFIER EQ expr ';'
-                    | data_type IDENTIFIER '(' expr ')' ';'
+variable_init: data_type IDENTIFIER EQ expr
+                    | data_type IDENTIFIER '(' expr ')'
                     ;
 
-const_init: CONST data_type IDENTIFIER EQ expr ';'
-                    | CONST data_type IDENTIFIER '(' expr ')' ';'
+const_init: CONST data_type IDENTIFIER EQ expr
+                    | CONST data_type IDENTIFIER '(' expr ')'
                     ;
 
  /* arithmetic operators */
@@ -123,8 +124,19 @@ bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
         |       BIT_NOT expr                ; // {$$ = ~$2}
         |       expr SHR expr               ; // {$$ = $1 >> $3}
         |       expr SHL expr               ; // {$$ = $1 << $3}
-        ;     
+        ;   
 
+while_expr:   expr
+        |   variable_init
+        ;
+
+eps_expr: expr 
+        |
+        ;
+
+for_expr:   eps_expr
+        |   variable_init
+        ;
 %%
 
 void yyerror(const char *s) {
