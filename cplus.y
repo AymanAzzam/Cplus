@@ -51,6 +51,7 @@ stmt: variable_declaration
         | variable_init
         | const_init
         | expr ';'
+        | ';'
         ;
 
 // master expression

@@ -63,7 +63,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
     /* ignore whitespace */
 [ \t]+          ;
 \n              ;
-;               return *yytext;
+;|\(|\)|\{|\}|,               return *yytext;
 
 
     /* matched literals */
@@ -72,7 +72,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 {integer}       {yylval.i=atoi(yytext); return INTEGER;}
 {identifier}    {yylval.s=strdup(yytext); return IDENTIFIER;}
 \'.\'           {yylval.c=yytext[1]; return CHAR;}
-.               {return *yytext;}
+.               {yyerror("Unexpected character");}
 %%
 
 int yywrap() {
