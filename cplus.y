@@ -10,7 +10,6 @@ void yyerror(const char *);
     char c;
     char* s;
     float f;
-    double d;
     bool b;
 }
 
@@ -19,8 +18,8 @@ void yyerror(const char *);
 %token <c> CHAR
 %token <b> BOOL
 %token <s> IDENTIFIER
-%token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL
-%token CONST
+%token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL TYPE_VOID
+%token CONST RETURN
 %token ADD SUB MUL DIV REM
 %token INC_OPR DEC_OPR
 %token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
@@ -50,10 +49,13 @@ void yyerror(const char *);
 %%
 
 program: program stmt
+        | program func
         |
         ;
 
-stmt:   variable_declaration ';'
+stmt:   multi_var_definition ';'
+    |   multi_const_init ';'
+    |   variable_declaration ';'
     |   variable_init ';'
     |   const_init ';'
     |   expr ';'
@@ -63,6 +65,7 @@ stmt:   variable_declaration ';'
     |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
     |   BREAK ';'
     |   CONTINUE ';'
+    |   return_stmt;
     |   if_stmt
     |   switch_stmt
     |   '{' stmt_list '}'
@@ -103,19 +106,37 @@ expr:     '(' expr ')'
         |       literal
         |       rel_expr
         |       assign_expr
+        |       func_call
         ;    
 
  /* variables & constants */
 variable_declaration: data_type IDENTIFIER
-                    ;
+                ;
 
 variable_init: data_type IDENTIFIER EQ expr
-                    | data_type IDENTIFIER '(' expr ')'
-                    ;
+        | data_type IDENTIFIER '(' expr ')'
+        ;
 
 const_init: CONST data_type IDENTIFIER EQ expr
-                    | CONST data_type IDENTIFIER '(' expr ')'
+        | CONST data_type IDENTIFIER '(' expr ')'
+        ;
+
+additional_declaration: ',' IDENTIFIER
                     ;
+
+additional_var_init: ',' IDENTIFIER EQ expr
+                | ',' IDENTIFIER '(' expr ')'
+                ;
+
+multi_var_definition: multi_var_definition additional_declaration
+                | multi_var_definition additional_var_init
+                | variable_declaration
+                | variable_init
+                ;
+
+multi_const_init: multi_const_init additional_var_init
+                | const_init
+                ;        
 
  /* arithmetic operators */
 arithmetic_expr:    expr ADD expr
@@ -181,6 +202,48 @@ cond_expr:   expr
         |   variable_init
         |   const_init
         ;
+
+// functions
+
+func:           func_header stmt          		
+        ;
+
+func_header:    TYPE_VOID IDENTIFIER '(' paramater ')'
+        |       data_type IDENTIFIER '(' paramater ')'
+        ;
+
+paramater:      /* epsilon */                 	
+        |       variable_declaration   
+        |       variable_init                    	
+        |       parameter_ext ',' variable_declaration
+        |       parameter_ext ',' variable_init
+        ;
+
+parameter_ext:  variable_declaration      
+        |       variable_init                	
+        |       parameter_ext ',' variable_declaration  
+        |       parameter_ext ',' variable_init     	
+        ;
+
+func_call:      IDENTIFIER '(' args ')'              	
+        ;
+
+args:           /* epsilon */                  	
+        |       expr                     	
+        |       args_ext ',' expr         
+        ;
+
+args_ext:       expr                     	
+        |       args_ext ',' expr         
+        ;
+
+return_stmt:    RETURN expr              	
+        |       RETURN                         	
+        ;
+
+
+while_expr:   expr
+
 
 eps_expr: expr 
         |
