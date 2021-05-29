@@ -80,12 +80,16 @@ if_stmt:          IF '(' cond_expr ')' stmt %prec IFX
 
 switch_stmt:    SWITCH '(' cond_expr ')' '{' cases '}';
 
-case:   CASE expr ':' stmt
-        | DEFAULT ':' stmt;
+case:     CASE expr ':' stmt;
 
-cases:  cases case
+default_case:   DEFAULT ':' stmt;
+
+cases:    cases case
+        | cases default_case
         |
         ;
+
+
 
 // master expression
 expr:     '(' expr ')'
