@@ -10,7 +10,6 @@ void yyerror(const char *);
     char c;
     char* s;
     float f;
-    double d;
     bool b;
 }
 
