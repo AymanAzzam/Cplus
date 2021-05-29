@@ -153,6 +153,7 @@ rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
 
 while_expr:   expr
         |   variable_init
+        |   const_init
         ;
 
 eps_expr: expr 
@@ -161,6 +162,7 @@ eps_expr: expr
 
 for_expr:   eps_expr
         |   variable_init
+        |   const_init
         ;
 %%
 
