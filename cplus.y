@@ -24,7 +24,7 @@ void yyerror(const char *);
 %token BIT_AND BIT_OR BIT_XOR BIT_NOT SHL SHR
 %token FOR WHILE DO BREAK CONTINUE
 
-%right "=" "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
+%right EQ "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
 %left LOGICAL_OR
 %left LOGICAL_AND
 %left BIT_OR
@@ -72,7 +72,7 @@ data_type: TYPE_INT
  /* variables & constants */
 variable_declaration: data_type IDENTIFIER ';'              {printf("\t~~~~~~~~~declaration(%s)\n", $2);}
                     ;
-variable_init: data_type IDENTIFIER '=' expr ';'            {printf("\t~~~~~~~~~initialization(%s→)\n", $2);}
+variable_init: data_type IDENTIFIER EQ expr ';'            {printf("\t~~~~~~~~~initialization(%s→)\n", $2);}
                     ;
 
  /* arithmetic operators */

@@ -46,7 +46,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "~"             return BIT_NOT;
 ">>"            return SHL;
 "<<"            return SHR;
-
+"="             return EQ;
 
  /* ... */ 
 
