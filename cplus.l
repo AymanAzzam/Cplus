@@ -35,7 +35,6 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "void"          return TYPE_VOID;
 
     /* reserved words */
-"const"         return CONST;
 "return"        return RETURN;
 
     /* operators */
