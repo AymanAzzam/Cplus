@@ -33,13 +33,32 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "char"          return TYPE_CHAR;
 "bool"          return TYPE_BOOL;
 
-    /* operators */
-{arth_opr}      {yylval.s=strdup(yytext); return ARTH_OPR;}
-"++"            {return INC_OPR;}
-"--"            {return DEC_OPR;}
+    /* reserved words */
+"const"         return CONST;
 
-    /* unfinished */ 
-{asgn_opr}|{cmpr_opr}|{logic_opr}|{bit_opr}
+    /* operators */
+"+"             return ADD;
+"-"             return SUB;
+"*"             return MUL;
+"/"             return DIV;
+"%"             return REM;
+
+"++"            return INC_OPR;
+"--"            return DEC_OPR;
+
+"&&"            return LOGICAL_AND;
+"||"            return LOGICAL_OR;
+"!"             return LOGICAL_NOT;
+
+"&"             return BIT_AND;
+"|"             return BIT_OR;
+"^"             return BIT_XOR;
+"~"             return BIT_NOT;
+
+">>"            return SHL;
+"<<"            return SHR;
+
+"="             return EQ;
 
     /* ignore whitespace */
 [ \t]+          ;
@@ -53,6 +72,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 {integer}       {yylval.i=atoi(yytext); return INTEGER;}
 {identifier}    {yylval.s=strdup(yytext); return IDENTIFIER;}
 \'.\'           {yylval.c=yytext[1]; return CHAR;}
+.               {return *yytext;}
 %%
 
 int yywrap() {
