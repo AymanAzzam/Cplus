@@ -65,7 +65,7 @@ stmt:   multi_var_definition ';'
     |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
     |   BREAK ';'
     |   CONTINUE ';'
-    |   return_stmt;
+    |   return_stmt ';'
     |   if_stmt
     |   switch_stmt
     |   '{' stmt_list '}'
