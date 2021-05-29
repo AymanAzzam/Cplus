@@ -32,9 +32,11 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "float"         return TYPE_FLOAT;
 "char"          return TYPE_CHAR;
 "bool"          return TYPE_BOOL;
+"void"          return TYPE_VOID;
 
     /* reserved words */
 "const"         return CONST;
+"return"        return RETURN;
 
 "++"            return INC_OPR;
 "--"            return DEC_OPR;

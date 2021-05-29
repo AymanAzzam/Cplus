@@ -19,8 +19,8 @@ void yyerror(const char *);
 %token <c> CHAR
 %token <b> BOOL
 %token <s> IDENTIFIER
-%token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL
-%token CONST
+%token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL TYPE_VOID
+%token CONST RETURN
 %token ADD SUB MUL DIV REM
 %token INC_OPR DEC_OPR
 %token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
@@ -50,6 +50,7 @@ void yyerror(const char *);
 %%
 
 program: program stmt
+        | program func
         |
         ;
 
@@ -63,6 +64,7 @@ stmt:   variable_declaration ';'
     |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
     |   BREAK ';'
     |   CONTINUE ';'
+    |   return_stmt;
     |   if_stmt
     |   '{' stmt_list '}'
     |   ';'
@@ -88,6 +90,7 @@ expr:     '(' expr ')'
         |       literal
         |       rel_expr
         |       assign_expr
+        |       func_call
         ;    
 
  /* variables & constants */
@@ -161,6 +164,45 @@ assign_expr:    expr EQ expr
 	|	expr MULT_EQ expr          	
 	|	expr MOD_EQ expr           	
         ;
+
+// functions
+
+func:           func_header stmt          		
+        ;
+
+func_header:    TYPE_VOID IDENTIFIER '(' paramater ')'
+        |       data_type IDENTIFIER '(' paramater ')'
+        ;
+
+paramater:      /* epsilon */                 	
+        |       variable_declaration   
+        |       variable_init                    	
+        |       parameter_ext ',' variable_declaration
+        |       parameter_ext ',' variable_init
+        ;
+
+parameter_ext:  variable_declaration      
+        |       variable_init                	
+        |       parameter_ext ',' variable_declaration  
+        |       parameter_ext ',' variable_init     	
+        ;
+
+func_call:      IDENTIFIER '(' args ')'              	
+        ;
+
+args:           /* epsilon */                  	
+        |       expr                     	
+        |       args_ext ',' expr         
+        ;
+
+args_ext:       expr                     	
+        |       args_ext ',' expr         
+        ;
+
+return_stmt:    RETURN expr              	
+        |       RETURN                         	
+        ;
+
 
 while_expr:   expr
         |   variable_init
