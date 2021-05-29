@@ -36,10 +36,10 @@ void yyerror(const char *);
 %left "==" "!="
 %left "<" ">" "<=" ">="
 %left SHL SHR
-%left '+' '-'
-%left '*' '/' '%'
-%right PRE_SNGL BIT_NOT LOGICAL_NOT "!" "~" "+" "-"  //unary+-, prefix inc/dec  xd
-%left POST_SNGL                 //         postfix inc/dec xddd
+%left ADD SUB
+%left MUL DIV REM
+%right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
+%left POST_SNGL     // postfix inc/dec xddd
 
 %%
 
@@ -55,9 +55,12 @@ stmt: variable_declaration
 
 // master expression
 expr:     '(' expr ')'
+        |       ADD expr %prec U_PLUS
+        |       SUB expr %prec U_MINUS
         |       single_opr_expr
         |       logic_expr
         |       bit_expr
+        |       arithmetic_expr
         |       IDENTIFIER
         |       literal
         ;    
@@ -75,7 +78,12 @@ const_init: CONST data_type IDENTIFIER EQ expr ';'
                     ;
 
  /* arithmetic operators */
-
+arithmetic_expr:    expr ADD expr
+                |   expr SUB expr
+                |   expr MUL expr
+                |   expr DIV expr
+                |   expr REM expr
+                ;
 
  /* single operators */
 single_opr_expr: INC_OPR IDENTIFIER %prec PRE_SNGL

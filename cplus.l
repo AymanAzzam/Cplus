@@ -12,9 +12,9 @@ void yyerror(const char *);
 
     // literals
 digit       [0-9]
-integer     [-+]?{digit}+
+integer     {digit}+
 identifier  [a-zA-Z_][a-zA-Z_0-9]*
-float       [-+]?(({digit}*\.{digit}+)|({digit}+\.{digit}*))(([eE]{integer})?)
+float       (({digit}*\.{digit}+)|({digit}+\.{digit}*))(([eE]{integer})?)
 
     // operators
 arth_opr    "+"|"-"|"*"|"/"|"%"
@@ -36,13 +36,6 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
     /* reserved words */
 "const"         return CONST;
 
-    /* operators */
-"+"             return ADD;
-"-"             return SUB;
-"*"             return MUL;
-"/"             return DIV;
-"%"             return REM;
-
 "++"            return INC_OPR;
 "--"            return DEC_OPR;
 
@@ -50,15 +43,22 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "||"            return LOGICAL_OR;
 "!"             return LOGICAL_NOT;
 
+">>"            return SHL;
+"<<"            return SHR;
+
 "&"             return BIT_AND;
 "|"             return BIT_OR;
 "^"             return BIT_XOR;
 "~"             return BIT_NOT;
 
-">>"            return SHL;
-"<<"            return SHR;
-
 "="             return EQ;
+
+    /* operators */
+"+"             return ADD;
+"-"             return SUB;
+"*"             return MUL;
+"/"             return DIV;
+"%"             return REM;
 
     /* ignore whitespace */
 [ \t]+          ;
