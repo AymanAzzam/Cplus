@@ -1,94 +1,109 @@
 %{
-#include "stdio.h"
+#include <stdio.h>
 
 int yylex(void);
-void yyerror(char *);
-
-bool addSym(char* id, char* dtype, bool constant=false);    // add new symbol to symbol table (uninitialized)
-template<class T> bool addSymValue(char* id, char* dtype, T value, bool constant=false);    // add new symbol (initialized)
-template<class T> bool updateSym(char* id, T value);     // update an existing symbol
-template<class T> T sym(char* id);  // return the value of an existing symbol
+void yyerror(const char *);
 %}
 
-%token IDENTIFIER INTEGER FLOAT BOOL
+%union {
+    int i;
+    char c;
+    char* s;
+    float f;
+    double d;
+    bool b;
+}
+
+%token <i> INTEGER SNGL_OPR
+%token <f> FLOAT
+%token <c> CHAR
+%token <b> BOOL
+%token <s> ARTH_OPR IDENTIFIER
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL
+%token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
+%token BIT_AND BIT_OR BIT_XOR BIT_NOT SHL SHR
 %token FOR WHILE DO BREAK CONTINUE
 
 %right "=" "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
-%left "||"
-%left "&&"
-%left "|"
-%left "&"
-%left "^"
+%left LOGICAL_OR
+%left LOGICAL_AND
+%left BIT_OR
+%left BIT_AND
+%left BIT_XOR
 %left "==" "!="
 %left "<" ">" "<=" ">="
-%left "<<" ">>"
+%left SHL SHR
 %left '+' '-'
 %left '*' '/' '%'
-%right "++" "--" "+" "-" //unary+-, prefix inc/dec  xd
-// %left "++" "--"          //         postfix inc/dec xddd
+%right BIT_NOT LOGICAL_NOT
+%right PRE_SNGL "+" "-" //unary+-, prefix inc/dec  xd
+%left POST_SNGL          //         postfix inc/dec xddd
 
 %%
 
-// root
-statement:      expr ';'
-        |       const_definition
-        |       variable_declaration
-        |       variable_definition
+program: program stmt
+        |
         ;
 
- // data types
-data_type: TYPE_INT
-         | TYPE_FLOAT
-         | TYPE_DOUBLE
-         | TYPE_CHAR
-         | TYPE_BOOL
-//       | .+           {/*error*/;}
-         ;
+stmt: variable_declaration
+        | variable_init
+        | expr ';'
+        ;
 
 // master expression
 expr:     '(' expr ')'
+        |       single_opr_expr
         |       logic_expr
         |       bit_expr
         |       INTEGER
         |       BOOL
         |       FLOAT
-        |       IDENTIFIER
-        ;     
+        |       CHAR
+        ;    
 
- // variables & constants
-variable_declaration: data_type IDENTIFIER ';'      {addSym($2, $1); /*add to symbol table*/} 
+ /* data types */
+data_type: TYPE_INT
+         | TYPE_FLOAT
+         | TYPE_DOUBLE
+         | TYPE_CHAR
+         | TYPE_BOOL
+         ;
+
+ /* variables & constants */
+variable_declaration: data_type IDENTIFIER ';'              {printf("\t~~~~~~~~~declaration(%s)\n", $2);}
+                    ;
+variable_init: data_type IDENTIFIER '=' expr ';'            {printf("\t~~~~~~~~~initialization(%s→)\n", $2);}
                     ;
 
-variable_definition: data_type IDENTIFIER '=' expr ';'      {addSymValue($2, $1, $4)}
-                    ;
-
-const_definition: "const" data_type IDENTIFIER '=' expr ';'      {addSymValue($3, $2, $5, true); /*add to symbol table*/}
-                    ;
-
- // arithmetic operators
+ /* arithmetic operators */
 
 
- // single operators
+ /* single operators */
+single_opr_expr: SNGL_OPR IDENTIFIER %prec PRE_SNGL          {printf("\t~~~~~~~~~pre-(%d)\n", $1);}
+                | IDENTIFIER SNGL_OPR %prec POST_SNGL        {printf("\t~~~~~~~~~post-(%d)\n", $2);}
+                ;
 
 // logical operators
-logic_expr:     expr "&&" expr          {$$ = $1 && $3}
-        |       expr "||" expr          {$$ = $1 || $3}
-        |       '!' expr                {$$ = !$2}
+logic_expr:     expr LOGICAL_AND expr           ; // {$$ = $1 && $3}
+        |       expr LOGICAL_OR expr            ; // {$$ = $1 || $3}
+        |       LOGICAL_NOT expr                ; // {$$ = !$2}
         ;
 
 // bitwise operators
-bit_expr:       expr '&' expr           {$$ = $1 & $3}
-        |       expr '|' expr           {$$ = $1 | $3}     
-        |       expr '^' expr           {$$ = $1 ^ $3}
-        |       '~' expr                {$$ = ~$2}
-        |       expr ">>" expr          {$$ = $1 >> $3}
-        |       expr "<<" expr          {$$ = $1 << $3}
+bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
+        |       expr BIT_OR expr            ; // {$$ = $1 | $3}     
+        |       expr BIT_XOR expr           ; // {$$ = $1 ^ $3}
+        |       BIT_NOT expr                ; // {$$ = ~$2}
+        |       expr SHR expr               ; // {$$ = $1 >> $3}
+        |       expr SHL expr               ; // {$$ = $1 << $3}
         ;     
 
 // loops
 
 %%
+
+// const_init: "const" data_type IDENTIFIER '=' expr ';'       {printf("constant initialized with vlaue\n")} /*{addSymValue($3, $2, $5, true);}*/
+                    // ;
 
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);

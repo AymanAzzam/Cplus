@@ -1,3 +1,7 @@
 /test/
 **/**/*.tab.c
 **/**/*.tab.h
+*.tab.*
+lex.yy.c
+*.exe
+**/**/*.out
