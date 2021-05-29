@@ -13,7 +13,7 @@ template<class T> T sym(char* id);  // return the value of an existing symbol
 %token IDENTIFIER INTEGER FLOAT BOOL
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL
 
-%right "=" "+=" "-=" "*=" "/=" "%=" //"<<=" ">>=" "&="" "^=" "|="
+%right "=" "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
 %left "||"
 %left "&&"
 %left "|"
