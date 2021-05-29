@@ -28,13 +28,15 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
  // matched literals
 {identifier}    return IDENTIFIER;
 {integer}       yylval=atoi(yytext); return INTEGER;
-{float}         yylval=atof(yytext); return FLOAT
+{float}         yylval=atof(yytext); return FLOAT;
 "true"          yylval=true; return BOOL;
 "false"         yylval=false; return BOOL;
 
  // operators
 {arth_opr}      return yytext;
-{single_opr}    return yytext;
+{sngl_opr}      return yytext;
+{logic_opr}     return *yytext;
+{bit_opr}       return *yytext;
 
  // data types
 "int"           return TYPE_INT;
@@ -43,7 +45,15 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 "char"          return TYPE_CHAR;
 "bool"          return TYPE_BOOL;
 
- // 
+ // loops
+"while"         return WHILE;
+"for"           return FOR;
+"do"            return DO;
+"break"         return BREAK;
+"continue"      return CONTINUE;
+
+ // Miscellaneous
+[();{}]         return *yytext;
 
  // ignore whitespace
 [ \t\n]+        ;

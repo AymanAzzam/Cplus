@@ -12,6 +12,7 @@ template<class T> T sym(char* id);  // return the value of an existing symbol
 
 %token IDENTIFIER INTEGER FLOAT BOOL
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL
+%token FOR WHILE DO BREAK CONTINUE
 
 %right "=" "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
 %left "||"
@@ -25,9 +26,16 @@ template<class T> T sym(char* id);  // return the value of an existing symbol
 %left '+' '-'
 %left '*' '/' '%'
 %right "++" "--" "+" "-" //unary+-, prefix inc/dec  xd
-%left "++" "--"          //         postfix inc/dec xddd
+// %left "++" "--"          //         postfix inc/dec xddd
 
 %%
+
+// root
+statement:      expr ';'
+        |       const_definition
+        |       variable_declaration
+        |       variable_definition
+        ;
 
  // data types
 data_type: TYPE_INT
@@ -37,6 +45,16 @@ data_type: TYPE_INT
          | TYPE_BOOL
 //       | .+           {/*error*/;}
          ;
+
+// master expression
+expr:     '(' expr ')'
+        |       logic_expr
+        |       bit_expr
+        |       INTEGER
+        |       BOOL
+        |       FLOAT
+        |       IDENTIFIER
+        ;     
 
  // variables & constants
 variable_declaration: data_type IDENTIFIER ';'      {addSym($2, $1); /*add to symbol table*/} 
@@ -52,6 +70,23 @@ const_definition: "const" data_type IDENTIFIER '=' expr ';'      {addSymValue($3
 
 
  // single operators
+
+// logical operators
+logic_expr:     expr "&&" expr          {$$ = $1 && $3}
+        |       expr "||" expr          {$$ = $1 || $3}
+        |       '!' expr                {$$ = !$2}
+        ;
+
+// bitwise operators
+bit_expr:       expr '&' expr           {$$ = $1 & $3}
+        |       expr '|' expr           {$$ = $1 | $3}     
+        |       expr '^' expr           {$$ = $1 ^ $3}
+        |       '~' expr                {$$ = ~$2}
+        |       expr ">>" expr          {$$ = $1 >> $3}
+        |       expr "<<" expr          {$$ = $1 << $3}
+        ;     
+
+// loops
 
 %%
 
