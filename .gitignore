@@ -1,1 +1,4 @@
 /test/
+*.tab.*
+lex.yy.c
+*.exe

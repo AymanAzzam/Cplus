@@ -1,16 +1,24 @@
 %{
-#include "stdio.h"
+#include <stdio.h>
 
 int yylex(void);
-void yyerror(char *);
-
-bool addSym(char* id, char* dtype, bool constant=false);    // add new symbol to symbol table (uninitialized)
-template<class T> bool addSymValue(char* id, char* dtype, T value, bool constant=false);    // add new symbol (initialized)
-template<class T> bool updateSym(char* id, T value);     // update an existing symbol
-template<class T> T sym(char* id);  // return the value of an existing symbol
+void yyerror(const char *);
 %}
 
-%token IDENTIFIER INTEGER FLOAT BOOL
+%union {
+    int i;
+    char c;
+    char* s;
+    float f;
+    double d;
+    bool b;
+}
+
+%token <i> INTEGER SNGL_OPR
+%token <f> FLOAT
+%token <c> CHAR
+%token <b> BOOL
+%token <s> ARTH_OPR IDENTIFIER
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_CHAR TYPE_BOOL
 
 %right "=" "+=" "-=" "*=" "/=" "%%=" //"<<=" ">>=" "&="" "^=" "|="
@@ -24,36 +32,51 @@ template<class T> T sym(char* id);  // return the value of an existing symbol
 %left "<<" ">>"
 %left '+' '-'
 %left '*' '/' '%'
-%right "++" "--" "+" "-" //unary+-, prefix inc/dec  xd
-%left "++" "--"          //         postfix inc/dec xddd
+%right PRE_SNGL "+" "-" //unary+-, prefix inc/dec  xd
+%left POST_SNGL          //         postfix inc/dec xddd
 
 %%
 
- // data types
+program: program stmt
+        |
+        ;
+
+stmt: variable_declaration
+        | expr ';'
+        ;
+
+expr: single_opr_expr
+    ;
+
+ /* variables & constants */
+variable_declaration: data_type IDENTIFIER ';'              {printf("\t~~~~~~~~~declaration(%s)\n", $2);}
+                    ;
+
+ /* data types */
 data_type: TYPE_INT
          | TYPE_FLOAT
          | TYPE_DOUBLE
          | TYPE_CHAR
          | TYPE_BOOL
-//       | .+           {/*error*/;}
          ;
 
- // variables & constants
-variable_declaration: data_type IDENTIFIER ';'      {addSym($2, $1); /*add to symbol table*/} 
-                    ;
 
-variable_definition: data_type IDENTIFIER '=' expr ';'      {addSymValue($2, $1, $4)}
-                    ;
-
-const_definition: "const" data_type IDENTIFIER '=' expr ';'      {addSymValue($3, $2, $5, true); /*add to symbol table*/}
-                    ;
-
- // arithmetic operators
+ /* arithmetic operators */
 
 
- // single operators
+ /* single operators */
+single_opr_expr: SNGL_OPR IDENTIFIER %prec PRE_SNGL          {printf("\t~~~~~~~~~pre-(%d)\n", $1);}
+                | IDENTIFIER SNGL_OPR %prec POST_SNGL        {printf("\t~~~~~~~~~post-(%d)\n", $2);}
+                ;
 
 %%
+
+// const_init: "const" data_type IDENTIFIER '=' expr ';'       {printf("constant initialized with vlaue\n")} /*{addSymValue($3, $2, $5, true);}*/
+                    // ;
+
+// variable_init: data_type IDENTIFIER '=' expr ';'            {printf("\t~~~~~~~~~initialization(%s→)\n", $2);}
+//                     ;
+    
 
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
