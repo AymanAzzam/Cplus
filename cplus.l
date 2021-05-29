@@ -53,27 +53,24 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 
 "="             return EQ;
 
-<<<<<<< HEAD
  /* loops */
 "for"           return FOR;
 "while"         return WHILE;
 "do"            return DO;
 "break"         return BREAK;
 "continue"      return CONTINUE;
- /* ... */ 
-=======
+
     /* operators */
 "+"             return ADD;
 "-"             return SUB;
 "*"             return MUL;
 "/"             return DIV;
 "%"             return REM;
->>>>>>> c85e17b3b551a6f0063ceeda15dcb59102c1d4d7
 
     /* ignore whitespace */
 [ \t]+          ;
 \n              ;
-;               return *yytext;
+;|\(|\)|\{|\}|,               return *yytext;
 
 
     /* matched literals */
@@ -82,7 +79,7 @@ bit_opr     "&"|"|"|"^"|"~"|"<<"|">>"
 {integer}       {yylval.i=atoi(yytext); return INTEGER;}
 {identifier}    {yylval.s=strdup(yytext); return IDENTIFIER;}
 \'.\'           {yylval.c=yytext[1]; return CHAR;}
-.               {return *yytext;}
+.               {yyerror("Unexpected character");}
 %%
 
 int yywrap() {

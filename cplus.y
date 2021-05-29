@@ -44,6 +44,7 @@ void yyerror(const char *);
 %%
 
 program: program stmt
+        |
         ;
 
 stmt:   variable_declaration
@@ -55,6 +56,7 @@ stmt:   variable_declaration
     |   FOR '(' expr ')' stmt
     |   BREAK ';'
     |   CONTINUE ';'
+    |   ';'
     ;
 
 // master expression
