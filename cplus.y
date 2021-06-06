@@ -13,6 +13,8 @@ void yyerror(const char *);
     bool b;
 }
 
+%start program
+
 %token <i> INTEGER
 %token <f> FLOAT
 %token <c> CHAR
