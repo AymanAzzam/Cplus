@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
-
+#include "Stmt.h"
+#include "IfStmt.h"
+#include "CondExpr.h"
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -11,6 +13,9 @@ void yyerror(const char *);
     char* s;
     float f;
     bool b;
+    Stmt* stmt;
+    IfStmt* ifStmt;
+    CondExpr* condExpr;
 }
 
 %token <i> INTEGER
@@ -46,6 +51,10 @@ void yyerror(const char *);
 %left POST_SNGL     // postfix inc/dec xddd
 
 
+%type <stmt> stmt
+%type <ifStmt> if_stmt
+%type <condExpr> cond_expr
+
 %%
 
 program: program stmt
@@ -53,21 +62,21 @@ program: program stmt
         |
         ;
 
-stmt:   multi_var_definition ';'
-    |   multi_const_init ';'
-    |   expr ';'
-    |   WHILE '(' cond_expr ')' stmt
-    |   DO stmt WHILE '(' cond_expr ')' ';'
-    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt
-    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
-    |   BREAK ';'
-    |   CONTINUE ';'
-    |   return_stmt ';'
-    |   if_stmt
-    |   switch_stmt
-    |   '{' stmt_list '}'
-    |   '{' '}'
-    |   ';'
+stmt:   multi_var_definition ';' {$$ = new Stmt();}
+    |   multi_const_init ';' {$$ = new Stmt();}
+    |   expr ';' {$$ = new Stmt();}
+    |   WHILE '(' cond_expr ')' stmt {$$ = new Stmt();}
+    |   DO stmt WHILE '(' cond_expr ')' ';' {$$ = new Stmt();}
+    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt {$$ = new Stmt();}
+    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt {$$ = new Stmt();}
+    |   BREAK ';'{$$ = new Stmt();}
+    |   CONTINUE ';'{$$ = new Stmt();}
+    |   return_stmt ';'{$$ = new Stmt();}
+    |   if_stmt		{$$ = new Stmt(); $1->execute();}
+    |   switch_stmt{$$ = new Stmt();}
+    |   '{' stmt_list '}'	{$$ = new Stmt();}
+    |   '{' '}'{$$ = new Stmt();}
+    |   ';'{$$ = new Stmt();}
     ;
 
 stmt_list:
@@ -75,8 +84,10 @@ stmt_list:
         | stmt_list stmt
         ;
 
-if_stmt:          IF '(' cond_expr ')' stmt %prec IFX
-                | IF '(' cond_expr ')' stmt ELSE stmt;
+if_stmt:
+	IF '(' cond_expr ')' stmt %prec IFX		{$$ = new IfStmt($3, $5);}
+	| IF '(' cond_expr ')' stmt ELSE stmt		{$$ = new IfStmt($3, $5, $7);}
+	;
 
 switch_stmt:      SWITCH '(' cond_expr ')' '{' cases '}'
                 | SWITCH '(' cond_expr ')' '{' cases default_case cases'}';
@@ -167,7 +178,6 @@ data_type: TYPE_INT
 logic_expr:     expr LOGICAL_AND expr           ; // {$$ = $1 && $3}
         |       expr LOGICAL_OR expr            ; // {$$ = $1 || $3}
         |       LOGICAL_NOT expr                ; // {$$ = !$2}
-        ;
 
 // bitwise operators
 bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
@@ -176,7 +186,6 @@ bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
         |       BIT_NOT expr                ; // {$$ = ~$2}
         |       expr SHR expr               ; // {$$ = $1 >> $3}
         |       expr SHL expr               ; // {$$ = $1 << $3}
-        ;
 
 // comparison operators
 rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
@@ -185,7 +194,6 @@ rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
         |       expr LT expr                ; // {$$ = $1 < $3}
         |       expr GTE expr               ; // {$$ = $1 >= $3}
         |       expr LTE expr               ; // {$$ = $1 <= $3}
-        ;     
 
 // assignment operators
 assign_expr:    expr EQ expr               	
@@ -196,9 +204,9 @@ assign_expr:    expr EQ expr
 	|	expr MOD_EQ expr           	
         ;
 
-cond_expr:   expr
-        |   variable_init
-        |   const_init
+cond_expr:   expr		{$$ = new CondExpr();}
+        |   variable_init	{$$ = new CondExpr();}
+        |   const_init		{$$ = new CondExpr();}
         ;
 
 // functions
