@@ -55,9 +55,6 @@ program: program stmt
 
 stmt:   multi_var_definition ';'
     |   multi_const_init ';'
-    |   variable_declaration ';'
-    |   variable_init ';'
-    |   const_init ';'
     |   expr ';'
     |   WHILE '(' cond_expr ')' stmt
     |   DO stmt WHILE '(' cond_expr ')' ';'
