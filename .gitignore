@@ -9,3 +9,7 @@ Phase 1 - Deliverables.zip
 /commands/
 *.output
 .idea/
+cmake-build-debug/
+CMakeLists.txt
+Test.cpp
+
