@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
-
+#include "Stmt.h"
+#include "IfStmt.h"
+#include "CondExpr.h"
 int yylex(void);
 void yyerror(const char *);
 %}
