@@ -30,9 +30,14 @@ enum DataType {
 
 
 class ExprNode: public Node{
-    
     public:
-        virtual void execute(){};
+        string name;
+        ExprNode(string n = "-1") {
+            name = n;
+        }
+        virtual void execute() {
+            printf("\tPUSH\t%s\n", name.c_str());
+        };
 };
 
 class TypeNode: public Node {
@@ -51,7 +56,7 @@ class ValueNode: public ExprNode {
     DataType type;
 
     public:
-        ValueNode(string v, DataType t): ExprNode() {
+        ValueNode(string v, DataType t): ExprNode(v) {
             value = v;
             type = t;
         }
@@ -99,7 +104,7 @@ class IdentifierNode: public ExprNode {
     string name;
 
     public:
-        IdentifierNode(string n): ExprNode() {
+        IdentifierNode(string n): ExprNode(n) {
             name = n;
         }
 
