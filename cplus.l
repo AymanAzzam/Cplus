@@ -2,14 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
-#include "Stmt.h"
-#include "IfStmt.h"
-#include "CondExpr.h"
-#include "expressions/expressions.h"
+
+#include "Headers.h"
+
 #include "cplus.tab.h"
 
 void yyerror(const char *);
 %}
+
+%option yylineno
 
  // terminals
 

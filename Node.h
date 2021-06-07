@@ -4,6 +4,7 @@
 
 class Node {
 public:
+    static int labelNumber;
     virtual void execute() = 0;
 };
 

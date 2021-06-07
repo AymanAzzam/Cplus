@@ -1,12 +1,15 @@
 %{
 #include <stdio.h>
-#include "Stmt.h"
-#include "IfStmt.h"
-#include "CondExpr.h"
-#include "expressions/expressions.h"
+#include <vector>
+
+#include "Headers.h"
+
+extern int yylineno;
+
 int yylex(void);
 void yyerror(const char *);
 %}
+
 
 %union {
     int i;
@@ -14,6 +17,9 @@ void yyerror(const char *);
     char* s;
     float f;
     bool b;
+
+    Node* placeholder;
+
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
@@ -22,7 +28,14 @@ void yyerror(const char *);
     TypeNode* typeNode;
     ValueNode* valueNode;
     IdentifierNode* identifierNode;
+    ForExpr* forExpr;
+    EpsExpr* epsExpr;
+    For* forLoop;
+    While* whileLoop;
+    DoWhile* doWhileLoop;
 }
+
+%start program
 
 %token <i> INTEGER
 %token <f> FLOAT
@@ -56,7 +69,6 @@ void yyerror(const char *);
 %right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
 %left POST_SNGL     // postfix inc/dec xddd
 
-
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
@@ -64,21 +76,22 @@ void yyerror(const char *);
 %type <typeNode> data_type
 %type <valueNode> literal
 %type <identifierNode> identifier
+%type <forExpr> for_expr extended_for_expr
+// %type <epsExpr> eps_expr
 
 %%
 
 program: program stmt
         | program func
-        |
+        |                       {/*$0->execute(); delete $0;*/;}
         ;
 
 stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   multi_const_init ';' {$$ = new Stmt();}
     |   expr ';' {$$ = new Stmt();}
-    |   WHILE '(' cond_expr ')' stmt {$$ = new Stmt();}
-    |   DO stmt WHILE '(' cond_expr ')' ';' {$$ = new Stmt();}
-    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt {$$ = new Stmt();}
-    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt {$$ = new Stmt();}
+    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
+    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
+    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
     |   BREAK ';'{$$ = new Stmt();}
     |   CONTINUE ';'{$$ = new Stmt();}
     |   return_stmt ';'{$$ = new Stmt();}
@@ -132,22 +145,22 @@ expr:     '(' expr ')'                          {$$ = new Expression($2);}
         ;    
 
  /* variables & constants */
-variable_declaration: data_type identifier
+variable_declaration: data_type IDENTIFIER
                 ;
 
-variable_init: data_type identifier EQ expr
-        | data_type identifier '(' expr ')'
+variable_init: data_type IDENTIFIER EQ expr
+        // | data_type IDENTIFIER '(' expr ')'
         ;
 
-const_init: CONST data_type identifier EQ expr
-        | CONST data_type identifier '(' expr ')'
+const_init: CONST data_type IDENTIFIER EQ expr
+        | CONST data_type IDENTIFIER '(' expr ')'
         ;
 
-additional_declaration: ',' identifier
+additional_declaration: ',' IDENTIFIER
                     ;
 
-additional_var_init: ',' identifier EQ expr
-                | ',' identifier '(' expr ')'
+additional_var_init: ',' IDENTIFIER EQ expr
+                | ',' IDENTIFIER '(' expr ')'
                 ;
 
 multi_var_definition: multi_var_definition additional_declaration
@@ -265,12 +278,15 @@ return_stmt:    RETURN expr
 
 
 eps_expr: expr                          {$$ = $1;}
-        |                               {$$ = NULL;}
+        |                               {$$ = nullptr;}
         ;
 
-for_expr:   eps_expr
-        |   variable_init
-        |   const_init
+extended_for_expr: for_expr                     {$$ = new ForExpr(nullptr);}
+                 | variable_declaration         {$$ = new ForExpr(nullptr);}
+
+for_expr:   eps_expr            {$$ = new ForExpr(nullptr);}
+        |   variable_init       {$$ = new ForExpr(nullptr);}
+        |   const_init          {$$ = new ForExpr(nullptr);}
         ;
 %%
 
