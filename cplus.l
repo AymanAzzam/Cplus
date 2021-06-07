@@ -4,8 +4,11 @@
 #include <cstring>
 #include "Headers.h"
 #include "cplus.tab.h"
+
 void yyerror(const char *);
 %}
+
+%option yylineno
 
  // terminals
 
