@@ -3,7 +3,7 @@
 
 #include "../Node.h"
 #include "../Stmt.h"
-#include "../Expr.h"
+#include "../expressions/expressions.h"
 #include "../StmtList.h"
 #include <vector>
 #include <iostream>
@@ -13,14 +13,14 @@ using namespace std;
 class Case : public Node {
 private:
     int caseLabel = -1;
-    Expr *expr;
+    ExprNode *expr;
     StmtList *stmtList;
 public:
 //    TODO make sure it is a constant expression
-    Case(Expr *expr, StmtList *stmtList)
+    Case(ExprNode *expr, StmtList *stmtList)
             : expr(expr), stmtList(stmtList) {}
 
-    explicit Case(Expr *expr)
+    explicit Case(ExprNode *expr)
             : expr(expr), stmtList(nullptr) {}
 
     explicit Case(StmtList *stmtList)
