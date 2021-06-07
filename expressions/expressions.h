@@ -23,10 +23,34 @@ enum Operator {
     BIT_NOT, LOGICAL_NOT
 };
 
-struct ExprNode{
+enum DataType {
+    TYPE_INT, TYPE_FLOAT, TYPE_CHAR, TYPE_BOOL, TYPE_VOID
+};
+
+struct Node{};
+
+
+class ExprNode: Node {
     int Value;
+
     virtual int getValue(){
         return Value;
+    }
+};
+
+class TypeNode: Node {
+    DataType type;
+
+    TypeNode(DataType t) {
+        type = t;
+    }
+};
+
+class ValueNode {
+    string value;
+
+    ValueNode(string v) {
+        value = v;
     }
 };
 

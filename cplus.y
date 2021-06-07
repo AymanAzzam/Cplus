@@ -11,21 +11,22 @@ void yyerror(const char *);
 %union {
     int i;
     char c;
-    char* s;
+    string s;
     float f;
     bool b;
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
     ExprNode* exprNode;
-    IdentifierNode* identifierNode;
+    TypeNode* typeNode;
+    ValueNode* valueNode;
 }
 
 %token <i> INTEGER
 %token <f> FLOAT
 %token <c> CHAR
 %token <b> BOOL
-%token IDENTIFIER
+%token <s> IDENTIFIER
 %token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL TYPE_VOID
 %token CONST RETURN
 %token ADD SUB MUL DIV REM
@@ -57,8 +58,9 @@ void yyerror(const char *);
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
-%type <exprNode> expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
-%type <IdentifierNode> IDENTIFIER
+%type <exprNode> eps_expr expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <TypeNode> data_type
+%type <ValueNode> literal
 
 %%
 
@@ -120,7 +122,7 @@ expr:     '(' expr ')'                          {$$ = new Expression($2);}
         |       bit_expr
         |       arithmetic_expr
         |       IDENTIFIER                      {$$ = new IdentifierNode($1);}
-        |       literal
+        |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
         |       func_call                       {$$ = $1;}
@@ -170,16 +172,16 @@ single_opr_expr: INC_OPR IDENTIFIER %prec PRE_SNGL      {$$ = new RightOpNode($2
                 | IDENTIFIER DEC_OPR %prec POST_SNGL    {$$ = new LeftOpNode($1, DEC_OPR);}
                 ;
 
-literal: INTEGER
-        | FLOAT
-        | BOOL
-        | CHAR
+literal: INTEGER                            {$$ = new ValueNode($1);}
+        | FLOAT                             {$$ = new ValueNode($1);}
+        | BOOL                              {$$ = new ValueNode($1);}
+        | CHAR                              {$$ = new ValueNode($1);}
         ;
 
-data_type: TYPE_INT
-        |  TYPE_FLOAT
-        |  TYPE_CHAR
-        |  TYPE_BOOL
+data_type: TYPE_INT                         {$$ = new TypeNode(TYPE_INT);}
+        |  TYPE_FLOAT                       {$$ = new TypeNode(TYPE_FLOAT);}
+        |  TYPE_CHAR                        {$$ = new TypeNode(TYPE_CHAR);}
+        |  TYPE_BOOL                        {$$ = new TypeNode(TYPE_BOOL);}
         ;
 
 // logical operators
@@ -259,8 +261,8 @@ return_stmt:    RETURN expr
         ;
 
 
-eps_expr: expr 
-        |
+eps_expr: expr                          {$$ = $1;}
+        |                               {$$ = NULL;}
         ;
 
 for_expr:   eps_expr
