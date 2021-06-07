@@ -20,14 +20,14 @@ void RightOpNode::execute() {
         case _INC_OPR:
             printf("\tPUSH\t1\n");
             printf("\tADD\n");
-            printf("\tPOP\tx\n");
-            printf("\tPUSH\tx\n");
+            printf("\tPOP\t%s\n", right->name.c_str());
+            printf("\tPUSH\t%s\n", right->name.c_str());
             return;
         case _DEC_OPR:
             printf("\tPUSH\t1\n");
             printf("\tSUB\n");
-            printf("\tPOP\tx\n");
-            printf("\tPUSH\tx\n");
+            printf("\tPOP\t%s\n", right->name.c_str());
+            printf("\tPUSH\t%s\n", right->name.c_str());
             return;
         case _ADD:
             printf("\tADD\n");
