@@ -1,8 +1,6 @@
 %{
 #include <stdio.h>
-#include "Stmt.h"
-#include "IfStmt.h"
-#include "CondExpr.h"
+
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -74,10 +72,13 @@ stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   return_stmt ';'{$$ = new Stmt();}
     |   if_stmt		{$$ = new Stmt(); $1->execute();}
     |   switch_stmt{$$ = new Stmt();}
-    |   '{' stmt_list '}'	{$$ = new Stmt();}
-    |   '{' '}'{$$ = new Stmt();}
+    |   block {$$ = new Stmt();}
     |   ';'{$$ = new Stmt();}
     ;
+
+block:  '{' stmt_list '}'
+        |   '{' '}'
+        ;
 
 stmt_list:
           stmt
@@ -211,7 +212,7 @@ cond_expr:   expr		{$$ = new CondExpr();}
 
 // functions
 
-func:           func_header stmt          		
+func:           func_header block
         ;
 
 func_header:    TYPE_VOID IDENTIFIER '(' paramater ')'
