@@ -40,6 +40,7 @@ private:
     vector<vector<string>> scope;
     int removeId(string name); // -1: undeclared, 0: used, ow: line of declaration
     string enumToString(DataType t);
+
 public:
     SymbolTable();
     void startScope();
@@ -48,8 +49,8 @@ public:
     int lookupId(string name, DataType &type); // -1: undeclared, 0: uninit, 1: init
     vector<pair<string, int>> finishScope();
 
-    bool insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList); // 0: func return type, 1,2,..:paramerterList
-    bool lookupFunc(string name, vector<DataType> &parameterList);
+    bool insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList);
+    bool lookupFunc(string name, vector<DataType> &parameterList); // 0: func return type, 1,2,..:paramerterList
     void print();
     ~SymbolTable();
 };

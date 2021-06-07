@@ -28,7 +28,7 @@ bool SymbolTable::modifyId(string name, bool init, bool use)
 {
     if (idTable[name].empty())
         return false;
-    Identifier & node = idTable[name].back();
+    Identifier &node = idTable[name].back();
     if (init)
         node.initialized = init;
     if (use)
@@ -39,7 +39,7 @@ int SymbolTable::lookupId(string name, DataType &type)
 {
     if (idTable[name].empty())
         return -1;
-    const Identifier & node = idTable[name].back();
+    const Identifier &node = idTable[name].back();
     type = node.type;
     return node.initialized;
 }
@@ -53,7 +53,7 @@ vector<pair<string, int>> SymbolTable::finishScope()
         int line = removeId(id);
         if (line == -1)
             throw "Removing Undeclared Variable";
-        else if (line == 0)
+        else if (line > 0)
         {
             unusedId.push_back({id, line});
         }
@@ -70,8 +70,8 @@ int SymbolTable::removeId(string name)
             return -1;
         return -2;
     }
-    const Identifier & node = idTable[name].back();
-    int line = (node.used) * node.line;
+    const Identifier &node = idTable[name].back();
+    int line = (!node.used) * node.line;
     return line;
 }
 
@@ -106,10 +106,11 @@ bool SymbolTable::lookupFunc(string name, vector<DataType> &parameterList)
 
 SymbolTable::~SymbolTable()
 {
-     finishScope();
+    finishScope();
 }
 
-string SymbolTable::enumToString(DataType t) {
+string SymbolTable::enumToString(DataType t)
+{
     if (t == INTEGER)
         return "int";
     if (t == FLOAT)
@@ -121,16 +122,23 @@ string SymbolTable::enumToString(DataType t) {
     return "void";
 }
 
-void SymbolTable::print() {
+void SymbolTable::print()
+{
     cout << "Symbol Table: " << endl;
     unordered_map<string, int> idx;
-    for (int i = 0; i < scope.size(); i++) {
-        for (int j = 0; j < scope[i].size(); j++) {
-            for (int k = 0; k < i; k++) cout << '\t';
-            if (i == 0 && funcTable.count(scope[i][j])) {
+    for (int i = 0; i < scope.size(); i++)
+    {
+        for (int j = 0; j < scope[i].size(); j++)
+        {
+            for (int k = 0; k < i; k++)
+                cout << '\t';
+            if (i == 0 && funcTable.count(scope[i][j]))
+            {
                 DataType type = funcTable[scope[i][j]][0];
                 cout << "Function: " + scope[i][j] << ", return type: " << enumToString(type) << "\n";
-            } else {
+            }
+            else
+            {
                 int id_idx = idx[scope[i][j]]++;
                 cout << "Variable: " << scope[i][j] << ", Type: " << enumToString(idTable[scope[i][j]][id_idx].type) << "\n";
             }
