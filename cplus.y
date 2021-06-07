@@ -76,10 +76,13 @@ stmt:   multi_var_definition ';'
     |   return_stmt ';'
     |   if_stmt
     |   switch_stmt
-    |   '{' stmt_list '}'
-    |   '{' '}'
+    |   block
     |   ';'
     ;
+
+block:  '{' stmt_list '}'
+        |   '{' '}'
+        ;
 
 stmt_list:
           stmt
@@ -214,7 +217,7 @@ cond_expr:   expr
 
 // functions
 
-func:           func_header stmt          		
+func:           func_header block
         ;
 
 func_header:    TYPE_VOID IDENTIFIER '(' paramater ')'
