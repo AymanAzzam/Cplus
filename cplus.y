@@ -73,7 +73,7 @@ void yyerror(const char *);
 
 program: program stmt
         | program func
-        |                       {/*delete($0);*/;}
+        |                       {/*delete $0;*/;}
         ;
 
 stmt:   multi_var_definition ';' {$$ = new Stmt();}

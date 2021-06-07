@@ -10,5 +10,5 @@ void DoWhile::execute() {
     printf("lbl%i:\n", labelNumber++);
     stmt->execute();
     cond->execute();
-    printf("JZ lbl%i\n", labelNumber);
+    printf("JNZ lbl%i\n", labelNumber-1);
 }
