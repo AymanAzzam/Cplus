@@ -1,11 +1,15 @@
 %{
 #include <stdio.h>
+#include <vector>
 
 #include "Headers.h"
+
+extern int yylineno;
 
 int yylex(void);
 void yyerror(const char *);
 %}
+
 
 %union {
     int i;
@@ -24,6 +28,10 @@ void yyerror(const char *);
     For* forLoop;
     While* whileLoop;
     DoWhile* doWhileLoop;
+
+    VarDec* declare;
+    VarInit* init;
+    vector<Node*> list;
 }
 
 %start program
@@ -69,6 +77,10 @@ void yyerror(const char *);
 %type <forExpr> for_expr extended_for_expr
 %type <epsExpr> eps_expr
 
+%type <declare> variable_declaration
+%type <init> variable_init
+%type <list> multi_var_definition
+
 %%
 
 program: program stmt
@@ -79,9 +91,9 @@ program: program stmt
 stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   multi_const_init ';' {$$ = new Stmt();}
     |   expr ';' {$$ = new Stmt();}
-    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
-    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
-    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
+    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute(); printf("%i", yylineno);}
+    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute(); printf("%i", yylineno);}
+    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute(); printf("%i", yylineno);}
     |   BREAK ';'{$$ = new Stmt();}
     |   CONTINUE ';'{$$ = new Stmt();}
     |   return_stmt ';'{$$ = new Stmt();}
@@ -135,11 +147,11 @@ expr:     '(' expr ')'
         ;    
 
  /* variables & constants */
-variable_declaration: data_type IDENTIFIER
+variable_declaration: data_type IDENTIFIER      {$$ = new VarDec($1, $2, yylineno);}
                 ;
 
-variable_init: data_type IDENTIFIER EQ expr
-        | data_type IDENTIFIER '(' expr ')'
+variable_init: data_type IDENTIFIER EQ expr     {$$ = new VarDec($1, $2, $4, yylineno);}
+        | data_type IDENTIFIER '(' expr ')'     {$$ = new VarDec($1, $2, $4, yylineno);}
         ;
 
 const_init: CONST data_type IDENTIFIER EQ expr
@@ -153,10 +165,10 @@ additional_var_init: ',' IDENTIFIER EQ expr
                 | ',' IDENTIFIER '(' expr ')'
                 ;
 
-multi_var_definition: multi_var_definition additional_declaration
-                | multi_var_definition additional_var_init
-                | variable_declaration
-                | variable_init
+multi_var_definition: multi_var_definition additional_declaration       {$$ = $1; $1->push_back($2);}
+                | multi_var_definition additional_var_init              {$$ = $1; $1->push_back($2);}
+                | variable_declaration  {$$ = new vector<Node*>();}
+                | variable_init         {$$ = new vector<Node*>();}
                 ;
 
 multi_const_init: multi_const_init additional_var_init

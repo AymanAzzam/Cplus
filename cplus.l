@@ -9,6 +9,8 @@
 void yyerror(const char *);
 %}
 
+%option yylineno
+
  // terminals
 
     // literals
