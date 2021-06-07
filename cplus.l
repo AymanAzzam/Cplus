@@ -5,8 +5,8 @@
 #include "Stmt.h"
 #include "IfStmt.h"
 #include "CondExpr.h"
-#include "cplus.tab.h"
 #include "expressions/expressions.h"
+#include "cplus.tab.h"
 
 void yyerror(const char *);
 %}

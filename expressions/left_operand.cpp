@@ -5,19 +5,26 @@ LeftOpNode::LeftOpNode(ExprNode* l, Operator o): ExprNode(){
     opr = o;
 }
 
-/* int LeftOpNode::getValue() {
-    int l = left->getValue();
+void LeftOpNode::execute() {
+    left->execute();
 
     switch (opr)
     {
-        case INC_OPR:
-            return l++;
-        case DEC_OPR:
-            return l--;
+        case _INC_OPR:
+            printf("\tPUSH\tx\t1\n");
+            left->execute();
+            printf("\tADD\n");
+            printf("\tPOP x\n");
+            return;
+        case _DEC_OPR:
+            printf("\tPUSH\tx\t1\n");
+            left->execute();
+            printf("\tSUB\n");
+            return;
     }
-    return -1;
+    printf("\n\nError occured in LeftOpNode::execute() in left_operand.cpp\n\n");
 }
- */
+
 LeftOpNode::~LeftOpNode() {
     if(left)    delete left;
 }
