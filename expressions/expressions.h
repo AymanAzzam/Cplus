@@ -32,10 +32,6 @@ enum DataType {
 class ExprNode: public Node{
     
     public:
-    /*     virtual int getValue(){
-            return Value;
-        }
- */
         virtual void execute(){};
 };
 
@@ -69,9 +65,7 @@ class TwoOpNode: public ExprNode {
     public:
         TwoOpNode(ExprNode* l, ExprNode* r, Operator o);
 
-/*         virtual int getValue();
- */
-        virtual void execute(){};
+        virtual void execute();
 
         ~TwoOpNode();
 };
@@ -83,9 +77,7 @@ class LeftOpNode: public ExprNode {
     public:
         LeftOpNode(ExprNode* l, Operator o);
 
-/*         virtual int getValue();
- */
-        virtual void execute(){};
+        virtual void execute();
 
         ~LeftOpNode();
 };
@@ -97,9 +89,7 @@ class RightOpNode: public ExprNode {
     public:
         RightOpNode(ExprNode* r, Operator o);
 
-/*         virtual int getValue();
- */
-        virtual void execute(){};
+        virtual void execute();
 
         ~RightOpNode();
 };
@@ -113,8 +103,6 @@ class IdentifierNode: public ExprNode {
             name = n;
         }
 
-/*         virtual int getValue(){}
- */
         virtual void execute(){};
 };
 
@@ -126,10 +114,6 @@ class Expression: public ExprNode {
             expr = e;
         }
 
-/*         virtual int getValue() {
-            return expr->getValue();
-        }
- */
         virtual void execute(){};
 
         ~Expression() {
