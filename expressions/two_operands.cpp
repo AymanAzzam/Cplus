@@ -32,26 +32,26 @@ void TwoOpNode::execute() {
         // assignment operators
         case _MOD_EQ:
             printf("\tREM\n");
-            printf("\tPOP\tx\n");
+            printf("\tPOP\t%s\n", left->name.c_str());
             return;
         case _MULT_EQ:
             printf("\tMUL\n");
-            printf("\tPOP\tx\n");
+            printf("\tPOP\t%s\n", left->name.c_str());
             return;
         case _DIV_EQ:
             printf("\tDIV\n");
-            printf("\tPOP\tx\n");
+            printf("\tPOP\t%s\n", left->name.c_str());
             return;
         case _MINUS_EQ:
             printf("\tSUB\n");
-            printf("\tPOP\tx\n");
+            printf("\tPOP\t%s\n", left->name.c_str());
             return;
         case _PLUS_EQ:
             printf("\tADD\n");
-            printf("\tPOP\tx\n");
+            printf("\tPOP\t%s\n", left->name.c_str());
             return;
         case _EQ:
-            printf("\tPOP\tx\n");
+            printf("\tPOP\t%s\n", left->name.c_str());
             return;
 
         // comparison operators
