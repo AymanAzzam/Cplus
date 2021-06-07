@@ -3,6 +3,7 @@
 #include "Stmt.h"
 #include "IfStmt.h"
 #include "CondExpr.h"
+#include "expressions/expressions.h"
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -16,6 +17,7 @@ void yyerror(const char *);
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
+    ExprNode* exprNode;
 }
 
 %token <i> INTEGER
@@ -54,6 +56,7 @@ void yyerror(const char *);
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
+%type <exprNode> expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 
 %%
 
@@ -151,18 +154,18 @@ multi_const_init: multi_const_init additional_var_init
                 ;        
 
  /* arithmetic operators */
-arithmetic_expr:    expr ADD expr
-                |   expr SUB expr
-                |   expr MUL expr
-                |   expr DIV expr
-                |   expr REM expr
+arithmetic_expr:    expr ADD expr               {$$ = new TwoOpNode($1, $3, ADD);}
+                |   expr SUB expr               {$$ = new TwoOpNode($1, $3, SUB);}
+                |   expr MUL expr               {$$ = new TwoOpNode($1, $3, MUL);}
+                |   expr DIV expr               {$$ = new TwoOpNode($1, $3, DIV);}
+                |   expr REM expr               {$$ = new TwoOpNode($1, $3, REM);}
                 ;
 
  /* single operators */
-single_opr_expr: INC_OPR IDENTIFIER %prec PRE_SNGL
-                | IDENTIFIER INC_OPR %prec POST_SNGL
-                | DEC_OPR IDENTIFIER %prec PRE_SNGL
-                | IDENTIFIER DEC_OPR %prec POST_SNGL
+single_opr_expr: INC_OPR IDENTIFIER %prec PRE_SNGL      {$$ = new RightOpNode($2, INC_OPR);}
+                | IDENTIFIER INC_OPR %prec POST_SNGL    {$$ = new LeftOpNode($1, INC_OPR);}
+                | DEC_OPR IDENTIFIER %prec PRE_SNGL     {$$ = new RightOpNode($2, DEC_OPR);}
+                | IDENTIFIER DEC_OPR %prec POST_SNGL    {$$ = new LeftOpNode($1, DEC_OPR);}
                 ;
 
 literal: INTEGER
@@ -178,33 +181,33 @@ data_type: TYPE_INT
         ;
 
 // logical operators
-logic_expr:     expr LOGICAL_AND expr           ; // {$$ = $1 && $3}
-        |       expr LOGICAL_OR expr            ; // {$$ = $1 || $3}
-        |       LOGICAL_NOT expr                ; // {$$ = !$2}
+logic_expr:     expr LOGICAL_AND expr       {$$ = new TwoOpNode($1, $3, LOGICAL_AND);}
+        |       expr LOGICAL_OR expr        {$$ = new TwoOpNode($1, $3, LOGICAL_OR);}
+        |       LOGICAL_NOT expr            {$$ = new RightOpNode($2, LOGICAL_NOT);}
 
 // bitwise operators
-bit_expr:       expr BIT_AND expr           ; // {$$ = $1 & $3}
-        |       expr BIT_OR expr            ; // {$$ = $1 | $3}     
-        |       expr BIT_XOR expr           ; // {$$ = $1 ^ $3}
-        |       BIT_NOT expr                ; // {$$ = ~$2}
-        |       expr SHR expr               ; // {$$ = $1 >> $3}
-        |       expr SHL expr               ; // {$$ = $1 << $3}
+bit_expr:       expr BIT_AND expr           {$$ = new TwoOpNode($1, $3, BIT_AND);}
+        |       expr BIT_OR expr            {$$ = new TwoOpNode($1, $3, BIT_OR);}     
+        |       expr BIT_XOR expr           {$$ = new TwoOpNode($1, $3, BIT_XOR);}
+        |       BIT_NOT expr                {$$ = new RightOpNode($2, BIT_NOT);}
+        |       expr SHR expr               {$$ = new TwoOpNode($1, $3, SHR);}
+        |       expr SHL expr               {$$ = new TwoOpNode($1, $3, SHL);}
 
 // comparison operators
-rel_expr:       expr IS_EQ expr             ; // {$$ = $1 == $3}
-        |       expr NOT_EQ expr            ; // {$$ = $1 != $3}     
-        |       expr GT expr                ; // {$$ = $1 > $3}
-        |       expr LT expr                ; // {$$ = $1 < $3}
-        |       expr GTE expr               ; // {$$ = $1 >= $3}
-        |       expr LTE expr               ; // {$$ = $1 <= $3}
+rel_expr:       expr IS_EQ expr             {$$ = new TwoOpNode($1, $3, IS_EQ);}
+        |       expr NOT_EQ expr            {$$ = new TwoOpNode($1, $3, NOT_EQ);}     
+        |       expr GT expr                {$$ = new TwoOpNode($1, $3, GT);}
+        |       expr LT expr                {$$ = new TwoOpNode($1, $3, LT);}
+        |       expr GTE expr               {$$ = new TwoOpNode($1, $3, GTE);}
+        |       expr LTE expr               {$$ = new TwoOpNode($1, $3, LTE);}
 
 // assignment operators
-assign_expr:    expr EQ expr               	
-	|	expr PLUS_EQ expr          	
-	|       expr MINUS_EQ expr          
-	|	expr DIV_EQ expr            
-	|	expr MULT_EQ expr          	
-	|	expr MOD_EQ expr           	
+assign_expr:    expr EQ expr                {$$ = new TwoOpNode($1, $3, EQ);}
+	|	expr PLUS_EQ expr           {$$ = new TwoOpNode($1, $3, PLUS_EQ);}	
+	|       expr MINUS_EQ expr          {$$ = new TwoOpNode($1, $3, MINUS_EQ);}
+	|	expr DIV_EQ expr            {$$ = new TwoOpNode($1, $3, DIV_EQ);}
+	|	expr MULT_EQ expr           {$$ = new TwoOpNode($1, $3, MULT_EQ);}
+	|	expr MOD_EQ expr            {$$ = new TwoOpNode($1, $3, MOD_EQ);}
         ;
 
 cond_expr:   expr		{$$ = new CondExpr();}
