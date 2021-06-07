@@ -18,13 +18,14 @@ void yyerror(const char *);
     IfStmt* ifStmt;
     CondExpr* condExpr;
     ExprNode* exprNode;
+    IdentifierNode* identifierNode;
 }
 
 %token <i> INTEGER
 %token <f> FLOAT
 %token <c> CHAR
 %token <b> BOOL
-%token <s> IDENTIFIER
+%token IDENTIFIER
 %token TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL TYPE_VOID
 %token CONST RETURN
 %token ADD SUB MUL DIV REM
@@ -57,6 +58,7 @@ void yyerror(const char *);
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
 %type <exprNode> expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <IdentifierNode> IDENTIFIER
 
 %%
 
@@ -110,18 +112,18 @@ cases:    cases case
 
 
 // master expression
-expr:     '(' expr ')'
-        |       ADD expr %prec U_PLUS
-        |       SUB expr %prec U_MINUS
+expr:     '(' expr ')'                          {$$ = new Expression($2);}
+        |       ADD expr %prec U_PLUS           {$$ = new RightOpNode($2, ADD);}
+        |       SUB expr %prec U_MINUS          {$$ = new RightOpNode($2, SUB);}
         |       single_opr_expr
         |       logic_expr
         |       bit_expr
         |       arithmetic_expr
-        |       IDENTIFIER
+        |       IDENTIFIER                      {$$ = new IdentifierNode($1);}
         |       literal
         |       rel_expr
         |       assign_expr
-        |       func_call
+        |       func_call                       {$$ = $1;}
         ;    
 
  /* variables & constants */
@@ -238,6 +240,9 @@ parameter_ext:  variable_declaration
         ;
 
 func_call:      IDENTIFIER '(' args ')'              	
+        ;
+
+identifier:     IDENTIFIER
         ;
 
 args:           /* epsilon */                  	

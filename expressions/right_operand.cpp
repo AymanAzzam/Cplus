@@ -19,6 +19,10 @@ int RightOpNode::getValue() {
             return ++r;
         case DEC_OPR:
             return --r;
+        case ADD:
+            return r;
+        case SUB:
+            return -r;
     }
     return -1;
 }
