@@ -2,8 +2,8 @@
 #define LEX_AND_YACC_IFSTMT_H
 
 
-#include "Stmt.h"
-#include "CondExpr.h"
+#include "../Stmt.h"
+#include "../CondExpr.h"
 
 class IfStmt : public Stmt {
 public:

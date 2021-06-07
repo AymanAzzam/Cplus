@@ -1,8 +1,7 @@
 %{
 #include <stdio.h>
 #include "Stmt.h"
-#include "IfStmt.h"
-#include "CondExpr.h"
+#include "Headers.h"
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -16,6 +15,11 @@ void yyerror(const char *);
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
+    StmtList* stmtList;
+    Case* aCase;
+    Cases* cases;
+    SwitchStmt* switchStmt;
+    Expr* expr;
 }
 
 %token <i> INTEGER
@@ -54,6 +58,11 @@ void yyerror(const char *);
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
+%type <stmtList> stmt_list
+%type <aCase> case_with_body default_with_body case default_case
+%type <cases> top_cases bottom_cases
+%type <switchStmt> switch_stmt
+%type <expr> expr
 
 %%
 
@@ -73,7 +82,7 @@ stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   CONTINUE ';'{$$ = new Stmt();}
     |   return_stmt ';'{$$ = new Stmt();}
     |   if_stmt		{$$ = new Stmt(); $1->execute();}
-    |   switch_stmt{$$ = new Stmt();}
+    |   switch_stmt	{$$ = new Stmt(); $1->execute();}
     |   block {$$ = new Stmt();}
     |   ';'{$$ = new Stmt();}
     ;
@@ -83,8 +92,8 @@ block:  '{' stmt_list '}'
         ;
 
 stmt_list:
-          stmt
-        | stmt_list stmt
+	stmt	{$$ = new StmtList($1);}
+        | stmt_list stmt	{$$ = $1; $$->push($2);}
         ;
 
 if_stmt:
@@ -92,33 +101,56 @@ if_stmt:
 	| IF '(' cond_expr ')' stmt ELSE stmt		{$$ = new IfStmt($3, $5, $7);}
 	;
 
-switch_stmt:      SWITCH '(' cond_expr ')' '{' cases '}'
-                | SWITCH '(' cond_expr ')' '{' cases default_case cases'}';
+switch_stmt:
+	SWITCH '(' cond_expr ')' '{' top_cases default_with_body  '}'	{$6->push($7); $$ = new SwitchStmt($6);}
+	| SWITCH '(' cond_expr ')' '{' top_cases default_case bottom_cases'}'	{$6->push($7)->push($8); $$ = new SwitchStmt($6);}
+	| SWITCH '(' cond_expr ')' '{' bottom_cases '}'	{$$ = new SwitchStmt($6);}
+	| SWITCH '(' cond_expr ')' '{' '}'	{$$ = new SwitchStmt();}
+	;
 
-case:     CASE expr ':' stmt
-        | CASE expr ':' case;
+top_cases:
+	top_cases case			{$$ = $1; $$->push($2);}
+	|				{$$ = new Cases();}
+	;
 
-default_case:   DEFAULT ':' stmt;
+// The last case must have body
+bottom_cases:
+	top_cases case_with_body	{$$ = $1; $$->push($2);}
+	;
 
-cases:    cases case
-        |
-        ;
+case:
+	case_with_body
+	| CASE expr ':'			{$$ = new Case($2);}
+	;
+
+case_with_body:
+	CASE expr ':' stmt_list		{$$ = new Case($2, $4);}
+	;
+
+default_case:
+	default_with_body
+	| DEFAULT ':'			{$$ = new Case();}
+	;
+
+default_with_body:
+	DEFAULT ':' stmt_list		{$$ = new Case($3);}
+	;
 
 
 
 // master expression
-expr:     '(' expr ')'
-        |       ADD expr %prec U_PLUS
-        |       SUB expr %prec U_MINUS
-        |       single_opr_expr
-        |       logic_expr
-        |       bit_expr
-        |       arithmetic_expr
-        |       IDENTIFIER
-        |       literal
-        |       rel_expr
-        |       assign_expr
-        |       func_call
+expr:     '(' expr ')' {$$=new Expr();}
+        |       ADD expr %prec U_PLUS {$$=new Expr();}
+        |       SUB expr %prec U_MINUS {$$=new Expr();}
+        |       single_opr_expr {$$=new Expr();}
+        |       logic_expr {$$=new Expr();}
+        |       bit_expr {$$=new Expr();}
+        |       arithmetic_expr {$$=new Expr();}
+        |       IDENTIFIER {$$=new Expr();}
+        |       literal {$$=new Expr();}
+        |       rel_expr {$$=new Expr();}
+        |       assign_expr {$$=new Expr();}
+        |       func_call {$$=new Expr();}
         ;    
 
  /* variables & constants */

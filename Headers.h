@@ -1,0 +1,9 @@
+#ifndef LEX_AND_YACC_HEADERS_H
+#define LEX_AND_YACC_HEADERS_H
+#include "Conditional/IfStmt.h"
+#include "CondExpr.h"
+#include "StmtList.h"
+#include "Conditional/SwitchStmt.h"
+#include "Expr.h"
+#include "Node.h"
+#endif //LEX_AND_YACC_HEADERS_H
