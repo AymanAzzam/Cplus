@@ -1,12 +1,7 @@
 %{
 #include <stdio.h>
 
-#include "Stmt.h"
-#include "IfStmt.h"
-#include "CondExpr.h"
-#include <For.h>
-#include <While.h>
-#include <DoWhile.h>
+#include "Headers.h"
 
 int yylex(void);
 void yyerror(const char *);
@@ -19,9 +14,16 @@ void yyerror(const char *);
     float f;
     bool b;
 
+    Node* placeholder;
+
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
+    ForExpr* forExpr;
+    EpsExpr* epsExpr;
+    For* forLoop;
+    While* whileLoop;
+    DoWhile* doWhileLoop;
 }
 
 %start program
@@ -58,27 +60,28 @@ void yyerror(const char *);
 %right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
 %left POST_SNGL     // postfix inc/dec xddd
 
-%type <stmt> stmt
-
+//everything here should be removed by the end
+// %type <placeholder> variable_declaration
 
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
+%type <forExpr> for_expr extended_for_expr
+%type <epsExpr> eps_expr
 
 %%
 
 program: program stmt
         | program func
-        |
+        |                       {/*delete($0);*/;}
         ;
 
 stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   multi_const_init ';' {$$ = new Stmt();}
     |   expr ';' {$$ = new Stmt();}
-    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5);}
-    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5);}
-    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9);}
-    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt         {$$ = new For($3, $5, $7, $9);}
+    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
+    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
+    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
     |   BREAK ';'{$$ = new Stmt();}
     |   CONTINUE ';'{$$ = new Stmt();}
     |   return_stmt ';'{$$ = new Stmt();}
@@ -261,13 +264,16 @@ return_stmt:    RETURN expr
         ;
 
 
-eps_expr: expr 
-        |
+eps_expr: expr  {$$ = new EpsExpr();}
+        |       {$$ = nullptr;}
         ;
 
-for_expr:   eps_expr
-        |   variable_init
-        |   const_init
+extended_for_expr: for_expr                     {$$ = new ForExpr(nullptr);}
+                 | variable_declaration         {$$ = new ForExpr(nullptr);}
+
+for_expr:   eps_expr            {$$ = new ForExpr(nullptr);};
+        |   variable_init       {$$ = new ForExpr(nullptr);}
+        |   const_init          {$$ = new ForExpr(nullptr);}
         ;
 %%
 

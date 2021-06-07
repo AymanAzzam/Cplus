@@ -1,8 +1,8 @@
 #pragma once
-#include "Node.h"
-#include "Statement.h"
+#include "../Node.h"
+#include "../Stmt.h"
 
-class While : public Statement {
+class While : public Stmt {
     Node *cond, *s;
 public:
     While(Node*, Node*);
