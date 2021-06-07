@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include <cstring>
 
-#include <Statement.h>
+#include "Stmt.h"
+#include "IfStmt.h"
+#include "CondExpr.h"
 #include <For.h>
 #include <While.h>
 #include <DoWhile.h>
 
 #include "cplus.tab.h"
-
 void yyerror(const char *);
 %}
 

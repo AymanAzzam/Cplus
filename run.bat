@@ -1,4 +1,4 @@
-flex cplus.l
 bison -d cplus.y
-g++ lex.yy.c cplus.tab.c
+flex cplus.l
+g++ lex.yy.c cplus.tab.c *.cpp
 a.exe
