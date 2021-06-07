@@ -17,9 +17,11 @@ void yyerror(const char *);
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
+    
     ExprNode* exprNode;
     TypeNode* typeNode;
     ValueNode* valueNode;
+    IdentifierNode* identifierNode;
 }
 
 %token <i> INTEGER
@@ -59,8 +61,9 @@ void yyerror(const char *);
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
 %type <exprNode> eps_expr expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
-%type <TypeNode> data_type
-%type <ValueNode> literal
+%type <typeNode> data_type
+%type <valueNode> literal
+%type <identifierNode> identifier
 
 %%
 
@@ -115,36 +118,36 @@ cases:    cases case
 
 // master expression
 expr:     '(' expr ')'                          {$$ = new Expression($2);}
-        |       ADD expr %prec U_PLUS           {$$ = new RightOpNode($2, ADD);}
-        |       SUB expr %prec U_MINUS          {$$ = new RightOpNode($2, SUB);}
+        |       ADD expr %prec U_PLUS           {Operator o = _ADD; $$ = new RightOpNode($2, o);}
+        |       SUB expr %prec U_MINUS          {Operator o = _SUB; $$ = new RightOpNode($2, o);}
         |       single_opr_expr
         |       logic_expr
         |       bit_expr
         |       arithmetic_expr
-        |       IDENTIFIER                      {$$ = new IdentifierNode($1);}
+        |       identifier                      {$$ = $1;}
         |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = $1;}
+        |       func_call                       {$$ = new ExprNode();}
         ;    
 
  /* variables & constants */
-variable_declaration: data_type IDENTIFIER
+variable_declaration: data_type identifier
                 ;
 
-variable_init: data_type IDENTIFIER EQ expr
-        | data_type IDENTIFIER '(' expr ')'
+variable_init: data_type identifier EQ expr
+        | data_type identifier '(' expr ')'
         ;
 
-const_init: CONST data_type IDENTIFIER EQ expr
-        | CONST data_type IDENTIFIER '(' expr ')'
+const_init: CONST data_type identifier EQ expr
+        | CONST data_type identifier '(' expr ')'
         ;
 
-additional_declaration: ',' IDENTIFIER
+additional_declaration: ',' identifier
                     ;
 
-additional_var_init: ',' IDENTIFIER EQ expr
-                | ',' IDENTIFIER '(' expr ')'
+additional_var_init: ',' identifier EQ expr
+                | ',' identifier '(' expr ')'
                 ;
 
 multi_var_definition: multi_var_definition additional_declaration
@@ -158,60 +161,60 @@ multi_const_init: multi_const_init additional_var_init
                 ;        
 
  /* arithmetic operators */
-arithmetic_expr:    expr ADD expr               {$$ = new TwoOpNode($1, $3, ADD);}
-                |   expr SUB expr               {$$ = new TwoOpNode($1, $3, SUB);}
-                |   expr MUL expr               {$$ = new TwoOpNode($1, $3, MUL);}
-                |   expr DIV expr               {$$ = new TwoOpNode($1, $3, DIV);}
-                |   expr REM expr               {$$ = new TwoOpNode($1, $3, REM);}
+arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o);}
+                |   expr SUB expr               {Operator o = _SUB; $$ = new TwoOpNode($1, $3, o);}
+                |   expr MUL expr               {Operator o = _MUL; $$ = new TwoOpNode($1, $3, o);}
+                |   expr DIV expr               {Operator o = _DIV; $$ = new TwoOpNode($1, $3, o);}
+                |   expr REM expr               {Operator o = _REM; $$ = new TwoOpNode($1, $3, o);}
                 ;
 
  /* single operators */
-single_opr_expr: INC_OPR IDENTIFIER %prec PRE_SNGL      {$$ = new RightOpNode($2, INC_OPR);}
-                | IDENTIFIER INC_OPR %prec POST_SNGL    {$$ = new LeftOpNode($1, INC_OPR);}
-                | DEC_OPR IDENTIFIER %prec PRE_SNGL     {$$ = new RightOpNode($2, DEC_OPR);}
-                | IDENTIFIER DEC_OPR %prec POST_SNGL    {$$ = new LeftOpNode($1, DEC_OPR);}
+single_opr_expr: INC_OPR identifier %prec PRE_SNGL      {Operator o = _INC_OPR; $$ = new RightOpNode($2, o);}
+                | identifier INC_OPR %prec POST_SNGL    {Operator o = _INC_OPR; $$ = new LeftOpNode($1, o);}
+                | DEC_OPR identifier %prec PRE_SNGL     {Operator o = _DEC_OPR; $$ = new RightOpNode($2, o);}
+                | identifier DEC_OPR %prec POST_SNGL    {Operator o = _DEC_OPR; $$ = new LeftOpNode($1, o);}
                 ;
 
-literal: INTEGER                            {$$ = new ValueNode($1);}
-        | FLOAT                             {$$ = new ValueNode($1);}
-        | BOOL                              {$$ = new ValueNode($1);}
-        | CHAR                              {$$ = new ValueNode($1);}
+literal: INTEGER                            {DataType t = _TYPE_INT; $$ = new ValueNode(to_string($1), t);}
+        | FLOAT                             {DataType t = _TYPE_FLOAT; $$ = new ValueNode(to_string($1), t);}
+        | BOOL                              {DataType t = _TYPE_BOOL; $$ = new ValueNode(to_string($1), t);}
+        | CHAR                              {DataType t = _TYPE_CHAR; $$ = new ValueNode(to_string($1), t);}
         ;
 
-data_type: TYPE_INT                         {$$ = new TypeNode(TYPE_INT);}
-        |  TYPE_FLOAT                       {$$ = new TypeNode(TYPE_FLOAT);}
-        |  TYPE_CHAR                        {$$ = new TypeNode(TYPE_CHAR);}
-        |  TYPE_BOOL                        {$$ = new TypeNode(TYPE_BOOL);}
+data_type: TYPE_INT                         {DataType t = _TYPE_INT; $$ = new TypeNode(t);}
+        |  TYPE_FLOAT                       {DataType t = _TYPE_FLOAT; $$ = new TypeNode(t);}
+        |  TYPE_CHAR                        {DataType t = _TYPE_CHAR; $$ = new TypeNode(t);}
+        |  TYPE_BOOL                        {DataType t = _TYPE_BOOL; $$ = new TypeNode(t);}
         ;
 
 // logical operators
-logic_expr:     expr LOGICAL_AND expr       {$$ = new TwoOpNode($1, $3, LOGICAL_AND);}
-        |       expr LOGICAL_OR expr        {$$ = new TwoOpNode($1, $3, LOGICAL_OR);}
-        |       LOGICAL_NOT expr            {$$ = new RightOpNode($2, LOGICAL_NOT);}
+logic_expr:     expr LOGICAL_AND expr       {Operator o = _LOGICAL_AND; $$ = new TwoOpNode($1, $3, o);}
+        |       expr LOGICAL_OR expr        {Operator o = _LOGICAL_OR; $$ = new TwoOpNode($1, $3, o);}
+        |       LOGICAL_NOT expr            {Operator o = _LOGICAL_NOT; $$ = new RightOpNode($2, o);}
 
 // bitwise operators
-bit_expr:       expr BIT_AND expr           {$$ = new TwoOpNode($1, $3, BIT_AND);}
-        |       expr BIT_OR expr            {$$ = new TwoOpNode($1, $3, BIT_OR);}     
-        |       expr BIT_XOR expr           {$$ = new TwoOpNode($1, $3, BIT_XOR);}
-        |       BIT_NOT expr                {$$ = new RightOpNode($2, BIT_NOT);}
-        |       expr SHR expr               {$$ = new TwoOpNode($1, $3, SHR);}
-        |       expr SHL expr               {$$ = new TwoOpNode($1, $3, SHL);}
+bit_expr:       expr BIT_AND expr           {Operator o = _BIT_AND; $$ = new TwoOpNode($1, $3, o);}
+        |       expr BIT_OR expr            {Operator o = _BIT_OR; $$ = new TwoOpNode($1, $3, o);}     
+        |       expr BIT_XOR expr           {Operator o = _BIT_XOR; $$ = new TwoOpNode($1, $3, o);}
+        |       BIT_NOT expr                {Operator o = _BIT_NOT; $$ = new RightOpNode($2, o);}
+        |       expr SHR expr               {Operator o = _SHR; $$ = new TwoOpNode($1, $3, o);}
+        |       expr SHL expr               {Operator o = _SHL; $$ = new TwoOpNode($1, $3, o);}
 
 // comparison operators
-rel_expr:       expr IS_EQ expr             {$$ = new TwoOpNode($1, $3, IS_EQ);}
-        |       expr NOT_EQ expr            {$$ = new TwoOpNode($1, $3, NOT_EQ);}     
-        |       expr GT expr                {$$ = new TwoOpNode($1, $3, GT);}
-        |       expr LT expr                {$$ = new TwoOpNode($1, $3, LT);}
-        |       expr GTE expr               {$$ = new TwoOpNode($1, $3, GTE);}
-        |       expr LTE expr               {$$ = new TwoOpNode($1, $3, LTE);}
+rel_expr:       expr IS_EQ expr             {Operator o = _IS_EQ; $$ = new TwoOpNode($1, $3, o);}
+        |       expr NOT_EQ expr            {Operator o = _NOT_EQ; $$ = new TwoOpNode($1, $3, o);}     
+        |       expr GT expr                {Operator o = _GT; $$ = new TwoOpNode($1, $3, o);}
+        |       expr LT expr                {Operator o = _LT; $$ = new TwoOpNode($1, $3, o);}
+        |       expr GTE expr               {Operator o = _GTE; $$ = new TwoOpNode($1, $3, o);}
+        |       expr LTE expr               {Operator o = _LTE; $$ = new TwoOpNode($1, $3, o);}
 
 // assignment operators
-assign_expr:    expr EQ expr                {$$ = new TwoOpNode($1, $3, EQ);}
-	|	expr PLUS_EQ expr           {$$ = new TwoOpNode($1, $3, PLUS_EQ);}	
-	|       expr MINUS_EQ expr          {$$ = new TwoOpNode($1, $3, MINUS_EQ);}
-	|	expr DIV_EQ expr            {$$ = new TwoOpNode($1, $3, DIV_EQ);}
-	|	expr MULT_EQ expr           {$$ = new TwoOpNode($1, $3, MULT_EQ);}
-	|	expr MOD_EQ expr            {$$ = new TwoOpNode($1, $3, MOD_EQ);}
+assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNode($1, $3, o);}
+	|	expr PLUS_EQ expr           {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o);}	
+	|       expr MINUS_EQ expr          {Operator o = _MINUS_EQ; $$ = new TwoOpNode($1, $3, o);}
+	|	expr DIV_EQ expr            {Operator o = _DIV_EQ; $$ = new TwoOpNode($1, $3, o);}
+	|	expr MULT_EQ expr           {Operator o = _MULT_EQ; $$ = new TwoOpNode($1, $3, o);}
+	|	expr MOD_EQ expr            {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o);}
         ;
 
 cond_expr:   expr		{$$ = new CondExpr();}
@@ -224,8 +227,8 @@ cond_expr:   expr		{$$ = new CondExpr();}
 func:           func_header block
         ;
 
-func_header:    TYPE_VOID IDENTIFIER '(' paramater ')'
-        |       data_type IDENTIFIER '(' paramater ')'
+func_header:    TYPE_VOID identifier '(' paramater ')'
+        |       data_type identifier '(' paramater ')'
         ;
 
 paramater:      /* epsilon */                 	
@@ -241,10 +244,10 @@ parameter_ext:  variable_declaration
         |       parameter_ext ',' variable_init     	
         ;
 
-func_call:      IDENTIFIER '(' args ')'              	
+func_call:      identifier '(' args ')'              	
         ;
 
-identifier:     IDENTIFIER
+identifier:     IDENTIFIER              {$$ = new IdentifierNode($1);}
         ;
 
 args:           /* epsilon */                  	

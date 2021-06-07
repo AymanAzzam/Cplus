@@ -6,6 +6,8 @@
 #include "IfStmt.h"
 #include "CondExpr.h"
 #include "cplus.tab.h"
+#include "expressions/expressions.h"
+
 void yyerror(const char *);
 %}
 

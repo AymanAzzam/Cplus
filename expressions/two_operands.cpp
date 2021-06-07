@@ -6,7 +6,7 @@ TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
     opr = o;
 }
 
-int TwoOpNode::getValue() {
+/* int TwoOpNode::getValue() {
     int l = left->getValue();
     int r = left->getValue();
 
@@ -59,7 +59,7 @@ int TwoOpNode::getValue() {
 
     return -1;
 }
-
+ */
 TwoOpNode::~TwoOpNode() {
     if(left)    delete left;
     if(right)   delete right;

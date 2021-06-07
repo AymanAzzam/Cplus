@@ -6,7 +6,7 @@ RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
 }
 
 
-int RightOpNode::getValue() {
+/* int RightOpNode::getValue() {
     int r = right->getValue();
 
     switch (opr)
@@ -27,7 +27,7 @@ int RightOpNode::getValue() {
     return -1;
 }
 
-
+ */
 RightOpNode::~RightOpNode() {
     if(right)   delete right;
 }

@@ -5,7 +5,7 @@ LeftOpNode::LeftOpNode(ExprNode* l, Operator o): ExprNode(){
     opr = o;
 }
 
-int LeftOpNode::getValue() {
+/* int LeftOpNode::getValue() {
     int l = left->getValue();
 
     switch (opr)
@@ -17,7 +17,7 @@ int LeftOpNode::getValue() {
     }
     return -1;
 }
-
+ */
 LeftOpNode::~LeftOpNode() {
     if(left)    delete left;
 }
