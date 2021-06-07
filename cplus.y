@@ -73,7 +73,7 @@ void yyerror(const char *);
 
 program: program stmt
         | program func
-        |                       {/*delete $0;*/;}
+        |                       {/*$0->execute(); delete $0;*/;}
         ;
 
 stmt:   multi_var_definition ';' {$$ = new Stmt();}
@@ -271,7 +271,7 @@ eps_expr: expr  {$$ = new EpsExpr();}
 extended_for_expr: for_expr                     {$$ = new ForExpr(nullptr);}
                  | variable_declaration         {$$ = new ForExpr(nullptr);}
 
-for_expr:   eps_expr            {$$ = new ForExpr(nullptr);};
+for_expr:   eps_expr            {$$ = new ForExpr(nullptr);}
         |   variable_init       {$$ = new ForExpr(nullptr);}
         |   const_init          {$$ = new ForExpr(nullptr);}
         ;
