@@ -11,7 +11,7 @@ void yyerror(const char *);
 %union {
     int i;
     char c;
-    string s;
+    char* s;
     float f;
     bool b;
     Stmt* stmt;

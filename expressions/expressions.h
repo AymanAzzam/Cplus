@@ -30,8 +30,7 @@ enum DataType {
 
 
 class ExprNode: public Node{
-    int Value;
-
+    
     public:
     /*     virtual int getValue(){
             return Value;
@@ -51,12 +50,12 @@ class TypeNode: public Node {
         virtual void execute(){};
 };
 
-class ValueNode: public Node {
+class ValueNode: public ExprNode {
     string value;
     DataType type;
 
     public:
-        ValueNode(string v, DataType t) {
+        ValueNode(string v, DataType t): ExprNode() {
             value = v;
             type = t;
         }
