@@ -1,6 +1,11 @@
 %{
 #include <stdio.h>
 
+#include <Statement.h>
+#include <For.h>
+#include <While.h>
+#include <DoWhile.h>
+
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -11,6 +16,8 @@ void yyerror(const char *);
     char* s;
     float f;
     bool b;
+
+    Statement* stmt;
 }
 
 %start program
@@ -47,6 +54,8 @@ void yyerror(const char *);
 %right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
 %left POST_SNGL     // postfix inc/dec xddd
 
+%type <stmt> stmt
+
 
 %%
 
@@ -58,10 +67,10 @@ program: program stmt
 stmt:   multi_var_definition ';'
     |   multi_const_init ';'
     |   expr ';'
-    |   WHILE '(' cond_expr ')' stmt
-    |   DO stmt WHILE '(' cond_expr ')' ';'
-    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt
-    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt
+    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5);}
+    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5);}
+    |   FOR '(' for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9);}
+    |   FOR '(' variable_declaration ';' for_expr ';' eps_expr ')' stmt         {$$ = new For($3, $5, $7, $9);}
     |   BREAK ';'
     |   CONTINUE ';'
     |   return_stmt ';'
