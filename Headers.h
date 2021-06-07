@@ -7,5 +7,4 @@
 #include "Loops/For.h"
 #include "Loops/While.h"
 #include "Loops/DoWhile.h"
-#include "Variables/Declaration.h"
-#include "Variables/Initialization.h"
+#include "expressions/expressions.h"
