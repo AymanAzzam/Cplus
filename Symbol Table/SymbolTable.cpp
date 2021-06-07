@@ -4,10 +4,21 @@
 
 using namespace std;
 
+SymbolTable *SymbolTable::symbolTable = nullptr;
+
 SymbolTable::SymbolTable()
 {
     scopeMask = 0;
     startScope(GLOBAL);
+}
+
+SymbolTable *SymbolTable::GetInstance()
+{
+    if (symbolTable == nullptr)
+    {
+        symbolTable = new SymbolTable();
+    }
+    return symbolTable;
 }
 
 void SymbolTable::startScope(ScopeType val)
@@ -117,13 +128,13 @@ SymbolTable::~SymbolTable()
 
 string SymbolTable::dataTypeEnumToString(DataType t)
 {
-    if (t == INTEGER)
+    if (t == _TYPE_INT)
         return "int";
-    if (t == FLOAT)
+    if (t == _TYPE_FLOAT)
         return "float";
-    if (t == CHAR)
+    if (t == _TYPE_CHAR)
         return "char";
-    if (t == BOOL)
+    if (t == _TYPE_BOOL)
         return "bool";
     return "void";
 }
@@ -151,7 +162,6 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 
 void SymbolTable::print()
 {
-    cout << "Symbol Table: " << endl;
     cout << "--------------------------------------------------------------" << endl;
     cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
     cout << "--------------------------------------------------------------" << endl;
@@ -183,7 +193,7 @@ void SymbolTable::print()
             cout << "| " << left << setw(6) << used << "|\n";
         }
     }
-    cout << "---------------------------------------------------------------" << endl;
+    cout << "--------------------------------------------------------------" << endl;
 }
 
 bool SymbolTable::canBreak()
