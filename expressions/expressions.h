@@ -30,15 +30,16 @@ enum DataType {
 struct Node{};
 
 
-class ExprNode: Node {
+class ExprNode: public Node{
     int Value;
 
-    virtual int getValue(){
-        return Value;
-    }
+    public:
+        virtual int getValue(){
+            return Value;
+        }
 };
 
-class TypeNode: Node {
+class TypeNode: public Node {
     DataType type;
 
     TypeNode(DataType t) {
@@ -46,7 +47,7 @@ class TypeNode: Node {
     }
 };
 
-class ValueNode {
+class ValueNode: public Node {
     string value;
 
     ValueNode(string v) {
