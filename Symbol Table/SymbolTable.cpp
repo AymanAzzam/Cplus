@@ -1,13 +1,18 @@
 #include "SymbolTable.h"
 #include <iostream>
+#include <iomanip>
+
 using namespace std;
+
 SymbolTable::SymbolTable()
 {
-    startScope();
+    scopeMask = 0;
+    startScope(GLOBAL);
 }
 
-void SymbolTable::startScope()
+void SymbolTable::startScope(ScopeType val)
 {
+    scopeMask = scopeMask * 10 + val;
     scope.push_back(vector<string>{});
 }
 
@@ -59,6 +64,7 @@ vector<pair<string, int>> SymbolTable::finishScope()
         }
     }
     scope.pop_back();
+    scopeMask /= 10;
     return unusedId;
 }
 
@@ -77,7 +83,7 @@ int SymbolTable::removeId(string name)
 
 bool SymbolTable::insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList)
 {
-    if (scope.size() > 1)
+    if (scopeMask != GLOBAL)
         return false;
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
@@ -86,7 +92,7 @@ bool SymbolTable::insertFunc(string name, int line, DataType returnType, vector<
             return false;
     }
     currentScope.push_back(name);
-    startScope();
+    startScope(static_cast<ScopeType>(INT_FUNC + returnType));
     funcTable[name].push_back(returnType);
     for (pair<string, DataType> p : parameterList)
     {
@@ -109,7 +115,7 @@ SymbolTable::~SymbolTable()
     finishScope();
 }
 
-string SymbolTable::enumToString(DataType t)
+string SymbolTable::dataTypeEnumToString(DataType t)
 {
     if (t == INTEGER)
         return "int";
@@ -122,26 +128,87 @@ string SymbolTable::enumToString(DataType t)
     return "void";
 }
 
+string SymbolTable::scopeTypeEnumToString(ScopeType t)
+{
+    if (t == GLOBAL)
+        return "GLOBAL";
+    if (t == BLOCK)
+        return "BLOCK";
+    if (t == LOOP)
+        return "LOOP";
+    if (t == SWITCH)
+        return "SWITCH";
+    if (t == INT_FUNC)
+        return "INT_FUNC";
+    if (t == FLOAT_FUNC)
+        return "FLOAT_FUNC";
+    if (t == CHAR_FUNC)
+        return "CHAR_FUNC";
+    if (t == BOOL_FUNC)
+        return "BOOL_FUNC";
+    return "VOID_FUNC";
+}
+
 void SymbolTable::print()
 {
     cout << "Symbol Table: " << endl;
+    cout<<"--------------------------------------------------------------"<<endl;
+    cout<<"|          |  Name          |  Type |    Scope       | Used  |"<<endl;
+    cout<<"--------------------------------------------------------------"<<endl;
     unordered_map<string, int> idx;
-    for (int i = 0; i < scope.size(); i++)
-    {
-        for (int j = 0; j < scope[i].size(); j++)
-        {
-            for (int k = 0; k < i; k++)
-                cout << '\t';
-            if (i == 0 && funcTable.count(scope[i][j]))
-            {
-                DataType type = funcTable[scope[i][j]][0];
-                cout << "Function: " + scope[i][j] << ", return type: " << enumToString(type) << "\n";
+    string scopeString = to_string(scopeMask);
+    for (int i = 0; i < scope.size(); i++) {
+        for (int j = 0; j < scope[i].size(); j++) {
+            const string &name = scope[i][j];
+            const string &scopeType = to_string(i) + " - " + scopeTypeEnumToString(
+                    static_cast<ScopeType>(scopeString[i] - '0'));
+            string identifier, dataType, used="-";
+            if (i == 0 && funcTable.count(name)) {
+                identifier = "Function";
+                dataType = dataTypeEnumToString(funcTable[name][0]);
+            } else {
+                int idIdx = idx[name]++;
+                identifier = "Variable";
+                dataType = dataTypeEnumToString(idTable[name][idIdx].type);
+                used = idTable[name][idIdx].used ? "True" : "False";
             }
-            else
-            {
-                int id_idx = idx[scope[i][j]]++;
-                cout << "Variable: " << scope[i][j] << ", Type: " << enumToString(idTable[scope[i][j]][id_idx].type) << "\n";
-            }
+            cout<<"| "<<left<<setw(9)<<identifier;
+            cout<<"| "<<left<<setw(15)<<name;
+            cout<<"| "<<left<<setw(6)<<dataType;
+            cout<<"| "<<left<<setw(15)<<scopeType;
+            cout<<"| "<<left<<setw(6)<<used<<"|\n";
         }
     }
+    cout<<"---------------------------------------------------------------"<<endl;
+}
+
+bool SymbolTable::canBreak() {
+    int aux = scopeMask;
+    while (aux){
+        if (aux % 10 == LOOP || aux % 10 == SWITCH) return true;
+        aux /= 10;
+    }
+    return false;
+}
+
+bool SymbolTable::canContinue() {
+    int aux = scopeMask;
+    while (aux){
+        if (aux % 10 == LOOP) return true;
+        aux /= 10;
+    }
+    return false;
+}
+
+bool SymbolTable::isGlobal() {
+    return scopeMask == GLOBAL;
+}
+
+bool SymbolTable::canReturn(DataType type) {
+    int aux = scopeMask;
+    while (aux){
+        if (aux % 10 >= INT_FUNC) return ((aux%10) - INT_FUNC) == type;
+        aux /= 10;
+    }
+    return false;
 }
