@@ -6,7 +6,7 @@
 #include <iostream>
 #include "../Node.h"
 #include "../Stmt.h"
-#include "../Symbol Table/SymbolTable.h"
+#include "../SymbolTable/SymbolTable.h"
 
 using namespace std;
 
@@ -36,6 +36,10 @@ class TypeNode: public Node {
         */
         TypeNode(DataType t) {
             type = t;
+        }
+
+        DataType getType() {
+            return type;
         }
 
         virtual void execute(){};

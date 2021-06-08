@@ -5,7 +5,7 @@
 
 class Stmt : public Node {
 public:
-    void execute() override;
+    virtual void execute() override;
 };
 
 
