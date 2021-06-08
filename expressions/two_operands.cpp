@@ -10,27 +10,34 @@ TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
 
 void TwoOpNode::checkError() {
     SymbolTable *symbolTable = SymbolTable::GetInstance();
-    DataType left_type, right_type;
     string left_s, right_s;
-    bool l_con, l_ini, l_success, r_con, r_ini, r_success;
+    bool l_con = false, l_ini = true, l_dec = true, \
+            r_con = false, r_ini = true, r_dec = true;
+    IdentifierNode* casted;
+
+    casted = dynamic_cast<IdentifierNode*>(left);
+    if(casted != NULL)
+        l_con = casted->con, l_ini = casted->ini, l_dec = casted->dec; 
     
-    l_success = symbolTable->lookupId(left->name, left_type, l_ini, l_con);
-    r_success = symbolTable->lookupId(left->name, right_type, r_ini, r_con);
-    
-    if(!r_success)
-         printf("\n\nError: undeclared variable %s\n\n", right->name.c_str());
-    else if(!l_success)
-         printf("\n\nError: undeclared variable %s\n\n", left->name.c_str());
+    casted = dynamic_cast<IdentifierNode*>(right);
+    if(casted != NULL)
+        r_con = casted->con, r_ini = casted->ini, r_dec = casted->dec;
+
+    if(!r_dec)
+         printf("\n\nError: undeclared variable %s\n\n", right->getName().c_str());
+    else if(!l_dec)
+         printf("\n\nError: undeclared variable %s\n\n", left->getName().c_str());
     else if(!r_ini)
-        printf("\n\nError: uninitialized variable %s\n\n", right->name.c_str());
+        printf("\n\nError: uninitialized variable %s\n\n", right->getName().c_str());
     else if(!l_ini && opr != _EQ)
-        printf("\n\nError: uninitialized variable %s\n\n", left->name.c_str());
-    else if(l_ini && l_con)
-        printf("\n\nConstant Error: %s is constant\n\n", left->name.c_str());
-    else if(left_type != right_type)
+        printf("\n\nError: uninitialized variable %s\n\n", left->getName().c_str());
+    else if(l_con && ( opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ ||\
+            opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
+        printf("\n\nConstant Error: %s is constant\n\n", left->getName().c_str());
+    else if(left->getType() != right->getType())
     {
-        left_s = typeToString(left_type);
-        right_s = typeToString(right_type);
+        left_s = typeToString(left->getType());
+        right_s = typeToString(right->getType());
         
         printf("\n\nWarning: Type mismatch, converting %s to %s", \
                 right_s.c_str(), left_s.c_str());
@@ -66,26 +73,26 @@ void TwoOpNode::execute() {
         // assignment operators
         case _MOD_EQ:
             printf("\tREM\n");
-            printf("\tPOP\t%s\n", left->name.c_str());
+            printf("\tPOP\t%s\n", left->getName().c_str());
             return;
         case _MULT_EQ:
             printf("\tMUL\n");
-            printf("\tPOP\t%s\n", left->name.c_str());
+            printf("\tPOP\t%s\n", left->getName().c_str());
             return;
         case _DIV_EQ:
             printf("\tDIV\n");
-            printf("\tPOP\t%s\n", left->name.c_str());
+            printf("\tPOP\t%s\n", left->getName().c_str());
             return;
         case _MINUS_EQ:
             printf("\tSUB\n");
-            printf("\tPOP\t%s\n", left->name.c_str());
+            printf("\tPOP\t%s\n", left->getName().c_str());
             return;
         case _PLUS_EQ:
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", left->name.c_str());
+            printf("\tPOP\t%s\n", left->getName().c_str());
             return;
         case _EQ:
-            printf("\tPOP\t%s\n", left->name.c_str());
+            printf("\tPOP\t%s\n", left->getName().c_str());
             return;
 
         // comparison operators

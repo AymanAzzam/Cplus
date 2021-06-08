@@ -97,7 +97,7 @@ program: program stmt
         // |   multi_const_init ';' {$$ = new Stmt();}
 stmt: variable_declaration ';'          {$$ = new Stmt();}
     |   variable_init                   {$$ = new Stmt();}
-    |   expr ';' {$$ = $1;}
+    |   expr ';'                        {$$ = dynamic_cast<Stmt*>($1);}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
@@ -173,7 +173,7 @@ expr:     '(' expr ')'                          {$$ = $2;}
         |       literal
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = new ExprNode();}
+        |       func_call                       {$$ = new Node();}
         ;    
 
  /* variables & constants */
