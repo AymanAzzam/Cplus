@@ -1,4 +1,6 @@
 #include "expressions.h"
+string oprToString(Operator opr);
+string typeToString(DataType type);
 
 RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
     right = r;
@@ -8,7 +10,7 @@ RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
 void RightOpNode::checkError() {
     SymbolTable *symbolTable = SymbolTable::GetInstance();
     DataType type;
-    string s;
+    string s, o;
     bool con, ini, success;
     
     success = symbolTable->lookupId(right->name, type, ini, con);
@@ -19,6 +21,13 @@ void RightOpNode::checkError() {
         printf("\n\nError: uninitialized variable %s\n\n", right->name.c_str());
     else if(ini && con && (opr == _INC_OPR || opr == _DEC_OPR))
         printf("\n\nConstant Error: %s is constant\n\n", right->name.c_str());
+    else if(type != _TYPE_INT && opr != _ADD && opr != _SUB)
+    {
+        s = typeToString(type);
+        o = oprToString(opr);
+        printf("\n\nType Error: type of %s is %s can't be used with operator %s", \
+                right->name.c_str(), s.c_str(), o.c_str());
+    }
     
 }
 
