@@ -34,7 +34,7 @@ void For::execute() {
 
     vector<pair<string, int>> unused = sym->finishScope();
     for (auto u: unused) {
-        printf("Warning:%i: Variable %s declared but not used.\n", u.second, u.first.c_str());
+        printf("Warning:%i: Variable declared but not used: %s.\n", u.second, u.first.c_str());
     }
 }
 

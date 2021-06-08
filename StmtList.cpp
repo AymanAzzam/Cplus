@@ -7,7 +7,6 @@ StmtList::~StmtList() {
 }
 
 void StmtList::execute() {
-    test();
     for (Stmt *stmt:statements)
         stmt->execute();
 }
@@ -18,11 +17,4 @@ void StmtList::push(Stmt *stmt) {
 
 StmtList::StmtList(Stmt *firstStmt) {
     push(firstStmt);
-}
-
-void StmtList::test() {
-    printf("num: %i\n", statements.size());
-    for (Stmt* stmt: statements) {
-        printf("Stmt found\n");
-    }
 }

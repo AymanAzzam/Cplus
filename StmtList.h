@@ -18,8 +18,6 @@ public:
 
     void push(Stmt *stmt);
 
-    void test();
-
 private:
     vector<Stmt *> statements;
 };
