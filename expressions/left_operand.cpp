@@ -27,8 +27,8 @@ void LeftOpNode::checkError() {
         s = typeToString(type);
         o = oprToString(opr);
 
-        printf("\n\nType Error: type of %s is %s can't be used with operator %s", \
-                left->name.c_str(), s.c_str(), o.c_str());
+        printf("\n\nWarning: Type mismatch, operation %s with %s", \
+                o.c_str(), s.c_str());
     }
     
 }

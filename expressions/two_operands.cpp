@@ -27,17 +27,13 @@ void TwoOpNode::checkError() {
         printf("\n\nError: uninitialized variable %s\n\n", left->name.c_str());
     else if(l_ini && l_con)
         printf("\n\nConstant Error: %s is constant\n\n", left->name.c_str());
-    /* else if(opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ || \
-             opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ)
-    */
-    else if((left_type == _TYPE_CHAR && right_type != _TYPE_CHAR) || \
-            (left_type != _TYPE_CHAR && right_type == _TYPE_CHAR))
+    else if(left_type != right_type)
     {
         left_s = typeToString(left_type);
         right_s = typeToString(right_type);
         
-        printf("\n\nType Error: type of %s is %s can't be %s", \
-                left->name.c_str(), left_s.c_str(), right_s.c_str());
+        printf("\n\nWarning: Type mismatch, converting %s to %s", \
+                right_s.c_str(), left_s.c_str());
     }
 }
 
