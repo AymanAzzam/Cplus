@@ -5,9 +5,26 @@ RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
     opr = o;
 }
 
+void RightOpNode::checkError() {
+    SymbolTable *symbolTable = SymbolTable::GetInstance();
+    DataType type;
+    string s;
+    bool con, ini, success;
+    
+    success = symbolTable->lookupId(right->name, type, ini, con);
+    
+    if(!success)
+        printf("\n\nError: undeclared variable %s\n\n", name.c_str());
+    else if(!ini)
+        printf("\n\nError: uninitialized variable %s\n\n", right->name.c_str());
+    else if(ini && con && (opr == _INC_OPR || opr == _DEC_OPR))
+        printf("\n\nConstant Error: %s is constant\n\n", right->name.c_str());
+    
+}
 
 void RightOpNode::execute() {
-    right->checkError();
+    this->checkError();
+
     right->execute();
 
     switch (opr)

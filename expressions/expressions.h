@@ -33,17 +33,6 @@ class ExprNode: public Stmt{
         ExprNode(string n = "-1") {
             name = n;
         }
-
-        void checkError() {
-            SymbolTable *symbolTable = SymbolTable::GetInstance();
-
-            DataType type;
-            bool con, ini, error;
-            error = symbolTable->lookupId(name, type, ini, con);
-
-            if(!error)
-                printf("\n\nError: undeclared variable %s\n\n", name.c_str());
-        };
         
         virtual void execute() {
             printf("\tPUSH\t%s\n", name.c_str());
@@ -94,9 +83,7 @@ class LeftOpNode: public ExprNode {
     public:
         LeftOpNode(ExprNode* l, Operator o);
 
-        void checkError() {
-
-        };
+        void checkError();
 
         virtual void execute();
 
@@ -110,9 +97,7 @@ class RightOpNode: public ExprNode {
     public:
         RightOpNode(ExprNode* r, Operator o);
 
-        void checkError() {
-
-        };
+        void checkError();
 
         virtual void execute();
 

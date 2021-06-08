@@ -9,21 +9,22 @@ TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
 }
 
 void TwoOpNode::checkError() {
-    
     SymbolTable *symbolTable = SymbolTable::GetInstance();
     DataType left_type, right_type;
     string left_s, right_s;
-    bool l_con, l_ini, l_error, r_con, r_ini, r_error;
-    l_error = symbolTable->lookupId(left->name, left_type, l_ini, l_con);
-    r_error = symbolTable->lookupId(left->name, right_type, r_ini, r_con);
+    bool l_con, l_ini, l_success, r_con, r_ini, r_success;
     
-    if(!l_error || !r_error)
-        return;
-    if(!r_ini)
-    {
-        printf("\n\nError: uninitialized variable %s\n\n", left->name.c_str());
-        return;
-    }
+    l_success = symbolTable->lookupId(left->name, left_type, l_ini, l_con);
+    r_success = symbolTable->lookupId(left->name, right_type, r_ini, r_con);
+    
+    if(!r_success)
+         printf("\n\nError: undeclared variable %s\n\n", right->name.c_str());
+    else if(!l_success)
+         printf("\n\nError: undeclared variable %s\n\n", left->name.c_str());
+    else if(!r_ini)
+        printf("\n\nError: uninitialized variable %s\n\n", right->name.c_str());
+    else if(l_ini && l_con)
+        printf("\n\nConstant Error: %s is constant\n\n", left->name.c_str());
     else if((left_type == _TYPE_CHAR && right_type != _TYPE_CHAR) || \
             (left_type != _TYPE_CHAR && right_type == _TYPE_CHAR))
     {
@@ -32,14 +33,11 @@ void TwoOpNode::checkError() {
         
         printf("\n\nType Error: %s type is %s can't be %s", \
                 left->name.c_str(), left_s.c_str(), right_s.c_str());
-        return;
     }
 }
 
 void TwoOpNode::execute() {
 
-    left->checkError();
-    right->checkError();
     this->checkError();
 
     left->execute();
