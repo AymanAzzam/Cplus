@@ -1,4 +1,5 @@
+del lex.yy.cpp cplus.tab.cpp
 flex cplus.l
-mv lex.yy.c lex.yy.cpp
+rename lex.yy.c lex.yy.cpp
 bison -d cplus.y
-mv cplus.tab.c cplus.tab.cpp
+rename cplus.tab.c cplus.tab.cpp
