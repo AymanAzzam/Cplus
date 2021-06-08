@@ -111,7 +111,7 @@ void yyerror(const char *);
 
 %type <function> func
 %type <funcHeader> func_header
-%type <funcParams> paramater parameter_decl
+%type <funcParameters> paramater parameter_decl
 %type <funcArguments> args args_ext
 %type <funcCall> func_call
 %type <funcReturn> return_stmt
@@ -201,8 +201,8 @@ expr:     '(' expr ')'                          {$$ = $2;}
         |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = new FunctionCall();}
-        ;    
+        |       func_call                       {$$ = $1;}
+        ;
 
  /* variables & constants */
 variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2, yylineno);}
@@ -235,7 +235,7 @@ multi_var_definition: multi_var_definition additional_declaration       {$$ = $1
 
 multi_const_init: multi_const_init additional_const_init                {$$ = $1; $1->push($2); $2->setType($1->getType());}
                 | const_init                                            {$$ = new MultiConstInit($1);}
-                ;        
+                ;
 
  /* arithmetic operators */
 arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o);}
