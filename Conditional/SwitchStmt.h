@@ -5,8 +5,12 @@
 #include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include "../StmtList.h"
+#include "../SubExpr/CondExpr.h"
 #include <vector>
 #include <iostream>
+
+// TODO check switch expression type
+// TODO check case expression type
 
 using namespace std;
 
@@ -35,22 +39,36 @@ public:
     void execute() override {
         cout << "ex case" << endl;
         if (caseLabel != -1)
-            cout << "L" << caseLabel << ":";
+            cout << "L" << caseLabel << ":" << endl;
         if (stmtList)
             stmtList->execute();
+    }
+
+    void evalExp() {
+        expr->execute();
+    }
+
+    bool isDefault() {
+        return !expr;
+    }
+
+    bool hasBody() {
+        return stmtList;
     }
 
     ~Case() {
         delete expr;
         delete stmtList;
     }
+
 };
 
 class Cases : public Node {
 private:
     vector<Case *> cases;
+    vector<int> caseLabels;
 public:
-    int defaultCaseIndex = -1;
+    int switchVariable;
 
     Cases *push(Case *aCase) {
         cases.push_back(aCase);
@@ -64,8 +82,23 @@ public:
 
     void execute() override {
         cout << "ex cases" << endl;
-        for (Case* aCase:cases)
+        int startLabelNumber = labelNumber;
+        int defaultLabel = -1;
+        for (Case *aCase : cases) {
+            if (aCase->isDefault()) {
+                defaultLabel = (aCase->hasBody() ? labelNumber++ : labelNumber);
+                continue;
+            }
+            aCase->evalExp();
+            cout << "push " << switchVariable << "_switch" << endl;
+            cout << "jnz " << "L" << (aCase->hasBody() ? labelNumber++ : labelNumber) << endl;
+        }
+        cout << "jmp L" << (defaultLabel != -1 ? defaultLabel : breakLabel.top()) << endl;
+        for (Case *aCase:cases) {
+            if (!aCase->hasBody()) continue;
+            aCase->setCaseLabel(startLabelNumber++);
             aCase->execute();
+        }
     }
 
     ~Cases() {
@@ -77,15 +110,20 @@ public:
 class SwitchStmt : public Stmt {
 private:
     Cases *cases;
+    CondExpr *condExpr;
 public:
-    explicit SwitchStmt(Cases *cases) : cases(cases) {
+    SwitchStmt(CondExpr *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
 
     // empty body switch
-    SwitchStmt() : cases(nullptr) {}
+    explicit SwitchStmt(CondExpr *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
-        cout << "ex switch" << endl;
+        cout << "#ex switch" << endl;
+        condExpr->execute();
+        int switchVariable = labelNumber++;
+        cout << "pop " << switchVariable << "_switch" << endl;
+        cases->switchVariable = switchVariable;
         int switchBreakLabel = labelNumber++;
         breakLabel.push(switchBreakLabel);
         cases->execute();

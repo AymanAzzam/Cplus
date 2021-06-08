@@ -95,8 +95,8 @@ stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
-    |   BREAK ';'{$$ = new Stmt();}
-    |   CONTINUE ';'{$$ = new Stmt();}
+    |   BREAK ';'{$$ = new BreakStmt();}
+    |   CONTINUE ';'{$$ = new ContinueStmt();}
     |   return_stmt ';'{$$ = new Stmt();}
     |   if_stmt		{$$ = $1; $1->execute();}
     |   switch_stmt	{$$ = new Stmt(); $1->execute();}
@@ -119,10 +119,10 @@ if_stmt:
 	;
 
 switch_stmt:
-	SWITCH '(' cond_expr ')' '{' top_cases default_with_body  '}'	{$6->push($7); $$ = new SwitchStmt($6);}
-	| SWITCH '(' cond_expr ')' '{' top_cases default_case bottom_cases'}'	{$6->push($7)->push($8); $$ = new SwitchStmt($6);}
-	| SWITCH '(' cond_expr ')' '{' bottom_cases '}'	{$$ = new SwitchStmt($6);}
-	| SWITCH '(' cond_expr ')' '{' '}'	{$$ = new SwitchStmt();}
+	SWITCH '(' cond_expr ')' '{' top_cases default_with_body  '}'	{$6->push($7); $$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' top_cases default_case bottom_cases'}'	{$6->push($7)->push($8); $$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' bottom_cases '}'	{$$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' '}'	{$$ = new SwitchStmt($3);}
 	;
 
 top_cases:

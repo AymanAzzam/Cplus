@@ -12,4 +12,5 @@
 #include "Loops/While.h"
 #include "Loops/DoWhile.h"
 #include "expressions/expressions.h"
+#include "JmpStmt.h"
 #endif //LEX_AND_YACC_HEADERS_H

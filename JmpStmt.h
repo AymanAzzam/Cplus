@@ -2,7 +2,7 @@
 #define LEX_AND_YACC_JMPSTMT_H
 
 #include <iostream>
-#include "../Stmt.h"
+#include "Stmt.h"
 
 using namespace std;
 
