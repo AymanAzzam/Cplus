@@ -9,7 +9,6 @@ TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
 }
 
 void TwoOpNode::checkError() {
-    SymbolTable *symbolTable = SymbolTable::GetInstance();
     string left_s, right_s;
     bool l_con = false, l_ini = true, l_dec = true, \
             r_con = false, r_ini = true, r_dec = true;
@@ -19,13 +18,13 @@ void TwoOpNode::checkError() {
     if(casted != NULL)
     {
         SymbolTable *symbolTable = SymbolTable::GetInstance();
-        l_dec = symbolTable->lookupId(casted->getName(), type, l_ini, l_con); 
+        l_dec = symbolTable->lookupId(casted->getName(), left->type, l_ini, l_con); 
     }
     casted = dynamic_cast<IdentifierNode*>(right);
     if(casted != NULL)
     {
         SymbolTable *symbolTable = SymbolTable::GetInstance();
-        r_dec = symbolTable->lookupId(casted->getName(), type, r_ini, r_con); 
+        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con); 
     }
     if(!r_dec)
          printf("\n\nError: undeclared variable %s\n\n", right->getName().c_str());
@@ -38,10 +37,10 @@ void TwoOpNode::checkError() {
     else if(l_con && ( opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ ||\
             opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
         printf("\n\nConstant Error: %s is constant\n\n", left->getName().c_str());
-    else if(left->getType() != right->getType())
+    else if(left->type != right->type)
     {
-        left_s = typeToString(left->getType());
-        right_s = typeToString(right->getType());
+        left_s = typeToString(left->type);
+        right_s = typeToString(right->type);
         
         printf("\n\nWarning: Type mismatch, converting %s to %s", \
                 right_s.c_str(), left_s.c_str());
@@ -145,6 +144,8 @@ void TwoOpNode::execute() {
             return;
     }
 
+    this->type = typeConversion(left->type, right->type, opr);
+    
     printf("\n\nError occured in TwoOpNode::execute() in two_operand.cpp\n\n");
 }
  

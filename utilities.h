@@ -10,4 +10,6 @@ string oprToString(Operator opr);
 
 string typeToString(DataType type);
 
+DataType typeConversion(DataType left, DataType right, Operator opr);
+
 #endif

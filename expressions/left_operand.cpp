@@ -9,28 +9,23 @@ LeftOpNode::LeftOpNode(ExprNode* l, Operator o): ExprNode(){
 
 void LeftOpNode::checkError() {
     
-    SymbolTable *symbolTable = SymbolTable::GetInstance();
-    DataType type;
     string s, o;
-    bool con, ini, dec;
-    
-    dec = symbolTable->lookupId(left->getName(), type, ini, con);
+    bool l_con = false, l_ini = true, l_dec = true;
+    IdentifierNode* casted;
+
+    casted = dynamic_cast<IdentifierNode*>(left);
+    if(casted != NULL)
+    {
+        SymbolTable *symbolTable = SymbolTable::GetInstance();
+        l_dec = symbolTable->lookupId(casted->getName(), left->type, l_ini, l_con); 
+    }
     
     if(!dec)
         printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
-    else if(!ini)
+    else if(!l_ini)
         printf("\n\nError: uninitialized variable %s\n\n", left->getName().c_str());
-    else if(ini && con)
+    else if(l_ini && l_con)
         printf("\n\nConstant Error: %s is constant\n\n", left->getName().c_str());
-    else if(type != _TYPE_INT)
-    {
-        s = typeToString(type);
-        o = oprToString(opr);
-
-        printf("\n\nWarning: Type mismatch, operation %s with %s", \
-                o.c_str(), s.c_str());
-    }
-    
 }
 
 void LeftOpNode::execute() {
@@ -53,6 +48,9 @@ void LeftOpNode::execute() {
             printf("\tPOP\t%s\n", left->getName().c_str());
             return;
     }
+
+    this->type = left->type;
+
     printf("\n\nError occured in LeftOpNode::execute() in left_operand.cpp\n\n");
 }
 
