@@ -1,4 +1,6 @@
 #include "expressions.h"
+#include "../utilities.h"
+
 
 TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
     left = l;
@@ -6,7 +8,40 @@ TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
     opr = o;
 }
 
+void TwoOpNode::checkError() {
+    
+    SymbolTable *symbolTable = SymbolTable::GetInstance();
+    DataType left_type, right_type;
+    string left_s, right_s;
+    bool l_con, l_ini, l_error, r_con, r_ini, r_error;
+    l_error = symbolTable->lookupId(left->name, left_type, l_ini, l_con);
+    r_error = symbolTable->lookupId(left->name, right_type, r_ini, r_con);
+    
+    if(!l_error || !r_error)
+        return;
+    if(!r_ini)
+    {
+        printf("\n\nError: uninitialized variable %s\n\n", left->name.c_str());
+        return;
+    }
+    else if((left_type == _TYPE_CHAR && right_type != _TYPE_CHAR) || \
+            (left_type != _TYPE_CHAR && right_type == _TYPE_CHAR))
+    {
+        left_s = typeToString(left_type);
+        right_s = typeToString(right_type);
+        
+        printf("\n\nType Error: %s type is %s can't be %s", \
+                left->name.c_str(), left_s.c_str(), right_s.c_str());
+        return;
+    }
+}
+
 void TwoOpNode::execute() {
+
+    left->checkError();
+    right->checkError();
+    this->checkError();
+
     left->execute();
     right->execute();
 
