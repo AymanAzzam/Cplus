@@ -1,9 +1,16 @@
 #include "Declaration.h"
 
-VarDec::VarDec(DataType type, std::string name, int lineno) {
+VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n) {
+    type = t;
+    name = n;
     // addSymbol - uninitialized
 }
 
-void VarDec::execute() {
+void VarDeclare::execute() {
     /*do nothing*/;
+}
+
+VarDeclare::~VarDeclare() {
+    delete type;
+    delete name;
 }

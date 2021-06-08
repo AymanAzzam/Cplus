@@ -32,6 +32,8 @@ void yyerror(const char *);
     For* forLoop;
     While* whileLoop;
     DoWhile* doWhileLoop;
+    VarDeclare* vDeclare;
+    VarInit* vInit;
 }
 
 %start program
@@ -81,6 +83,8 @@ void yyerror(const char *);
 %type <identifierNode> identifier
 %type <forExpr> for_expr extended_for_expr
 // %type <epsExpr> eps_expr
+%type <vDeclare> variable_declaration
+%type <vInit> variable_init
 
 %%
 
@@ -89,8 +93,10 @@ program: program stmt
         |                       {/*$0->execute(); delete $0;*/;}
         ;
 
-stmt:   multi_var_definition ';' {$$ = new Stmt();}
-    |   multi_const_init ';' {$$ = new Stmt();}
+        // stmt:   multi_var_definition ';' {$$ = new Stmt();}
+        // |   multi_const_init ';' {$$ = new Stmt();}
+stmt: variable_declaration ';'          {$$ = new Stmt();}
+    |   variable_init                   {$$ = new Stmt();}
     |   expr ';' {$$ = $1;}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
@@ -163,30 +169,30 @@ expr:     '(' expr ')'                          {$$ = new Expression($2);}
         |       logic_expr
         |       bit_expr
         |       arithmetic_expr
-        |       identifier                      {$$ = $1;}
-        |       literal                         {$$ = $1;}
+        |       identifier
+        |       literal
         |       rel_expr
         |       assign_expr
         |       func_call                       {$$ = new ExprNode();}
         ;    
 
  /* variables & constants */
-variable_declaration: data_type IDENTIFIER
+variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2); $$->execute();}
                 ;
 
-variable_init: data_type IDENTIFIER EQ expr
-        // | data_type IDENTIFIER '(' expr ')'
+variable_init: data_type identifier EQ expr     {$$ = new VarInit($1, $2, $4); $$->execute();}
+        | data_type identifier '(' expr ')'  {$$ = new VarInit($1, $2, $4); $$->execute();}
         ;
 
-const_init: CONST data_type IDENTIFIER EQ expr
-        | CONST data_type IDENTIFIER '(' expr ')'
+const_init: CONST data_type identifier EQ expr
+        | CONST data_type identifier '(' expr ')'
         ;
 
-additional_declaration: ',' IDENTIFIER
+additional_declaration: ',' identifier
                     ;
 
-additional_var_init: ',' IDENTIFIER EQ expr
-                | ',' IDENTIFIER '(' expr ')'
+additional_var_init: ',' identifier EQ expr
+                | ',' identifier '(' expr ')'
                 ;
 
 multi_var_definition: multi_var_definition additional_declaration

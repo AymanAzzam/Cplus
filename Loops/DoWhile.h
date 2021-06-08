@@ -7,4 +7,5 @@ class DoWhile : public Stmt {
 public:
     DoWhile(Node*, Node*);
     void execute();
+    ~DoWhile();
 };

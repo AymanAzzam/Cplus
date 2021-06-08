@@ -1,11 +1,21 @@
 #include "Initialization.h"
 
-VarInit::VarInit(DataType type, std::string name, std::string v, int lineno) {
-    value = v;
-    // addSymbol - uninitialized
+VarInit::VarInit(TypeNode* t, IdentifierNode* n, ExprNode* e) {
+    type = t;
+    name = n;
+    expr = e;
+    // addSymbol - initialized
 }
 
 void VarInit::execute() {
-    printf("push %s\n", value);
-    printf("pop %s\n", name);
+    expr->execute();
+    // printf("push %s\n", expr);
+    name->execute();
+    // printf("pop %s\n", name);
+}
+
+VarInit::~VarInit() {
+    delete type;
+    delete name;
+    delete expr;
 }

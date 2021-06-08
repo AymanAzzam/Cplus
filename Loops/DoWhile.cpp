@@ -7,8 +7,20 @@ DoWhile::DoWhile(Node* a, Node* z) {
 }
 
 void DoWhile::execute() {
-    printf("lbl%i:\n", labelNumber++);
+    continueLabel.push(labelNumber++);
+    breakLabel.push(labelNumber++);
+
+    printf("L%i:\n", continueLabel.top());
     stmt->execute();
     cond->execute();
-    printf("JNZ lbl%i\n", labelNumber-1);
+    printf("JNZ L%i\n", continueLabel.top());
+    printf("L%i:\n", breakLabel.top());
+
+    continueLabel.pop();
+    breakLabel.pop();
+}
+
+DoWhile::~DoWhile() {
+    delete stmt;
+    delete cond;
 }

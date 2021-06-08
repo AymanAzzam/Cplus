@@ -5,6 +5,7 @@
 #include "Conditional/SwitchStmt.h"
 #include "Node.h"
 #include "Stmt.h"
+#include "Conditional/IfStmt.h"
 #include "SubExpr/CondExpr.h"
 #include "SubExpr/ForExpr.h"
 #include "SubExpr/EpsExpr.h"
@@ -12,5 +13,7 @@
 #include "Loops/While.h"
 #include "Loops/DoWhile.h"
 #include "expressions/expressions.h"
+#include "Variables/Declaration.h"
+#include "Variables/Initialization.h"
 #include "JmpStmt.h"
 #endif //LEX_AND_YACC_HEADERS_H

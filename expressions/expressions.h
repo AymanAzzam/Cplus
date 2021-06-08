@@ -71,7 +71,7 @@ class ValueNode: public ExprNode {
             type = t;
         }
 
-        virtual void execute(){};
+        virtual void execute(){printf("PUSH %s\n", value.c_str());};
 };
 
 class TwoOpNode: public ExprNode {
@@ -128,7 +128,7 @@ class IdentifierNode: public ExprNode {
             name = n;
         }
 
-        virtual void execute(){};
+        virtual void execute(){printf("POP %s\n", name.c_str()); printf("PUSH %s\n", name.c_str());};
 };
 
 class Expression: public ExprNode {
