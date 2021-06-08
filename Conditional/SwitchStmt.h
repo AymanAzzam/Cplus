@@ -5,7 +5,7 @@
 #include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include "../StmtList.h"
-#include "../SubExpr/CondExpr.h"
+// #include "../SubExpr/CondExpr.h"
 #include <vector>
 #include <iostream>
 
@@ -110,13 +110,13 @@ public:
 class SwitchStmt : public Stmt {
 private:
     Cases *cases;
-    CondExpr *condExpr;
+    Node *condExpr;
 public:
-    SwitchStmt(CondExpr *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
+    SwitchStmt(Node *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
 
     // empty body switch
-    explicit SwitchStmt(CondExpr *condExpr) : condExpr(condExpr), cases(nullptr) {}
+    explicit SwitchStmt(Node *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
         cout << "#ex switch" << endl;

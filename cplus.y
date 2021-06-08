@@ -22,7 +22,7 @@ void yyerror(const char *);
 
     Stmt* stmt;
     IfStmt* ifStmt;
-    CondExpr* condExpr;
+//     CondExpr* condExpr;
     StmtList* stmtList;
     Case* aCase;
     Cases* cases;
@@ -32,8 +32,8 @@ void yyerror(const char *);
     TypeNode* typeNode;
     ValueNode* valueNode;
     IdentifierNode* identifierNode;
-    ForExpr* forExpr;
-    EpsExpr* epsExpr;
+//     ForExpr* forExpr;
+//     EpsExpr* epsExpr;
     For* forLoop;
     While* whileLoop;
     DoWhile* doWhileLoop;
@@ -120,7 +120,7 @@ void yyerror(const char *);
 program:  program multi_var_definition  {$$ = $1; $1->push($2);}
         | program multi_const_init      {$$ = $1; $1->push($2);}
         | program func
-        |                               {$$ = new Program(); $$->execute(); /* works? maybe later? destructor? */}
+        |                               {$$ = new Program(); $$->execute(); /* works? destructor maybe? */}
         ;
 
 stmt:   multi_var_definition ';'        {$$ = $1;}
