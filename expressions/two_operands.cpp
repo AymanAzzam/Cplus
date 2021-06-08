@@ -13,13 +13,13 @@ void TwoOpNode::checkError() {
     SymbolTable *symbolTable = SymbolTable::GetInstance();
     DataType left_type, right_type;
     string left_s, right_s;
-    int l_error, r_error;
-    l_error = symbolTable->lookupId(left->name, left_type);
-    r_error = symbolTable->lookupId(left->name, right_type);
+    bool l_con, l_ini, l_error, r_con, r_ini, r_error;
+    l_error = symbolTable->lookupId(left->name, left_type, l_ini, l_con);
+    r_error = symbolTable->lookupId(left->name, right_type, r_ini, r_con);
     
-    if(l_error == -1 || r_error == -1)
+    if(!l_error || !r_error)
         return;
-    if(r_error == 0)
+    if(!r_ini)
     {
         printf("\n\nError: uninitialized variable %s\n\n", left->name.c_str());
         return;

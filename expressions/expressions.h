@@ -37,10 +37,10 @@ class ExprNode: public Node{
             SymbolTable *symbolTable = SymbolTable::GetInstance();
 
             DataType type;
-            int error;
-            error = symbolTable->lookupId(name, type);
+            bool con, ini, error;
+            error = symbolTable->lookupId(name, type, ini, con);
 
-            if(error == -1)
+            if(!error)
                 printf("\n\nError: undeclared variable %s\n\n", name.c_str());
         };
         
