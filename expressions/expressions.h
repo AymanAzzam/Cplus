@@ -95,13 +95,15 @@ class IdentifierNode: public ExprNode {
 class TwoOpNode: public ExprNode {
     ExprNode *left, *right;
     Operator opr;
+    int line;
+    
     public:
         /**
         * @param l: Pointer to the left operand
         * @param r: Pointer to the right operand
         * @param o: The operator [_ADD, _SUB, _MUL, ..]
         */
-        TwoOpNode(ExprNode* l, ExprNode* r, Operator o);
+        TwoOpNode(ExprNode* l, ExprNode* r, Operator o, int line);
         
         virtual string getName() {};
         
@@ -121,13 +123,14 @@ class TwoOpNode: public ExprNode {
 class LeftOpNode: public ExprNode {
     ExprNode* left;
     Operator opr;
+    int line;
 
     public:
         /**
         * @param l: Pointer to the left operand
         * @param o: The operator [_INC_OPR, _DEC_OPR]
         */
-        LeftOpNode(ExprNode* l, Operator o);
+        LeftOpNode(ExprNode* l, Operator o, int line);
 
         virtual string getName() {};
 
@@ -147,13 +150,14 @@ class LeftOpNode: public ExprNode {
 class RightOpNode: public ExprNode {
     ExprNode* right;
     Operator opr;
+    int line;
 
     public:
         /**
         * @param r: Pointer to the right operand
         * @param o: The operator [_INC_OPR, _DEC_OPR, _BIT_NOT, _LOGICAL_NOT, _ADD, _SUB]
         */
-        RightOpNode(ExprNode* r, Operator o);
+        RightOpNode(ExprNode* r, Operator o, int line);
 
         virtual string getName() {};        
 

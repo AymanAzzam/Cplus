@@ -2,9 +2,10 @@
 string oprToString(Operator opr);
 string typeToString(DataType type);
 
-RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
+RightOpNode::RightOpNode(ExprNode* r, Operator o, int line): ExprNode(){
     right = r;
     opr = o;
+    this->line = line;
 }
 
 void RightOpNode::checkError() {
@@ -21,11 +22,14 @@ void RightOpNode::checkError() {
     }
     
     if(!r_dec)
-        printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
+        printf("\n\nError in line %d: undeclared variable %s\n\n", \
+                this->line, getName().c_str());
     else if(!r_ini)
-        printf("\n\nError: uninitialized variable %s\n\n", right->getName().c_str());
+        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
+                this->line, right->getName().c_str());
     else if(r_ini && r_con && (opr == _INC_OPR || opr == _DEC_OPR))
-        printf("\n\nConstant Error: %s is constant\n\n", right->getName().c_str());
+        printf("\n\nConstant Error in line %d: %s is constant\n\n", \
+                this->line, right->getName().c_str());
 }
 
 void RightOpNode::execute() {

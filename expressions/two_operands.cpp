@@ -2,10 +2,11 @@
 #include "../utilities.h"
 
 
-TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o): ExprNode() {
+TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o, int line): ExprNode() {
     left = l;
     right = r;
     opr = o;
+    this->line = line;
 }
 
 void TwoOpNode::checkError() {
@@ -27,16 +28,21 @@ void TwoOpNode::checkError() {
         r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con); 
     }
     if(!r_dec)
-         printf("\n\nError: undeclared variable %s\n\n", right->getName().c_str());
+         printf("\n\nError in line %d: undeclared variable %s\n\n", \
+                this->line, right->getName().c_str());
     else if(!l_dec)
-         printf("\n\nError: undeclared variable %s\n\n", left->getName().c_str());
+         printf("\n\nError in line %d: undeclared variable %s\n\n", \
+                this->line, left->getName().c_str());
     else if(!r_ini)
-        printf("\n\nError: uninitialized variable %s\n\n", right->getName().c_str());
+        printf("\n\nErrorin line %d: uninitialized variable %s\n\n", \
+                this->line, right->getName().c_str());
     else if(!l_ini && opr != _EQ)
-        printf("\n\nError: uninitialized variable %s\n\n", left->getName().c_str());
+        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
+                this->line, left->getName().c_str());
     else if(l_con && ( opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ ||\
             opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
-        printf("\n\nConstant Error: %s is constant\n\n", left->getName().c_str());
+        printf("\n\nConstant Error in line %d: %s is constant\n\n", \
+                this->line, left->getName().c_str());
 }
 
 void TwoOpNode::execute() {
