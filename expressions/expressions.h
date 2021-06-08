@@ -5,6 +5,7 @@
 // int DataType need to be changed
 #include <iostream>
 #include "../Node.h"
+#include "../Stmt.h"
 #include "../Symbol Table/SymbolTable.h"
 
 using namespace std;
@@ -25,7 +26,7 @@ enum Operator {
     _BIT_NOT, _LOGICAL_NOT
 };
 
-class ExprNode: public Node{
+class ExprNode: public Stmt{
     public:
         string name;
         

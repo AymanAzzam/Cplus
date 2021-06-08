@@ -91,7 +91,7 @@ program: program stmt
 
 stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   multi_const_init ';' {$$ = new Stmt();}
-    |   expr ';' {$$ = new Stmt();}
+    |   expr ';' {$$ = $1;}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
@@ -99,7 +99,7 @@ stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   CONTINUE ';'	{$$ = new ContinueStmt();}
     |   return_stmt ';'	{$$ = new Stmt();}
     |   if_stmt		{$$ = $1; $1->execute();}
-    |   switch_stmt	{$$ = new Stmt(); $1->execute();}
+    |   switch_stmt	{$$ = $1; $1->execute();}
     |   block
     |   ';'		{$$ = new Stmt();}
     ;
