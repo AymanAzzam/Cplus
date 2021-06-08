@@ -2,9 +2,9 @@
 string oprToString(Operator opr);
 string typeToString(DataType type);
 
-LeftOpNode::LeftOpNode(ExprNode* l, Operator o, int line): ExprNode(){
-    left = l;
-    opr = o;
+LeftOpNode::LeftOpNode(ExprNode* left, Operator opr, int line): ExprNode(){
+    this->left = left;
+    this->opr = opr;
     this-> line = line;
 }
 

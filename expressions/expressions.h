@@ -14,6 +14,9 @@ class ExprNode: public Node{
     public:
         DataType type;
 
+        /**
+        * @param type: The name of data type
+        */
         ExprNode(DataType type = _TYPE_VOID) {
             this->type = type; 
         }
@@ -32,10 +35,10 @@ class TypeNode: public Node {
 
     public:
         /**
-        * @param t: The name of data type [_TYPE_INT, _TYPE_FLOAT, ..]
+        * @param type: The name of data type [_TYPE_INT, _TYPE_FLOAT, ..]
         */
-        TypeNode(DataType t) {
-            type = t;
+        TypeNode(DataType type) {
+            this->type = type;
         }
 
         DataType getType() {
@@ -50,11 +53,11 @@ class ValueNode: public ExprNode {
    
     public:
         /**
-        * @param v: The value of node
-        * @param t: The name of data type [_TYPE_INT, _TYPE_FLOAT, ..]
+        * @param value: The value of node
+        * @param type: The name of data type [_TYPE_INT, _TYPE_FLOAT, ..]
         */
-        ValueNode(string v, DataType t): ExprNode(t) {
-            value = v;
+        ValueNode(string value, DataType type): ExprNode(type) {
+            this->value = value;
         }
 
         /**
@@ -75,10 +78,10 @@ class IdentifierNode: public ExprNode {
     string name;
     public:
         /**
-        * @param n: The name of identifier
+        * @param name: The name of identifier
         */
-        IdentifierNode(string n): ExprNode() {
-            name = n;
+        IdentifierNode(string name): ExprNode() {
+            this->name = name;
         }
 
         /**
@@ -99,11 +102,12 @@ class TwoOpNode: public ExprNode {
     
     public:
         /**
-        * @param l: Pointer to the left operand
-        * @param r: Pointer to the right operand
-        * @param o: The operator [_ADD, _SUB, _MUL, ..]
+        * @param left: Pointer to the left operand
+        * @param right: Pointer to the right operand
+        * @param opr: The operator [_ADD, _SUB, _MUL, ..]
+        * @param line: The line number that contains the expression
         */
-        TwoOpNode(ExprNode* l, ExprNode* r, Operator o, int line);
+        TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line);
         
         virtual string getName() {};
         
@@ -127,10 +131,11 @@ class LeftOpNode: public ExprNode {
 
     public:
         /**
-        * @param l: Pointer to the left operand
-        * @param o: The operator [_INC_OPR, _DEC_OPR]
+        * @param left: Pointer to the left operand
+        * @param opr: The operator [_INC_OPR, _DEC_OPR]
+        * @param line: The line number that contains the expression
         */
-        LeftOpNode(ExprNode* l, Operator o, int line);
+        LeftOpNode(ExprNode* left, Operator opr, int line);
 
         virtual string getName() {};
 
@@ -154,10 +159,11 @@ class RightOpNode: public ExprNode {
 
     public:
         /**
-        * @param r: Pointer to the right operand
-        * @param o: The operator [_INC_OPR, _DEC_OPR, _BIT_NOT, _LOGICAL_NOT, _ADD, _SUB]
+        * @param right: Pointer to the right operand
+        * @param opr: The operator [_INC_OPR, _DEC_OPR, _BIT_NOT, _LOGICAL_NOT, _ADD, _SUB]
+        * @param line: The line number that contains the expression
         */
-        RightOpNode(ExprNode* r, Operator o, int line);
+        RightOpNode(ExprNode* right, Operator opr, int line);
 
         virtual string getName() {};        
 

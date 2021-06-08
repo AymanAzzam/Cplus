@@ -2,10 +2,10 @@
 #include "../utilities.h"
 
 
-TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o, int line): ExprNode() {
-    left = l;
-    right = r;
-    opr = o;
+TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): ExprNode() {
+    this->left = left;
+    this->right = right;
+    this->opr = opr;
     this->line = line;
 }
 
