@@ -1,6 +1,10 @@
+#ifndef LEX_AND_YACC_HEADERS_H
+#define LEX_AND_YACC_HEADERS_H
+#include "Conditional/IfStmt.h"
+#include "StmtList.h"
+#include "Conditional/SwitchStmt.h"
 #include "Node.h"
 #include "Stmt.h"
-#include "IfStmt.h"
 #include "SubExpr/CondExpr.h"
 #include "SubExpr/ForExpr.h"
 #include "SubExpr/EpsExpr.h"
@@ -8,3 +12,4 @@
 #include "Loops/While.h"
 #include "Loops/DoWhile.h"
 #include "expressions/expressions.h"
+#endif //LEX_AND_YACC_HEADERS_H
