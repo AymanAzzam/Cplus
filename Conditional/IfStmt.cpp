@@ -1,5 +1,4 @@
 #include "IfStmt.h"
-#include "Globals.h"
 #include <iostream>
 
 using namespace std;

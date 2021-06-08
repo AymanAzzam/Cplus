@@ -1,17 +1,14 @@
 #pragma once
 
 #include "../Node.h"
+#include "../expressions/expressions.h"
 #include <string>
 
-typedef enum {
-    Int,
-    Char,
-    Bool,
-    Float
-} DataType;
-
-class VarDec : Node {
+class VarDeclare : Node {
+    TypeNode* type;
+    IdentifierNode* name;
 public:
-    VarDec(DataType type, std::string name, int lineno);
+    VarDeclare(TypeNode* t, IdentifierNode* n);
     void execute();
+    ~VarDeclare();
 };

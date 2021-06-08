@@ -1,16 +1,30 @@
 #include <iostream>
 #include "While.h"
 
-While::While(Node* a, Node* z) {
+While::While(Node* a, Node* s) {
     cond = a;
-    s = z;
+    stmt = s;
 }
 
 void While::execute() {
-    printf("lbl%i:\n", labelNumber++);
+    contLabel = labelNumber++;
+    breakLabel = labelNumber++;
+
+    contLabels.push_back(contLabel);
+    breakLabels.push_back(breakLabel);
+
+    printf("lbl%i:\n", contLabel);
     cond->execute();
-    printf("JZ lbl%i\n", labelNumber);
-    s->execute();
-    printf("JMP lbl%i\n", labelNumber-1);
-    printf("lbl%i:\n", labelNumber++);
+    printf("JZ lbl%i\n", breakLabel);
+    stmt->execute();
+    printf("JMP lbl%i\n", contLabel);
+    printf("lbl%i:\n", breakLabel);
+    
+    contLabels.pop_back();
+    breakLabels.pop_back();
+}
+
+While::~While() {
+    delete cond;
+    delete stmt;
 }
