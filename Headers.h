@@ -16,4 +16,5 @@
 #include "Variables/Declaration.h"
 #include "Variables/Initialization.h"
 #include "JmpStmt.h"
+#include "Functions/Function.h"
 #endif //LEX_AND_YACC_HEADERS_H
