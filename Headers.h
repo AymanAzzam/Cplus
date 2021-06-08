@@ -19,4 +19,5 @@
 #include "Variables/ConstDef.h"
 #include "Variables/MultiVarDef.h"
 #include "Variables/MultiConstInit.h"
+#include "Functions/Function.h"
 #endif //LEX_AND_YACC_HEADERS_H

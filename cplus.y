@@ -40,6 +40,13 @@ void yyerror(const char *);
 
     MultiVarDef* multiVar;
     MultiConstInit* multiConst;
+
+    Function* function;
+    FunctionHeader* funcHeader;
+    FunctionParameters* funcParameters;
+    FunctionCall* funcCall;
+    FunctionArguments* funcArguments;
+    FunctionReturn* funcReturn;
 }
 
 %start program
@@ -84,7 +91,7 @@ void yyerror(const char *);
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
 %type <exprNode> eps_expr expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
-%type <typeNode> data_type
+%type <typeNode> data_type TYPE_VOID
 %type <valueNode> literal
 %type <identifierNode> identifier
 %type <forExpr> for_expr extended_for_expr
@@ -95,6 +102,12 @@ void yyerror(const char *);
 %type <multiVar> multi_var_definition
 %type <multiConst> multi_const_init
 
+%type <function> func
+%type <funcHeader> func_header
+%type <funcParameters> paramater parameter_decl
+%type <funcArguments> args args_ext
+%type <funcCall> func_call
+%type <funcReturn> return_stmt
 %%
 
 program: program stmt
@@ -180,8 +193,8 @@ expr:     '(' expr ')'                          {$$ = $2;}
         |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = new Node();}
-        ;    
+        |       func_call                       {$$ = $1;}
+        ;
 
  /* variables & constants */
 variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2, yylineno);}
@@ -214,7 +227,7 @@ multi_var_definition: multi_var_definition additional_declaration       {$$ = $1
 
 multi_const_init: multi_const_init additional_const_init                {$$ = $1; $1->push($2); $2->setType($1->getType());}
                 | const_init                                            {$$ = new MultiConstInit($1);}
-                ;        
+                ;
 
  /* arithmetic operators */
 arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o);}
@@ -280,43 +293,36 @@ cond_expr:   expr		{$$ = new CondExpr();}
 
 // functions
 
-func:           func_header block
+func:	func_header block	{$$ = new Function($1, $2);}
+    ;
+
+func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4);}
+        |       data_type identifier '(' paramater ')'	{$$ = new FunctionHeader($1, $2, $4);}
         ;
 
-func_header:    TYPE_VOID identifier '(' paramater ')'
-        |       data_type identifier '(' paramater ')'
+paramater:      /* epsilon */	{$$ = nullptr;}
+        |	parameter_decl	{$$ = $1;}
         ;
 
-paramater:      /* epsilon */                 	
-        |       variable_declaration   
-        |       variable_init                    	
-        |       parameter_ext ',' variable_declaration
-        |       parameter_ext ',' variable_init
-        ;
+parameter_decl: 	parameter_decl ',' variable_declaration	{$$ = $1; $$->push($3);}
+		|	variable_declaration			{$$ = new FunctionParameters($1);}
+		;
 
-parameter_ext:  variable_declaration      
-        |       variable_init                	
-        |       parameter_ext ',' variable_declaration  
-        |       parameter_ext ',' variable_init     	
-        ;
-
-func_call:      identifier '(' args ')'
+func_call:      identifier '(' args ')'	{$$ = new FunctionCall($1, $3);}
         ;
 
 identifier:     IDENTIFIER              {$$ = new IdentifierNode($1);}
         ;
 
-args:           /* epsilon */                  	
-        |       expr                     	
-        |       args_ext ',' expr         
+args:           /* epsilon */		{$$ = nullptr;}
+        |       args_ext		{$$ = $1;}
         ;
 
-args_ext:       expr                     	
-        |       args_ext ',' expr         
+args_ext:       expr			{$$ = new FunctionArguments($1);}
+        |       args_ext ',' expr	{$$ = $1; $$->push($3);}
         ;
 
-return_stmt:    RETURN expr              	
-        |       RETURN                         	
+return_stmt:    RETURN eps_expr		{$$ = new FunctionReturn($2);}
         ;
 
 
