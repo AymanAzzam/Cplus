@@ -16,7 +16,9 @@ void yyerror(const char *);
     float f;
     bool b;
 
-    Node* placeholder;
+    Program* pgm;
+
+    Node* intermediate;
 
     Stmt* stmt;
     IfStmt* ifStmt;
@@ -26,6 +28,7 @@ void yyerror(const char *);
     Cases* cases;
     SwitchStmt* switchStmt;
     ExprNode* exprNode;
+    ExprStmt* exprStmt;
     TypeNode* typeNode;
     ValueNode* valueNode;
     IdentifierNode* identifierNode;
@@ -83,18 +86,22 @@ void yyerror(const char *);
 %right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
 %left POST_SNGL     // postfix inc/dec xddd
 
+%type <pgm> program
+
+%type <intermediate> for_expr cond_expr eps_expr extended_for_expr
+
 %type <stmt> stmt
 %type <ifStmt> if_stmt
-%type <condExpr> cond_expr
+// %type <condExpr> cond_expr
 %type <stmtList> stmt_list block
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
-%type <exprNode> eps_expr expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <exprNode> expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 %type <typeNode> data_type TYPE_VOID
 %type <valueNode> literal
 %type <identifierNode> identifier
-%type <forExpr> for_expr extended_for_expr
+// %type <forExpr> for_expr extended_for_expr
 %type <vDeclare> variable_declaration additional_declaration
 %type <vInit> variable_init additional_var_init
 %type <constant> const_init additional_const_init
@@ -110,28 +117,29 @@ void yyerror(const char *);
 %type <funcReturn> return_stmt
 %%
 
-program: program stmt
+program:  program multi_var_definition  {$$ = $1; $1->push($2);}
+        | program multi_const_init      {$$ = $1; $1->push($2);}
         | program func
-        |                       {/*$0->execute(); delete $0;*/;}
+        |                               {$$ = new Program(); $$->execute(); /* works? maybe later? destructor? */}
         ;
 
-stmt:   multi_var_definition ';'        {$$ = $1; $1->execute();}
-    |   multi_const_init ';'            {$$ = $1; $1->execute();}
-    |   expr ';'                        {$$ = dynamic_cast<Stmt*>($1);}
-    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
-    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
-    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
+stmt:   multi_var_definition ';'        {$$ = $1;}
+    |   multi_const_init ';'            {$$ = $1;}
+    |   expr ';'                        {$$ = new ExprStmt($1);}
+    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5);}
+    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5);}
+    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9);}
     |   BREAK ';'	{$$ = new BreakStmt();}
     |   CONTINUE ';'	{$$ = new ContinueStmt();}
     |   return_stmt ';'	{$$ = new Stmt();}
-    |   if_stmt		{$$ = $1; $1->execute();}
-    |   switch_stmt	{$$ = $1; $1->execute();}
+    |   if_stmt		{$$ = $1;}
+    |   switch_stmt	{$$ = $1;}
     |   block		{$$ = $1;}
-    |   ';'		{$$ = new Stmt();}
+    |   ';'		{$$ = nullptr;}
     ;
 
 block:  '{' stmt_list '}'	{$$ = $2;}
-        |   '{' '}'		{$$ = new StmtList();}
+        |   '{' '}'		{$$ = nullptr;}
         ;
 
 stmt_list:
@@ -193,7 +201,7 @@ expr:     '(' expr ')'                          {$$ = $2;}
         |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = new Node();}
+        |       func_call                       {$$ = new FunctionCall();}
         ;    
 
  /* variables & constants */
@@ -201,7 +209,7 @@ variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2, yyl
                 ;
 
 variable_init: data_type identifier EQ expr     {$$ = new VarInit($1, $2, $4, yylineno);}
-        | data_type identifier '(' expr ')'  {$$ = new VarInit($1, $2, $4, yylineno);}
+        | data_type identifier '(' expr ')'     {$$ = new VarInit($1, $2, $4, yylineno);}
         ;
 
 const_init: CONST data_type identifier EQ expr          {$$ = new ConstDef($2, $3, $5, yylineno);}
@@ -286,14 +294,14 @@ assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNod
 	|	expr MOD_EQ expr            {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o);}
         ;
 
-cond_expr:   expr		{$$ = new CondExpr();}
-        |   variable_init	{$$ = new CondExpr();}
-        |   const_init		{$$ = new CondExpr();}
+cond_expr:   expr		{$$ = $1;}
+        |   variable_init	{$$ = $1;}
+        |   const_init		{$$ = $1;}
         ;
 
 // functions
 
-func:	func_header block	{$$ = new Function($1, $2)}
+func:	func_header block	{$$ = new Function($1, $2);}
     ;
 
 func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4);}
@@ -330,12 +338,12 @@ eps_expr: expr                          {$$ = $1;}
         |                               {$$ = nullptr;}
         ;
 
-extended_for_expr: for_expr                     {$$ = new ForExpr(nullptr);}
-                 | variable_declaration         {$$ = new ForExpr(nullptr);}
+extended_for_expr: for_expr                     {$$ = $1;}
+                 | variable_declaration         {$$ = $1;}
 
-for_expr:   eps_expr            {$$ = new ForExpr(nullptr);}
-        |   variable_init       {$$ = new ForExpr(nullptr);}
-        |   const_init          {$$ = new ForExpr(nullptr);}
+for_expr:   eps_expr            {$$ = $1;}
+        |   variable_init       {$$ = $1;}
+        |   const_init          {$$ = $1;}
         ;
 %%
 

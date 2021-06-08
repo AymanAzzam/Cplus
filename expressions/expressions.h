@@ -27,6 +27,22 @@ class ExprNode: public Node{
         virtual void execute() = 0;
 };
 
+class ExprStmt : public Stmt {
+    ExprNode* expr;
+public:
+    ExprStmt(ExprNode* e) {
+        expr = e;
+    }
+
+    void execute() {
+        expr->execute();
+    }
+    
+    ~ExprStmt() {
+        delete expr;
+    }
+};
+
 class TypeNode: public Node {
     DataType type;
 

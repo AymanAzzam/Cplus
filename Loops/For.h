@@ -3,9 +3,10 @@
 #include "../Stmt.h"
 
 class For : public Stmt {
-    Node *f1, *f2, *f3, *stmt;
+    Node *f1, *f2, *f3;
+    Stmt* stmt;
 public:
-    For(Node* , Node*, Node*, Node*);
+    For(Node* , Node*, Node*, Stmt*);
     void execute();
     ~For();
 };

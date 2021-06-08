@@ -1,5 +1,6 @@
 #ifndef LEX_AND_YACC_HEADERS_H
 #define LEX_AND_YACC_HEADERS_H
+#include "Program.h"
 #include "Conditional/IfStmt.h"
 #include "StmtList.h"
 #include "Conditional/SwitchStmt.h"
