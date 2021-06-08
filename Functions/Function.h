@@ -15,7 +15,7 @@ class FunctionParameters : public Node
     vector<VarDeclare *> parameters;
 
 public:
-    FunctionParameters(VarDeclare *baseParam);
+    explicit FunctionParameters(VarDeclare *baseParam);
     FunctionParameters *push(VarDeclare *otherParam);
     void execute() override;
 };
@@ -58,6 +58,8 @@ class FunctionCall : public ExprNode
 
 public:
     FunctionCall(IdentifierNode *fId, FunctionArguments *args);
+    string getName() override;
+    void execute() override;
 };
 
 class FunctionReturn : public Node

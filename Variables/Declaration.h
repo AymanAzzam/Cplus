@@ -13,6 +13,7 @@ public:
     VarDeclare(TypeNode* t, IdentifierNode* n, int l);
     virtual void setType(TypeNode* t);
     virtual TypeNode* getType();
+    virtual IdentifierNode* getName();
     void execute();
     ~VarDeclare();
 };

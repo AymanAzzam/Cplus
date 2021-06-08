@@ -3,6 +3,7 @@
 //
 
 #include "Function.h"
+#include "../utilities.h"
 
 FunctionParameters::FunctionParameters(VarDeclare* baseParam){ parameters.push_back(baseParam); }
 
@@ -12,7 +13,11 @@ FunctionParameters *FunctionParameters::push(VarDeclare *otherParam) {
 }
 
 void FunctionParameters::execute() {
-
+    for (VarDeclare* param: parameters){
+        DataType type = param->getType()->getType();
+        string name = param->getName()->getName();
+        printf("push %s %s\n", typeToString(type).c_str(), name.c_str());
+    }
 }
 
 FunctionHeader::FunctionHeader(TypeNode *tnode, IdentifierNode *id, FunctionParameters *param)
@@ -29,6 +34,14 @@ void Function::execute() {
 }
 
 FunctionCall::FunctionCall(IdentifierNode *fId, FunctionArguments *args) :funcIdentifier(fId), funcArgs(args){}
+
+string FunctionCall::getName() {
+    return std::__cxx11::string();
+}
+
+void FunctionCall::execute() {
+
+}
 
 FunctionArguments::FunctionArguments(ExprNode *baseExpr) {
     expressions.push_back(baseExpr);

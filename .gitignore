@@ -11,7 +11,7 @@ Phase 1 - Deliverables.zip
 .idea/
 cmake-build-debug/
 Test.cpp
-Symbol\ Table/main.cpp
-Symbol\ Table/Makefile
+SymbolTable/main.cpp
+SymbolTable/Makefile
 .vscode
 CMakeListHelper.py
