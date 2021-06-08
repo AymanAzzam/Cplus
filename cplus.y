@@ -34,8 +34,6 @@ void yyerror(const char *);
     DoWhile* doWhileLoop;
     VarDeclare* vDeclare;
     VarInit* vInit;
-    ContinueStmt* cnt;
-    BreakStmt* brk;
 }
 
 %start program
@@ -51,9 +49,7 @@ void yyerror(const char *);
 %token INC_OPR DEC_OPR
 %token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
 %token BIT_AND BIT_OR BIT_XOR BIT_NOT SHL SHR
-%token FOR WHILE DO
-%token <cnt> CONTINUE
-%token <brk> BREAK
+%token FOR WHILE DO BREAK CONTINUE
 %token IS_EQ NOT_EQ GT LT GTE LTE
 %token EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ
 %token IF ELSE SWITCH CASE DEFAULT
@@ -100,21 +96,21 @@ program: program stmt
         // |   multi_const_init ';' {$$ = new Stmt();}
 stmt: variable_declaration ';'          {$$ = new Stmt();}
     |   variable_init                   {$$ = new Stmt();}
-    |   expr ';' {$$ = new Stmt();}
+    |   expr ';' {$$ = $1;}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
-    |   BREAK ';'       {$$ = new BreakStmt();}
-    |   CONTINUE ';'    {$$ = new ContinueStmt();}
-    |   return_stmt ';' {$$ = new Stmt();}
+    |   BREAK ';'	{$$ = new BreakStmt();}
+    |   CONTINUE ';'	{$$ = new ContinueStmt();}
+    |   return_stmt ';'	{$$ = new Stmt();}
     |   if_stmt		{$$ = $1; $1->execute();}
-    |   switch_stmt	{$$ = new Stmt(); $1->execute();}
-    |   block           {$$ = new Stmt();}
-    |   ';'             {$$ = new Stmt();}
+    |   switch_stmt	{$$ = $1; $1->execute();}
+    |   block		{$$ = $1;}
+    |   ';'		{$$ = new Stmt();}
     ;
 
-block:  '{' stmt_list '}'       {$$ = $2; $$->test();}
-        |   '{' '}'             {$$ = nullptr;}
+block:  '{' stmt_list '}'	{$$ = $2;}
+        |   '{' '}'		{$$ = new StmtList();}
         ;
 
 stmt_list:

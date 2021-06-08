@@ -39,9 +39,9 @@ private:
     unordered_map<string, vector<Identifier>> idTable;
     unordered_map<string, vector<DataType>> funcTable;
     vector<vector<string>> scope;
-    int removeId(string name); // -1: undeclared, 0: used, ow: line of declaration
-    string dataTypeEnumToString(DataType t);
-    string scopeTypeEnumToString(ScopeType t);
+    int removeId(const string& name); // -1: undeclared, 0: used, ow: line of declaration
+    static string dataTypeEnumToString(DataType t);
+    static string scopeTypeEnumToString(ScopeType t);
     int scopeMask;
 
 public:
@@ -67,7 +67,7 @@ public:
      * @return true upon successful insertion (not seen yet).
      * @return false upon failed insertion (seen before).
      */
-    bool insertId(string name, int line, DataType type, bool init = false, bool isConst = false);
+    bool insertId(const string& name, int line, DataType type, bool init = false, bool isConst = false);
 
     /**
      * @brief Modify status of identifier upon initialization (LHS) or usage (RHS)
@@ -78,7 +78,7 @@ public:
      * @return true upon sucessful modification (identifier seen before).
      * @return false upon failed modification (identifier not seen before).
      */
-    bool modifyId(string name, bool init = false, bool use = false);
+    bool modifyId(const string& name, bool init = false, bool use = false);
 
     /**
      * @brief Lookup for some identifier
@@ -90,7 +90,7 @@ public:
      * @return true upon sucessful lookup (identifier seen before).
      * @return false upon failed lookup (identifier not seen before).
      */
-    bool lookupId(string name, DataType &type, bool &isInitialized, bool &isConst);
+    bool lookupId(const string& name, DataType &type, bool &isInitialized, bool &isConst);
 
     /**
      * @brief Finish a scope on closing a curly brace
@@ -109,7 +109,7 @@ public:
      * @return true upon sucessful insertion (not seen before && global scope).
      * @return false upon failed insertion.
      */
-    bool insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList);
+    bool insertFunc(const string& name, int line, DataType returnType, const vector<pair<string, DataType>>& parameterList);
 
     /**
      * @brief Lookup for a function if appeared before and return its related info.
@@ -119,7 +119,7 @@ public:
      * @return true true upon sucessful lookup (function seen before).
      * @return false false upon failed lookup (function not seen before).
      */
-    bool lookupFunc(string name, vector<DataType> &parameterList); // 0: func return type, 1,2,..:paramerterList
+    bool lookupFunc(const string& name, vector<DataType> &parameterList); // 0: func return type, 1,2,..:paramerterList
 
     /**
      * @brief Prints SymbolTable (Name, Type, Scope, Used)
@@ -133,7 +133,7 @@ public:
      * @return true breakable
      * @return false not breakable
      */
-    bool canBreak();
+    bool canBreak() const;
 
     /**
      * @brief Whether a continue can be performed in this scope or not (loops).
@@ -141,7 +141,7 @@ public:
      * @return true continuable
      * @return false not coninuable
      */
-    bool canContinue();
+    bool canContinue() const;
 
     /**
      * @brief Whether it is a global scope or not.
@@ -149,7 +149,7 @@ public:
      * @return true in case of global scope.
      * @return false any nested scope.
      */
-    bool isGlobal();
+    bool isGlobal() const;
 
     /**
      * @brief Whether a return statement can be performed in this scope (inside a function of same return type).
@@ -158,7 +158,7 @@ public:
      * @return true returnable
      * @return false non returnable
      */
-    bool canReturn(DataType type);
+    bool canReturn(DataType type) const;
 
     ~SymbolTable();
 };
