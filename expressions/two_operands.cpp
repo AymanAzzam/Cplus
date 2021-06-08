@@ -1,5 +1,4 @@
 #include "expressions.h"
-#include "../utilities.h"
 
 
 TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): ExprNode() {
@@ -74,26 +73,26 @@ void TwoOpNode::execute() {
         // assignment operators
         case _MOD_EQ:
             printf("\tREM\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _MULT_EQ:
             printf("\tMUL\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _DIV_EQ:
             printf("\tDIV\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _MINUS_EQ:
             printf("\tSUB\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _PLUS_EQ:
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _EQ:
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
 
         // comparison operators

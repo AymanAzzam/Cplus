@@ -4,6 +4,7 @@
 
 // int DataType need to be changed
 #include <iostream>
+#include "../utilities.h"
 #include "../Node.h"
 #include "../Stmt.h"
 #include "../SymbolTable/SymbolTable.h"
@@ -70,7 +71,7 @@ class ValueNode: public ExprNode {
         /**
         * @brief Push the node value into the stack
         */
-        virtual void execute(){printf("PUSH %s\n", value.c_str());};
+        virtual void execute(){pushToStack(value, type);}
 };
 
 
@@ -91,7 +92,7 @@ class IdentifierNode: public ExprNode {
             return name;
         }
 
-        virtual void execute(){printf("PUSH %s\n", name.c_str());};
+        virtual void execute(){pushToStack(name, type);}
 };
 
 

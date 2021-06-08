@@ -1,6 +1,4 @@
 #include "expressions.h"
-string oprToString(Operator opr);
-string typeToString(DataType type);
 
 LeftOpNode::LeftOpNode(ExprNode* left, Operator opr, int line): ExprNode(){
     this->left = left;
@@ -40,13 +38,13 @@ void LeftOpNode::execute() {
     switch (opr)
     {
         case _INC_OPR:
-            printf("\tPUSH\t1\n");
+            pushToStack("1", _TYPE_INT);
             left->execute();
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _DEC_OPR:
-            printf("\tPUSH\tx\t1\n");
+            pushToStack("1", _TYPE_INT);
             left->execute();
             printf("\tSUB\n");
             printf("\tPOP\t%s\n", left->getName().c_str());

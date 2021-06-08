@@ -178,3 +178,14 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
 
     return out;
 };
+
+void pushToStack(string name, DataType type) {
+    string t = typeToString(type);
+
+    printf("\tPUSH\t%s\t%s\n", t.c_str(), name.c_str());
+}
+
+
+void popFromStack(string name) {
+    printf("\tPOP\t%s\n", name.c_str());
+}

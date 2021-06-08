@@ -1,6 +1,4 @@
 #include "expressions.h"
-string oprToString(Operator opr);
-string typeToString(DataType type);
 
 RightOpNode::RightOpNode(ExprNode* right, Operator opr, int line): ExprNode(){
     this->right = right;
@@ -46,16 +44,16 @@ void RightOpNode::execute() {
             printf("\tlogicNOT\n");
             return;
         case _INC_OPR:
-            printf("\tPUSH\t1\n");
+            pushToStack("1", _TYPE_INT);
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", right->getName().c_str());
+            popFromStack(right->getName());
             printf("\tPUSH\t%s\n", right->getName().c_str());
             return;
         case _DEC_OPR:
-            printf("\tPUSH\t1\n");
+            pushToStack("1", _TYPE_INT);
             printf("\tSUB\n");
-            printf("\tPOP\t%s\n", right->getName().c_str());
-            printf("\tPUSH\t%s\n", right->getName().c_str());
+            popFromStack(right->getName());
+            pushToStack(right->getName(), right->type);
             return;
         case _ADD:
             printf("\tADD\n");
