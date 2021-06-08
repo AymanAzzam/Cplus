@@ -71,7 +71,7 @@ void yyerror(const char *);
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
-%type <stmtList> stmt_list
+%type <stmtList> stmt_list block
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
@@ -95,17 +95,17 @@ stmt:   multi_var_definition ';' {$$ = new Stmt();}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
-    |   BREAK ';'{$$ = new BreakStmt();}
-    |   CONTINUE ';'{$$ = new ContinueStmt();}
-    |   return_stmt ';'{$$ = new Stmt();}
+    |   BREAK ';'	{$$ = new BreakStmt();}
+    |   CONTINUE ';'	{$$ = new ContinueStmt();}
+    |   return_stmt ';'	{$$ = new Stmt();}
     |   if_stmt		{$$ = $1; $1->execute();}
     |   switch_stmt	{$$ = new Stmt(); $1->execute();}
-    |   block {$$ = new Stmt();}
-    |   ';'{$$ = new Stmt();}
+    |   block
+    |   ';'		{$$ = new Stmt();}
     ;
 
-block:  '{' stmt_list '}'
-        |   '{' '}'
+block:  '{' stmt_list '}'	{$$ = $2;}
+        |   '{' '}'		{$$ = new StmtList();}
         ;
 
 stmt_list:

@@ -3,13 +3,15 @@
 
 #include <vector>
 #include "Stmt.h"
-#include "Node.h"
 
 using namespace std;
 
-class StmtList : public Node {
+class StmtList : public Stmt {
 public:
-    explicit StmtList(Stmt* firstStmt);
+    StmtList() = default;
+
+    explicit StmtList(Stmt *firstStmt);
+
     ~StmtList();
 
     void execute() override;
