@@ -24,10 +24,10 @@ SymbolTable *SymbolTable::GetInstance()
 void SymbolTable::startScope(ScopeType val)
 {
     scopeMask = scopeMask * 10 + val;
-    scope.push_back(vector<string>{});
+    scope.emplace_back();
 }
 
-bool SymbolTable::insertId(string name, int line, DataType type, bool init, bool isConst)
+bool SymbolTable::insertId(const string& name, int line, DataType type, bool init, bool isConst)
 {
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
@@ -40,7 +40,7 @@ bool SymbolTable::insertId(string name, int line, DataType type, bool init, bool
     return true;
 }
 
-bool SymbolTable::modifyId(string name, bool init, bool use)
+bool SymbolTable::modifyId(const string& name, bool init, bool use)
 {
     if (idTable[name].empty())
         return false;
@@ -51,7 +51,7 @@ bool SymbolTable::modifyId(string name, bool init, bool use)
         node.used = use;
 }
 
-bool SymbolTable::lookupId(string name, DataType &type, bool &isInitialized, bool &isConst)
+bool SymbolTable::lookupId(const string& name, DataType &type, bool &isInitialized, bool &isConst)
 {
     if (idTable[name].empty())
         return false;
@@ -66,22 +66,25 @@ vector<pair<string, int>> SymbolTable::finishScope()
 {
     const vector<string> &currentScope = scope.back();
     vector<pair<string, int>> unusedId;
-    for (const string &id : currentScope)
-    {
-        int line = removeId(id);
-        if (line == -1)
-            throw "Removing Undeclared Variable";
-        else if (line > 0)
-        {
-            unusedId.push_back({id, line});
+    try {
+        for (const string &id : currentScope) {
+            int line = removeId(id);
+            if (line == -1)
+                throw "Removing Undeclared Variable";
+            else if (line > 0) {
+                unusedId.emplace_back(id, line);
+            }
         }
+    } catch (const char* msg) {
+        cerr << msg << endl;
     }
+
     scope.pop_back();
     scopeMask /= 10;
     return unusedId;
 }
 
-int SymbolTable::removeId(string name)
+int SymbolTable::removeId(const string& name)
 {
     if (idTable[name].empty())
     {
@@ -94,7 +97,7 @@ int SymbolTable::removeId(string name)
     return line;
 }
 
-bool SymbolTable::insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList)
+bool SymbolTable::insertFunc(const string& name, int line, DataType returnType, const vector<pair<string, DataType>>& parameterList)
 {
     if (!isGlobal())
         return false;
@@ -107,7 +110,7 @@ bool SymbolTable::insertFunc(string name, int line, DataType returnType, vector<
     currentScope.push_back(name);
     startScope(static_cast<ScopeType>(INT_FUNC + returnType));
     funcTable[name].push_back(returnType);
-    for (pair<string, DataType> p : parameterList)
+    for (const pair<string, DataType>& p : parameterList)
     {
         insertId(p.first, line, p.second, true);
         funcTable[name].push_back(p.second);
@@ -115,7 +118,7 @@ bool SymbolTable::insertFunc(string name, int line, DataType returnType, vector<
     return true;
 }
 
-bool SymbolTable::lookupFunc(string name, vector<DataType> &parameterList)
+bool SymbolTable::lookupFunc(const string& name, vector<DataType> &parameterList)
 {
     if (!funcTable.count(name))
         return false;
@@ -198,7 +201,7 @@ void SymbolTable::print()
     cout << "--------------------------------------------------------------" << endl;
 }
 
-bool SymbolTable::canBreak()
+bool SymbolTable::canBreak() const
 {
     int aux = scopeMask;
     while (aux)
@@ -210,7 +213,7 @@ bool SymbolTable::canBreak()
     return false;
 }
 
-bool SymbolTable::canContinue()
+bool SymbolTable::canContinue() const
 {
     int aux = scopeMask;
     while (aux)
@@ -222,12 +225,12 @@ bool SymbolTable::canContinue()
     return false;
 }
 
-bool SymbolTable::isGlobal()
+bool SymbolTable::isGlobal() const
 {
     return scopeMask == GLOBAL;
 }
 
-bool SymbolTable::canReturn(DataType type)
+bool SymbolTable::canReturn(DataType type) const
 {
     int aux = scopeMask;
     while (aux)
