@@ -104,7 +104,7 @@ void yyerror(const char *);
 
 %type <function> func
 %type <funcHeader> func_header
-%type <funcParams> paramater parameter_decl
+%type <funcParameters> paramater parameter_decl
 %type <funcArguments> args args_ext
 %type <funcCall> func_call
 %type <funcReturn> return_stmt
@@ -193,8 +193,8 @@ expr:     '(' expr ')'                          {$$ = $2;}
         |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = new Node();}
-        ;    
+        |       func_call                       {$$ = $1;}
+        ;
 
  /* variables & constants */
 variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2, yylineno);}
@@ -227,7 +227,7 @@ multi_var_definition: multi_var_definition additional_declaration       {$$ = $1
 
 multi_const_init: multi_const_init additional_const_init                {$$ = $1; $1->push($2); $2->setType($1->getType());}
                 | const_init                                            {$$ = new MultiConstInit($1);}
-                ;        
+                ;
 
  /* arithmetic operators */
 arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o);}
@@ -293,7 +293,7 @@ cond_expr:   expr		{$$ = new CondExpr();}
 
 // functions
 
-func:	func_header block	{$$ = new Function($1, $2)}
+func:	func_header block	{$$ = new Function($1, $2);}
     ;
 
 func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4);}
