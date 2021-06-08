@@ -6,6 +6,7 @@ LeftOpNode::LeftOpNode(ExprNode* l, Operator o): ExprNode(){
 }
 
 void LeftOpNode::execute() {
+    left->checkError();
     left->execute();
 
     switch (opr)

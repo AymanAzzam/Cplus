@@ -147,7 +147,7 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
         return "BLOCK";
     if (t == LOOP)
         return "LOOP";
-    if (t == SWITCH)
+    if (t == _SWITCH)
         return "SWITCH";
     if (t == INT_FUNC)
         return "INT_FUNC";
@@ -201,7 +201,7 @@ bool SymbolTable::canBreak()
     int aux = scopeMask;
     while (aux)
     {
-        if (aux % 10 == LOOP || aux % 10 == SWITCH)
+        if (aux % 10 == LOOP || aux % 10 == _SWITCH)
             return true;
         aux /= 10;
     }
