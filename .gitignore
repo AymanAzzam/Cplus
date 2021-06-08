@@ -2,7 +2,7 @@
 **/**/*.tab.c
 **/**/*.tab.h
 *.tab.*
-lex.yy.c
+lex.yy.*
 *.exe
 **/**/*.out
 Phase 1 - Deliverables.zip
@@ -10,8 +10,8 @@ Phase 1 - Deliverables.zip
 *.output
 .idea/
 cmake-build-debug/
-CMakeLists.txt
 Test.cpp
 Symbol\ Table/main.cpp
 Symbol\ Table/Makefile
 .vscode
+CMakeListHelper.py
