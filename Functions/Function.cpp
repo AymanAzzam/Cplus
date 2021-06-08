@@ -35,6 +35,14 @@ void Function::execute() {
 
 FunctionCall::FunctionCall(IdentifierNode *fId, FunctionArguments *args) :funcIdentifier(fId), funcArgs(args){}
 
+string FunctionCall::getName() {
+    return std::__cxx11::string();
+}
+
+void FunctionCall::execute() {
+
+}
+
 FunctionArguments::FunctionArguments(ExprNode *baseExpr) {
     expressions.push_back(baseExpr);
 }

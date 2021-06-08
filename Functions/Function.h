@@ -58,6 +58,8 @@ class FunctionCall : public ExprNode
 
 public:
     FunctionCall(IdentifierNode *fId, FunctionArguments *args);
+    string getName() override;
+    void execute() override;
 };
 
 class FunctionReturn : public Node
