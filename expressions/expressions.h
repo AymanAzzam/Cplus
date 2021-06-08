@@ -6,7 +6,7 @@
 #include <iostream>
 #include "../Node.h"
 #include "../Stmt.h"
-#include "../Symbol Table/SymbolTable.h"
+#include "../SymbolTable/SymbolTable.h"
 
 using namespace std;
 
@@ -36,6 +36,10 @@ class TypeNode: public Node {
         */
         TypeNode(DataType t) {
             type = t;
+        }
+
+        DataType getType() {
+            return type;
         }
 
         virtual void execute(){};
@@ -143,6 +147,10 @@ class IdentifierNode: public ExprNode {
         */
         IdentifierNode(string n): ExprNode(n) {
             name = n;
+        }
+
+        string getName() {
+            return name;
         }
 
         virtual void execute(){printf("POP %s\n", name.c_str()); printf("PUSH %s\n", name.c_str());};

@@ -1,14 +1,18 @@
 #pragma once
 
-#include "../Node.h"
+#include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include <string>
 
-class VarDeclare : Node {
+class VarDeclare : public Stmt {
+protected:
     TypeNode* type;
     IdentifierNode* name;
+    int lineno;
 public:
-    VarDeclare(TypeNode* t, IdentifierNode* n);
+    VarDeclare(TypeNode* t, IdentifierNode* n, int l);
+    virtual void setType(TypeNode* t);
+    virtual TypeNode* getType();
     void execute();
     ~VarDeclare();
 };
