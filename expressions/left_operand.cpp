@@ -10,7 +10,7 @@ LeftOpNode::LeftOpNode(ExprNode* l, Operator o): ExprNode(){
 void LeftOpNode::checkError() {
     
     string s, o;
-    bool l_con = false, l_ini = true, l_dec = true;
+    bool l_con = true, l_ini = true, l_dec = true;
     IdentifierNode* casted;
 
     casted = dynamic_cast<IdentifierNode*>(left);

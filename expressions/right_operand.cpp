@@ -9,7 +9,7 @@ RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
 
 void RightOpNode::checkError() {
     string s, o;
-    bool r_con = false, r_ini = true, r_dec = true;
+    bool r_con = true, r_ini = true, r_dec = true;
     
     IdentifierNode* casted;
 
