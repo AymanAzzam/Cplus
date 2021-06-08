@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class ExprNode: public Stmt{
+class ExprNode: public Node{
     public:
         DataType type;
 
@@ -88,7 +88,7 @@ class IdentifierNode: public ExprNode {
             return name;
         }
 
-        virtual void execute(){printf("POP %s\n", name.c_str()); printf("PUSH %s\n", name.c_str());};
+        virtual void execute(){printf("PUSH %s\n", name.c_str());};
 };
 
 
