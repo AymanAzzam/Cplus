@@ -16,9 +16,13 @@ TypeNode* VarDeclare::getType() {
     return type;
 }
 
+IdentifierNode *VarDeclare::getName() {
+    return name;
+}
+
 void VarDeclare::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
-    
+
     if (sym->insertId(name->getName(), 1, type->getType(), false, false)) {
         /*no quadruples produced*/;
     }

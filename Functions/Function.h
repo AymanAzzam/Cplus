@@ -15,7 +15,7 @@ class FunctionParameters : public Node
     vector<VarDeclare *> parameters;
 
 public:
-    FunctionParameters(VarDeclare *baseParam);
+    explicit FunctionParameters(VarDeclare *baseParam);
     FunctionParameters *push(VarDeclare *otherParam);
     void execute() override;
 };
