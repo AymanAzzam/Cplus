@@ -1,15 +1,11 @@
 %{
 #include <stdio.h>
 #include <vector>
-
 #include "Headers.h"
-
 extern int yylineno;
-
 int yylex(void);
 void yyerror(const char *);
 %}
-
 
 %union {
     int i;
@@ -23,7 +19,10 @@ void yyerror(const char *);
     Stmt* stmt;
     IfStmt* ifStmt;
     CondExpr* condExpr;
-    
+    StmtList* stmtList;
+    Case* aCase;
+    Cases* cases;
+    SwitchStmt* switchStmt;
     ExprNode* exprNode;
     TypeNode* typeNode;
     ValueNode* valueNode;
@@ -35,7 +34,7 @@ void yyerror(const char *);
     DoWhile* doWhileLoop;
     VarDeclare* vDeclare;
     VarInit* vInit;
-    ContStmt* cnt;
+    ContinueStmt* cnt;
     BreakStmt* brk;
 }
 
@@ -78,6 +77,10 @@ void yyerror(const char *);
 %type <stmt> stmt
 %type <ifStmt> if_stmt
 %type <condExpr> cond_expr
+%type <stmtList> stmt_list
+%type <aCase> case_with_body default_with_body case default_case
+%type <cases> top_cases bottom_cases
+%type <switchStmt> switch_stmt
 %type <exprNode> eps_expr expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 %type <typeNode> data_type
 %type <valueNode> literal
@@ -102,11 +105,11 @@ stmt: variable_declaration ';'          {$$ = new Stmt();}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
-    |   BREAK ';'       {$$ = new BreakStmt();}
-    |   CONTINUE ';'    {$$ = new ContStmt();}
+    |   BREAK ';'{$$ = new BreakStmt();}
+    |   CONTINUE ';'{$$ = new ContinueStmt();}
     |   return_stmt ';'{$$ = new Stmt();}
-    |   if_stmt		{$$ = new Stmt(); $1->execute();}
-    |   switch_stmt{$$ = new Stmt();}
+    |   if_stmt		{$$ = $1; $1->execute();}
+    |   switch_stmt	{$$ = new Stmt(); $1->execute();}
     |   block {$$ = new Stmt();}
     |   ';'{$$ = new Stmt();}
     ;
@@ -116,8 +119,8 @@ block:  '{' stmt_list '}'
         ;
 
 stmt_list:
-          stmt
-        | stmt_list stmt
+	stmt	{$$ = new StmtList($1);}
+        | stmt_list stmt	{$$ = $1; $$->push($2);}
         ;
 
 if_stmt:
@@ -125,17 +128,40 @@ if_stmt:
 	| IF '(' cond_expr ')' stmt ELSE stmt		{$$ = new IfStmt($3, $5, $7);}
 	;
 
-switch_stmt:      SWITCH '(' cond_expr ')' '{' cases '}'
-                | SWITCH '(' cond_expr ')' '{' cases default_case cases'}';
+switch_stmt:
+	SWITCH '(' cond_expr ')' '{' top_cases default_with_body  '}'	{$6->push($7); $$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' top_cases default_case bottom_cases'}'	{$6->push($7)->push($8); $$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' bottom_cases '}'	{$$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' '}'	{$$ = new SwitchStmt($3);}
+	;
 
-case:     CASE expr ':' stmt
-        | CASE expr ':' case;
+top_cases:
+	top_cases case			{$$ = $1; $$->push($2);}
+	|				{$$ = new Cases();}
+	;
 
-default_case:   DEFAULT ':' stmt;
+// The last case must have body
+bottom_cases:
+	top_cases case_with_body	{$$ = $1; $$->push($2);}
+	;
 
-cases:    cases case
-        |
-        ;
+case:
+	case_with_body
+	| CASE expr ':'			{$$ = new Case($2);}
+	;
+
+case_with_body:
+	CASE expr ':' stmt_list		{$$ = new Case($2, $4);}
+	;
+
+default_case:
+	default_with_body
+	| DEFAULT ':'			{$$ = new Case();}
+	;
+
+default_with_body:
+	DEFAULT ':' stmt_list		{$$ = new Case($3);}
+	;
 
 
 
@@ -217,7 +243,7 @@ logic_expr:     expr LOGICAL_AND expr       {Operator o = _LOGICAL_AND; $$ = new
 
 // bitwise operators
 bit_expr:       expr BIT_AND expr           {Operator o = _BIT_AND; $$ = new TwoOpNode($1, $3, o);}
-        |       expr BIT_OR expr            {Operator o = _BIT_OR; $$ = new TwoOpNode($1, $3, o);}     
+        |       expr BIT_OR expr            {Operator o = _BIT_OR; $$ = new TwoOpNode($1, $3, o);}
         |       expr BIT_XOR expr           {Operator o = _BIT_XOR; $$ = new TwoOpNode($1, $3, o);}
         |       BIT_NOT expr                {Operator o = _BIT_NOT; $$ = new RightOpNode($2, o);}
         |       expr SHR expr               {Operator o = _SHR; $$ = new TwoOpNode($1, $3, o);}
@@ -225,7 +251,7 @@ bit_expr:       expr BIT_AND expr           {Operator o = _BIT_AND; $$ = new Two
 
 // comparison operators
 rel_expr:       expr IS_EQ expr             {Operator o = _IS_EQ; $$ = new TwoOpNode($1, $3, o);}
-        |       expr NOT_EQ expr            {Operator o = _NOT_EQ; $$ = new TwoOpNode($1, $3, o);}     
+        |       expr NOT_EQ expr            {Operator o = _NOT_EQ; $$ = new TwoOpNode($1, $3, o);}
         |       expr GT expr                {Operator o = _GT; $$ = new TwoOpNode($1, $3, o);}
         |       expr LT expr                {Operator o = _LT; $$ = new TwoOpNode($1, $3, o);}
         |       expr GTE expr               {Operator o = _GTE; $$ = new TwoOpNode($1, $3, o);}
@@ -233,7 +259,7 @@ rel_expr:       expr IS_EQ expr             {Operator o = _IS_EQ; $$ = new TwoOp
 
 // assignment operators
 assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNode($1, $3, o);}
-	|	expr PLUS_EQ expr           {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o);}	
+	|	expr PLUS_EQ expr           {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o);}
 	|       expr MINUS_EQ expr          {Operator o = _MINUS_EQ; $$ = new TwoOpNode($1, $3, o);}
 	|	expr DIV_EQ expr            {Operator o = _DIV_EQ; $$ = new TwoOpNode($1, $3, o);}
 	|	expr MULT_EQ expr           {Operator o = _MULT_EQ; $$ = new TwoOpNode($1, $3, o);}
@@ -267,7 +293,7 @@ parameter_ext:  variable_declaration
         |       parameter_ext ',' variable_init     	
         ;
 
-func_call:      identifier '(' args ')'              	
+func_call:      identifier '(' args ')'
         ;
 
 identifier:     IDENTIFIER              {$$ = new IdentifierNode($1);}

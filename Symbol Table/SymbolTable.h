@@ -4,49 +4,38 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include "../constants.h"
 
 using namespace std;
 
-enum DataType
-{
-    INTEGER,
-    FLOAT,
-    CHAR,
-    BOOL,
-    VOID
-};
-
-enum ScopeType
-{
-    GLOBAL = 1,
-    BLOCK,
-    LOOP,
-    SWITCH,
-    INT_FUNC,
-    FLOAT_FUNC,
-    CHAR_FUNC,
-    BOOL_FUNC,
-    VOID_FUNC
-};
 struct Identifier
 {
     DataType type;
     bool initialized;
     bool used;
+    bool isConstant;
     int line;
 
-    Identifier(int l, DataType t = INTEGER, bool init = false, bool use = false)
+    Identifier(int l, DataType t = _TYPE_INT, bool init = false, bool isConst = false, bool use = false)
     {
         line = l;
         type = t;
         initialized = init;
         used = use;
+        isConstant = isConst;
     }
 };
 
+/**
+ * @brief Singleton Class for all symbol table opearations.
+ * 
+ */
 class SymbolTable
 {
 private:
+    SymbolTable();
+    static SymbolTable *symbolTable;
+
     unordered_map<string, vector<Identifier>> idTable;
     unordered_map<string, vector<DataType>> funcTable;
     vector<vector<string>> scope;
@@ -56,21 +45,121 @@ private:
     int scopeMask;
 
 public:
-    SymbolTable();
+    SymbolTable(SymbolTable &other) = delete;
+    void operator=(const SymbolTable &) = delete;
+    static SymbolTable *GetInstance();
+
+    /**
+     * @brief Start a new scope on an openning curly brace or a function definition.
+     * 
+     * @param type Enum ScopeType: [GLOBAL, BLOCK, SWITCH, LOOP, INT_FUNC, ..etc]
+     */
     void startScope(ScopeType type);
-    bool insertId(string name, int line, DataType type, bool init);
+
+    /**
+     * @brief Insert a new identifier upon initialization or declaration.
+     * 
+     * @param name string: name of identifier. 
+     * @param line int: line number
+     * @param type Enum DataType: [_TYPE_INT, _TYPE_FLOAT, ..]
+     * @param init bool: either initialized or not.
+     * @param isConst bool: either constant or not.
+     * @return true upon successful insertion (not seen yet).
+     * @return false upon failed insertion (seen before).
+     */
+    bool insertId(string name, int line, DataType type, bool init = false, bool isConst = false);
+
+    /**
+     * @brief Modify status of identifier upon initialization (LHS) or usage (RHS)
+     * 
+     * @param name string: name of identifier.
+     * @param init bool: true in case of LHS.
+     * @param use bool: true in case of RHS.
+     * @return true upon sucessful modification (identifier seen before).
+     * @return false upon failed modification (identifier not seen before).
+     */
     bool modifyId(string name, bool init = false, bool use = false);
-    int lookupId(string name, DataType &type); // -1: undeclared, 0: uninit, 1: init
+
+    /**
+     * @brief Lookup for some identifier
+     * 
+     * @param name string: name of identifier
+     * @param type Enum DataType: dummy parameter to return actual dataType of identifier.
+     * @param isInitialized bool: dummy parameter to return if identifier is initialized.
+     * @param isConst bool: dummy parameter to return if identifier is constant.
+     * @return true upon sucessful lookup (identifier seen before).
+     * @return false upon failed lookup (identifier not seen before).
+     */
+    bool lookupId(string name, DataType &type, bool &isInitialized, bool &isConst);
+
+    /**
+     * @brief Finish a scope on closing a curly brace
+     * 
+     * @return vector<pair<string, int>> Vector of not used identifiers.
+     */
     vector<pair<string, int>> finishScope();
 
+    /**
+     * @brief Insert a new function upon declaration.
+     * 
+     * @param name string: name of the function
+     * @param line int: line number of function
+     * @param returnType Enum DataType: return type of function
+     * @param parameterList vector<pair<string, DataType>>: first: identifier name, second: data type of identifier
+     * @return true upon sucessful insertion (not seen before && global scope).
+     * @return false upon failed insertion.
+     */
     bool insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList);
+
+    /**
+     * @brief Lookup for a function if appeared before and return its related info.
+     * 
+     * @param name string: name of function.
+     * @param parameterList vector<DataType>: dummy parameter holds return type of function in index 0 then parameters type
+     * @return true true upon sucessful lookup (function seen before).
+     * @return false false upon failed lookup (function not seen before).
+     */
     bool lookupFunc(string name, vector<DataType> &parameterList); // 0: func return type, 1,2,..:paramerterList
+
+    /**
+     * @brief Prints SymbolTable (Name, Type, Scope, Used)
+     * 
+     */
     void print();
 
+    /**
+     * @brief Whether a break can be performed in this scope or not (loops, switch).
+     * 
+     * @return true breakable
+     * @return false not breakable
+     */
     bool canBreak();
+
+    /**
+     * @brief Whether a continue can be performed in this scope or not (loops).
+     * 
+     * @return true continuable
+     * @return false not coninuable
+     */
     bool canContinue();
+
+    /**
+     * @brief Whether it is a global scope or not.
+     * 
+     * @return true in case of global scope.
+     * @return false any nested scope.
+     */
     bool isGlobal();
+
+    /**
+     * @brief Whether a return statement can be performed in this scope (inside a function of same return type).
+     * 
+     * @param type Enum DataType: type of return we want to do.
+     * @return true returnable
+     * @return false non returnable
+     */
     bool canReturn(DataType type);
+
     ~SymbolTable();
 };
 

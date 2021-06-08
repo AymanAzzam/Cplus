@@ -3,9 +3,10 @@
 #define EXPRESSIONS_H
 
 // int DataType need to be changed
-#include <string>
 #include <iostream>
 #include "../Node.h"
+#include "../Symbol Table/SymbolTable.h"
+
 using namespace std;
 
 enum Operator {
@@ -24,17 +25,25 @@ enum Operator {
     _BIT_NOT, _LOGICAL_NOT
 };
 
-enum DataType {
-    _TYPE_INT, _TYPE_FLOAT, _TYPE_CHAR, _TYPE_BOOL, _TYPE_VOID
-};
-
-
 class ExprNode: public Node{
     public:
         string name;
+        
         ExprNode(string n = "-1") {
             name = n;
         }
+
+        void checkError() {
+            SymbolTable *symbolTable = SymbolTable::GetInstance();
+
+            DataType type;
+            bool con, ini, error;
+            error = symbolTable->lookupId(name, type, ini, con);
+
+            if(!error)
+                printf("\n\nError: undeclared variable %s\n\n", name.c_str());
+        };
+        
         virtual void execute() {
             printf("\tPUSH\t%s\n", name.c_str());
         };
@@ -70,6 +79,8 @@ class TwoOpNode: public ExprNode {
     public:
         TwoOpNode(ExprNode* l, ExprNode* r, Operator o);
 
+        void checkError();
+
         virtual void execute();
 
         ~TwoOpNode();
@@ -82,6 +93,10 @@ class LeftOpNode: public ExprNode {
     public:
         LeftOpNode(ExprNode* l, Operator o);
 
+        void checkError() {
+
+        };
+
         virtual void execute();
 
         ~LeftOpNode();
@@ -93,6 +108,10 @@ class RightOpNode: public ExprNode {
 
     public:
         RightOpNode(ExprNode* r, Operator o);
+
+        void checkError() {
+
+        };
 
         virtual void execute();
 

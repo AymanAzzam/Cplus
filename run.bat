@@ -1,4 +1,4 @@
 bison -d cplus.y
 flex cplus.l
-g++ lex.yy.c cplus.tab.c *.cpp
+g++ cplus.tab.c lex.yy.c *.cpp Loops/*.cpp SubExpr/*.cpp expressions/*.cpp Conditional/*.cpp
 a.exe

@@ -7,6 +7,7 @@ RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
 
 
 void RightOpNode::execute() {
+    right->checkError();
     right->execute();
 
     switch (opr)

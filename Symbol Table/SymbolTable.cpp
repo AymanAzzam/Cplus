@@ -4,10 +4,21 @@
 
 using namespace std;
 
+SymbolTable *SymbolTable::symbolTable = nullptr;
+
 SymbolTable::SymbolTable()
 {
     scopeMask = 0;
     startScope(GLOBAL);
+}
+
+SymbolTable *SymbolTable::GetInstance()
+{
+    if (symbolTable == nullptr)
+    {
+        symbolTable = new SymbolTable();
+    }
+    return symbolTable;
 }
 
 void SymbolTable::startScope(ScopeType val)
@@ -16,7 +27,7 @@ void SymbolTable::startScope(ScopeType val)
     scope.push_back(vector<string>{});
 }
 
-bool SymbolTable::insertId(string name, int line, DataType type, bool init)
+bool SymbolTable::insertId(string name, int line, DataType type, bool init, bool isConst)
 {
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
@@ -25,7 +36,7 @@ bool SymbolTable::insertId(string name, int line, DataType type, bool init)
             return false;
     }
     currentScope.push_back(name);
-    idTable[name].push_back(Identifier(line, type, init));
+    idTable[name].push_back(Identifier(line, type, init, isConst));
     return true;
 }
 
@@ -40,13 +51,15 @@ bool SymbolTable::modifyId(string name, bool init, bool use)
         node.used = use;
 }
 
-int SymbolTable::lookupId(string name, DataType &type)
+bool SymbolTable::lookupId(string name, DataType &type, bool &isInitialized, bool &isConst)
 {
     if (idTable[name].empty())
-        return -1;
+        return false;
     const Identifier &node = idTable[name].back();
     type = node.type;
-    return node.initialized;
+    isInitialized = node.initialized;
+    isConst = node.isConstant;
+    return true;
 }
 
 vector<pair<string, int>> SymbolTable::finishScope()
@@ -83,7 +96,7 @@ int SymbolTable::removeId(string name)
 
 bool SymbolTable::insertFunc(string name, int line, DataType returnType, vector<pair<string, DataType>> parameterList)
 {
-    if (scopeMask != GLOBAL)
+    if (!isGlobal())
         return false;
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
@@ -117,13 +130,13 @@ SymbolTable::~SymbolTable()
 
 string SymbolTable::dataTypeEnumToString(DataType t)
 {
-    if (t == INTEGER)
+    if (t == _TYPE_INT)
         return "int";
-    if (t == FLOAT)
+    if (t == _TYPE_FLOAT)
         return "float";
-    if (t == CHAR)
+    if (t == _TYPE_CHAR)
         return "char";
-    if (t == BOOL)
+    if (t == _TYPE_BOOL)
         return "bool";
     return "void";
 }
@@ -136,7 +149,7 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
         return "BLOCK";
     if (t == LOOP)
         return "LOOP";
-    if (t == SWITCH)
+    if (t == _SWITCH)
         return "SWITCH";
     if (t == INT_FUNC)
         return "INT_FUNC";
@@ -151,7 +164,6 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 
 void SymbolTable::print()
 {
-    cout << "Symbol Table: " << endl;
     cout << "--------------------------------------------------------------" << endl;
     cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
     cout << "--------------------------------------------------------------" << endl;
@@ -183,7 +195,7 @@ void SymbolTable::print()
             cout << "| " << left << setw(6) << used << "|\n";
         }
     }
-    cout << "---------------------------------------------------------------" << endl;
+    cout << "--------------------------------------------------------------" << endl;
 }
 
 bool SymbolTable::canBreak()
@@ -191,7 +203,7 @@ bool SymbolTable::canBreak()
     int aux = scopeMask;
     while (aux)
     {
-        if (aux % 10 == LOOP || aux % 10 == SWITCH)
+        if (aux % 10 == LOOP || aux % 10 == _SWITCH)
             return true;
         aux /= 10;
     }

@@ -1,14 +1,15 @@
 #ifndef LEX_AND_YACC_NODE_H
 #define LEX_AND_YACC_NODE_H
 
-#include <vector>
-
+#include <stack>
+using namespace std;
 
 class Node {
 public:
     static int labelNumber;
-    static std::vector<int> contLabels;
-    static std::vector<int> breakLabels;
+    static stack<int> breakLabel;
+    static stack<int> continueLabel;
+
     virtual void execute() = 0;
 };
 
