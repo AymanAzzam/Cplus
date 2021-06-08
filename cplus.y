@@ -169,7 +169,7 @@ default_with_body:
 
 
 // master expression
-expr:     '(' expr ')'                          {$$ = new Expression($2);}
+expr:     '(' expr ')'                          {$$ = $2;}
         |       ADD expr %prec U_PLUS           {Operator o = _ADD; $$ = new RightOpNode($2, o);}
         |       SUB expr %prec U_MINUS          {Operator o = _SUB; $$ = new RightOpNode($2, o);}
         |       single_opr_expr

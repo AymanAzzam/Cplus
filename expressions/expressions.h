@@ -156,19 +156,4 @@ class IdentifierNode: public ExprNode {
         virtual void execute(){printf("POP %s\n", name.c_str()); printf("PUSH %s\n", name.c_str());};
 };
 
-class Expression: public ExprNode {
-    ExprNode* expr;
-
-    public:
-        Expression(ExprNode* e): ExprNode() {
-            expr = e;
-        }
-
-        virtual void execute(){};
-
-        ~Expression() {
-            if(expr) delete expr;
-        }
-};
-
 #endif
