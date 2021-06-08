@@ -106,7 +106,7 @@ stmt: variable_declaration ';'          {$$ = new Stmt();}
     |   return_stmt ';'	{$$ = new Stmt();}
     |   if_stmt		{$$ = $1; $1->execute();}
     |   switch_stmt	{$$ = $1; $1->execute();}
-    |   block
+    |   block		{$$ = $1;}
     |   ';'		{$$ = new Stmt();}
     ;
 
