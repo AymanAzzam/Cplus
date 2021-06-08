@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class ExprNode: public Node{
+class ExprNode: public Stmt{
     public:
         DataType type;
 

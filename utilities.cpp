@@ -127,3 +127,54 @@ string typeToString(DataType type) {
 
     return out;
 };
+
+
+bool isLogicalOpr(Operator opr){
+    switch (opr)
+    {
+        case _LOGICAL_OR:
+            return true;
+        case _LOGICAL_AND:
+            return true;
+        case _LOGICAL_NOT:
+            return true;
+    }
+
+    return false;
+}
+
+DataType typeConversion(DataType left, DataType right, Operator opr) {
+    DataType out = left;
+    string left_s, right_s;
+
+    left_s = typeToString(left);
+    right_s = typeToString(right);
+
+    if(isLogicalOpr(opr))
+    {
+        if(left != _TYPE_BOOL)
+            printf("\n\nWarning: Type mismatch, converting %s to bool", \
+                left_s.c_str());
+        
+        if(right != _TYPE_BOOL)
+            printf("\n\nWarning: Type mismatch, converting %s to bool", \
+                right_s.c_str());
+                
+        return _TYPE_BOOL;
+    }
+
+    if(right == _TYPE_FLOAT || \
+      (right == _TYPE_INT && (left == _TYPE_CHAR || left == _TYPE_BOOL)) || \
+        (right == _TYPE_CHAR && left == _TYPE_BOOL))
+            out = right;
+
+    if(out == right && right != left)
+        printf("\n\nWarning: Type mismatch, converting %s to %s", \
+                left_s.c_str(), right_s.c_str());
+
+    if(out == left && right != left)
+        printf("\n\nWarning: Type mismatch, converting %s to %s", \
+                right_s.c_str(), left_s.c_str());
+
+    return out;
+};

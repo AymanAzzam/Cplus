@@ -8,28 +8,24 @@ RightOpNode::RightOpNode(ExprNode* r, Operator o): ExprNode(){
 }
 
 void RightOpNode::checkError() {
-    SymbolTable *symbolTable = SymbolTable::GetInstance();
-    DataType type;
     string s, o;
-    bool con, ini, success;
+    bool r_con = true, r_ini = true, r_dec = true;
     
-    success = symbolTable->lookupId(right->getName(), type, ini, con);
-    
-    if(!success)
-        printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
-    else if(!ini)
-        printf("\n\nError: uninitialized variable %s\n\n", right->getName().c_str());
-    else if(ini && con && (opr == _INC_OPR || opr == _DEC_OPR))
-        printf("\n\nConstant Error: %s is constant\n\n", right->getName().c_str());
-    else if(type != _TYPE_INT && opr != _ADD && opr != _SUB)
+    IdentifierNode* casted;
+
+    casted = dynamic_cast<IdentifierNode*>(right);
+    if(casted != NULL)
     {
-        s = typeToString(type);
-        o = oprToString(opr);
-        
-        printf("\n\nWarning: Type mismatch, operation %s with %s", \
-                o.c_str(), s.c_str());
+        SymbolTable *symbolTable = SymbolTable::GetInstance();
+        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con); 
     }
     
+    if(!r_dec)
+        printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
+    else if(!r_ini)
+        printf("\n\nError: uninitialized variable %s\n\n", right->getName().c_str());
+    else if(r_ini && r_con && (opr == _INC_OPR || opr == _DEC_OPR))
+        printf("\n\nConstant Error: %s is constant\n\n", right->getName().c_str());
 }
 
 void RightOpNode::execute() {
@@ -65,6 +61,15 @@ void RightOpNode::execute() {
             return;
     }
 
+    if(opr != _LOGICAL_NOT && right->type != _TYPE_BOOL)
+    {
+        this->type = _TYPE_BOOL; 
+        
+        printf("\n\nWarning: Type mismatch, converting %s to bool", \
+                typeToString(right->type).c_str());
+    }
+    else
+        this->type = right->type;
     printf("\n\nError occured in RightOpNode::execute() in right_operand.cpp\n\n");
 }
 
