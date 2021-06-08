@@ -12,11 +12,11 @@ void LeftOpNode::checkError() {
     SymbolTable *symbolTable = SymbolTable::GetInstance();
     DataType type;
     string s, o;
-    bool con, ini, success;
+    bool con, ini, dec;
     
-    success = symbolTable->lookupId(left->getName(), type, ini, con);
+    dec = symbolTable->lookupId(left->getName(), type, ini, con);
     
-    if(!success)
+    if(!dec)
         printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
     else if(!ini)
         printf("\n\nError: uninitialized variable %s\n\n", left->getName().c_str());

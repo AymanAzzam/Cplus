@@ -17,12 +17,16 @@ void TwoOpNode::checkError() {
 
     casted = dynamic_cast<IdentifierNode*>(left);
     if(casted != NULL)
-        l_con = casted->con, l_ini = casted->ini, l_dec = casted->dec; 
-    
+    {
+        SymbolTable *symbolTable = SymbolTable::GetInstance();
+        l_dec = symbolTable->lookupId(casted->getName(), type, l_ini, l_con); 
+    }
     casted = dynamic_cast<IdentifierNode*>(right);
     if(casted != NULL)
-        r_con = casted->con, r_ini = casted->ini, r_dec = casted->dec;
-
+    {
+        SymbolTable *symbolTable = SymbolTable::GetInstance();
+        r_dec = symbolTable->lookupId(casted->getName(), type, r_ini, r_con); 
+    }
     if(!r_dec)
          printf("\n\nError: undeclared variable %s\n\n", right->getName().c_str());
     else if(!l_dec)

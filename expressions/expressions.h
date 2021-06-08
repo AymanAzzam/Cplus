@@ -74,17 +74,11 @@ class ValueNode: public ExprNode {
 class IdentifierNode: public ExprNode {
     string name;
     public:
-        bool ini, dec, con;
         /**
         * @param n: The name of identifier
         */
         IdentifierNode(string n): ExprNode() {
-            SymbolTable *symbolTable = SymbolTable::GetInstance();
-            
             name = n;
-            
-            dec = symbolTable->lookupId(name, type, ini, con);
-    
         }
 
         /**
