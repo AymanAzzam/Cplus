@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class StmtList : public Node {
+class StmtList : public Stmt {
 public:
     explicit StmtList(Stmt* firstStmt);
     ~StmtList();
@@ -15,6 +15,8 @@ public:
     void execute() override;
 
     void push(Stmt *stmt);
+
+    void test();
 
 private:
     vector<Stmt *> statements;
