@@ -23,6 +23,8 @@ void TwoOpNode::checkError() {
          printf("\n\nError: undeclared variable %s\n\n", left->name.c_str());
     else if(!r_ini)
         printf("\n\nError: uninitialized variable %s\n\n", right->name.c_str());
+    else if(!l_ini && opr != _EQ)
+        printf("\n\nError: uninitialized variable %s\n\n", left->name.c_str());
     else if(l_ini && l_con)
         printf("\n\nConstant Error: %s is constant\n\n", left->name.c_str());
     /* else if(opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ || \
