@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <vector>
 #include "Headers.h"
+
 extern int yylineno;
+
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -34,6 +36,11 @@ void yyerror(const char *);
     DoWhile* doWhileLoop;
     VarDeclare* vDeclare;
     VarInit* vInit;
+    ConstDef* constant;
+
+    MultiVarDef* multiVar;
+    MultiConstInit* multiConst;
+
     Function* function;
     FunctionHeader* funcHeader;
     FunctionParameters* funcParameters;
@@ -88,16 +95,19 @@ void yyerror(const char *);
 %type <valueNode> literal
 %type <identifierNode> identifier
 %type <forExpr> for_expr extended_for_expr
+%type <vDeclare> variable_declaration additional_declaration
+%type <vInit> variable_init additional_var_init
+%type <constant> const_init additional_const_init
+
+%type <multiVar> multi_var_definition
+%type <multiConst> multi_const_init
+
 %type <function> func
 %type <funcHeader> func_header
 %type <funcParams> paramater parameter_decl
 %type <funcArguments> args args_ext
 %type <funcCall> func_call
 %type <funcReturn> return_stmt
-// %type <epsExpr> eps_expr
-%type <vDeclare> variable_declaration
-%type <vInit> variable_init
-
 %%
 
 program: program stmt
@@ -105,11 +115,9 @@ program: program stmt
         |                       {/*$0->execute(); delete $0;*/;}
         ;
 
-        // stmt:   multi_var_definition ';' {$$ = new Stmt();}
-        // |   multi_const_init ';' {$$ = new Stmt();}
-stmt: variable_declaration ';'          {$$ = new Stmt();}
-    |   variable_init                   {$$ = new Stmt();}
-    |   expr ';' {$$ = $1;}
+stmt:   multi_var_definition ';'        {$$ = $1; $1->execute();}
+    |   multi_const_init ';'            {$$ = $1; $1->execute();}
+    |   expr ';'                        {$$ = dynamic_cast<Stmt*>($1);}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5); $$->execute();}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5); $$->execute();}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9); $$->execute();}
@@ -174,48 +182,52 @@ default_with_body:
 
 
 // master expression
-expr:     '(' expr ')'                          {$$ = new Expression($2);}
+expr:     '(' expr ')'                          {$$ = $2;}
         |       ADD expr %prec U_PLUS           {Operator o = _ADD; $$ = new RightOpNode($2, o);}
         |       SUB expr %prec U_MINUS          {Operator o = _SUB; $$ = new RightOpNode($2, o);}
         |       single_opr_expr
         |       logic_expr
         |       bit_expr
         |       arithmetic_expr
-        |       identifier
-        |       literal
+        |       identifier                      {$$ = $1;}
+        |       literal                         {$$ = $1;}
         |       rel_expr
         |       assign_expr
-        |       func_call                       {$$ = $1;}
-        ;
+        |       func_call                       {$$ = new Node();}
+        ;    
 
  /* variables & constants */
-variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2); $$->execute();}
+variable_declaration: data_type identifier      {$$ = new VarDeclare($1, $2, yylineno);}
                 ;
 
-variable_init: data_type identifier EQ expr     {$$ = new VarInit($1, $2, $4); $$->execute();}
-        | data_type identifier '(' expr ')'  {$$ = new VarInit($1, $2, $4); $$->execute();}
+variable_init: data_type identifier EQ expr     {$$ = new VarInit($1, $2, $4, yylineno);}
+        | data_type identifier '(' expr ')'  {$$ = new VarInit($1, $2, $4, yylineno);}
         ;
 
-const_init: CONST data_type identifier EQ expr
-        | CONST data_type identifier '(' expr ')'
+const_init: CONST data_type identifier EQ expr          {$$ = new ConstDef($2, $3, $5, yylineno);}
+        | CONST data_type identifier '(' expr ')'       {$$ = new ConstDef($2, $3, $5, yylineno);}
         ;
 
-additional_declaration: ',' identifier
+additional_declaration: ',' identifier                  {$$ = new VarDeclare(nullptr, $2, yylineno);}
                     ;
 
-additional_var_init: ',' identifier EQ expr
-                | ',' identifier '(' expr ')'
+additional_var_init: ',' identifier EQ expr             {$$ = new VarInit(nullptr, $2, $4, yylineno);}
+                | ',' identifier '(' expr ')'           {$$ = new VarInit(nullptr, $2, $4, yylineno);}
                 ;
 
-multi_var_definition: multi_var_definition additional_declaration
-                | multi_var_definition additional_var_init
-                | variable_declaration
-                | variable_init
+additional_const_init: ',' identifier EQ expr           {$$ = new ConstDef(nullptr, $2, $4, yylineno);}
+                | ',' identifier '(' expr ')'           {$$ = new ConstDef(nullptr, $2, $4, yylineno);}
                 ;
 
-multi_const_init: multi_const_init additional_var_init
-                | const_init
+multi_var_definition: multi_var_definition additional_declaration       {$$ = $1; $1->push($2); $2->setType($1->getType());}
+                | multi_var_definition additional_var_init              {$$ = $1; $1->push($2); $2->setType($1->getType());}
+                | variable_declaration                                  {$$ = new MultiVarDef($1);}
+                | variable_init                                         {$$ = new MultiVarDef($1);}
                 ;
+
+multi_const_init: multi_const_init additional_const_init                {$$ = $1; $1->push($2); $2->setType($1->getType());}
+                | const_init                                            {$$ = new MultiConstInit($1);}
+                ;        
 
  /* arithmetic operators */
 arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o);}

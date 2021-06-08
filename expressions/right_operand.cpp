@@ -13,20 +13,21 @@ void RightOpNode::checkError() {
     string s, o;
     bool con, ini, success;
     
-    success = symbolTable->lookupId(right->name, type, ini, con);
+    success = symbolTable->lookupId(right->getName(), type, ini, con);
     
     if(!success)
-        printf("\n\nError: undeclared variable %s\n\n", name.c_str());
+        printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
     else if(!ini)
-        printf("\n\nError: uninitialized variable %s\n\n", right->name.c_str());
+        printf("\n\nError: uninitialized variable %s\n\n", right->getName().c_str());
     else if(ini && con && (opr == _INC_OPR || opr == _DEC_OPR))
-        printf("\n\nConstant Error: %s is constant\n\n", right->name.c_str());
+        printf("\n\nConstant Error: %s is constant\n\n", right->getName().c_str());
     else if(type != _TYPE_INT && opr != _ADD && opr != _SUB)
     {
         s = typeToString(type);
         o = oprToString(opr);
-        printf("\n\nType Error: type of %s is %s can't be used with operator %s", \
-                right->name.c_str(), s.c_str(), o.c_str());
+        
+        printf("\n\nWarning: Type mismatch, operation %s with %s", \
+                o.c_str(), s.c_str());
     }
     
 }
@@ -47,14 +48,14 @@ void RightOpNode::execute() {
         case _INC_OPR:
             printf("\tPUSH\t1\n");
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", right->name.c_str());
-            printf("\tPUSH\t%s\n", right->name.c_str());
+            printf("\tPOP\t%s\n", right->getName().c_str());
+            printf("\tPUSH\t%s\n", right->getName().c_str());
             return;
         case _DEC_OPR:
             printf("\tPUSH\t1\n");
             printf("\tSUB\n");
-            printf("\tPOP\t%s\n", right->name.c_str());
-            printf("\tPUSH\t%s\n", right->name.c_str());
+            printf("\tPOP\t%s\n", right->getName().c_str());
+            printf("\tPUSH\t%s\n", right->getName().c_str());
             return;
         case _ADD:
             printf("\tADD\n");

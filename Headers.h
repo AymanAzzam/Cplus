@@ -13,8 +13,11 @@
 #include "Loops/While.h"
 #include "Loops/DoWhile.h"
 #include "expressions/expressions.h"
+#include "JmpStmt.h"
 #include "Variables/Declaration.h"
 #include "Variables/Initialization.h"
-#include "JmpStmt.h"
+#include "Variables/ConstDef.h"
+#include "Variables/MultiVarDef.h"
+#include "Variables/MultiConstInit.h"
 #include "Functions/Function.h"
 #endif //LEX_AND_YACC_HEADERS_H

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "While.h"
+#include "../SymbolTable/SymbolTable.h"
 
 While::While(Node* a, Node* s) {
     cond = a;
@@ -7,6 +8,10 @@ While::While(Node* a, Node* s) {
 }
 
 void While::execute() {
+    SymbolTable* sym = SymbolTable::GetInstance();
+
+    sym->startScope(LOOP);
+
     continueLabel.push(labelNumber++);
     breakLabel.push(labelNumber++);
 
@@ -19,6 +24,11 @@ void While::execute() {
     
     continueLabel.pop();
     breakLabel.pop();
+
+    vector<pair<string, int>> unused = sym->finishScope();
+    for (auto u: unused) {
+        printf("Warning:%i: Variable %s declared but not used.\n", u.second, u.first.c_str());
+    }
 }
 
 While::~While() {

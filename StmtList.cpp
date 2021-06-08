@@ -1,4 +1,5 @@
 #include "StmtList.h"
+    #include <iostream>
 
 StmtList::~StmtList() {
     for (Stmt *stmt:statements)

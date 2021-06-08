@@ -34,13 +34,14 @@ add_executable(
         SubExpr/EpsExpr.h
         SubExpr/ForExpr.cpp
         SubExpr/ForExpr.h
-        "Symbol Table/SymbolTable.cpp"
-        "Symbol Table/SymbolTable.h"
+        SymbolTable/SymbolTable.cpp
+        SymbolTable/SymbolTable.h
         utilities.h
         Variables/Declaration.cpp
         Variables/Declaration.h
         Variables/Initialization.cpp
         Variables/Initialization.h
-#        Test.cpp
-        Functions/Function.cpp Functions/Function.h
+        #        Test.cpp
+        Functions/Function.cpp
+        Functions/Function.h
 )
