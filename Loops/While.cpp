@@ -7,21 +7,18 @@ While::While(Node* a, Node* s) {
 }
 
 void While::execute() {
-    contLabel = labelNumber++;
-    breakLabel = labelNumber++;
+    continueLabel.push(labelNumber++);
+    breakLabel.push(labelNumber++);
 
-    contLabels.push_back(contLabel);
-    breakLabels.push_back(breakLabel);
-
-    printf("lbl%i:\n", contLabel);
+    printf("L%i:\n", continueLabel.top());
     cond->execute();
-    printf("JZ lbl%i\n", breakLabel);
+    printf("JZ L%i\n", breakLabel.top());
     stmt->execute();
-    printf("JMP lbl%i\n", contLabel);
-    printf("lbl%i:\n", breakLabel);
+    printf("JMP L%i\n", continueLabel.top());
+    printf("L%i:\n", breakLabel.top());
     
-    contLabels.pop_back();
-    breakLabels.pop_back();
+    continueLabel.pop();
+    breakLabel.pop();
 }
 
 While::~While() {

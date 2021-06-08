@@ -9,26 +9,20 @@ For::For(Node* a, Node* b, Node* c, Node* s) {
 }
 
 void For::execute() {
-    contLabel = labelNumber++;
-    breakLabel = labelNumber++;
-
-    contLabels.push_back(contLabel);
-    breakLabels.push_back(breakLabel);
+    continueLabel.push(labelNumber++);
+    breakLabel.push(labelNumber++);
 
     f1->execute();
-    printf("lbl%i:\n", contLabel);
+    printf("L%i:\n", continueLabel.top());
     f2->execute();
-    printf("JZ lbl%i\n", breakLabel);
+    printf("JZ L%i\n", breakLabel.top());
     stmt->execute();
     f3->execute();
-    printf("JMP lbl%i\n", contLabel);
-    printf("lbl%i:\n", breakLabel);
+    printf("JMP L%i\n", continueLabel.top());
+    printf("L%i:\n", breakLabel.top());
 
-    contLabels.pop_back();
-    breakLabels.pop_back();
-
-    contLabels.pop_back();
-    breakLabels.pop_back();
+    continueLabel.pop();
+    breakLabel.pop();
 }
 
 For::~For() {
