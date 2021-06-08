@@ -13,5 +13,6 @@ DataType typeConversion(DataType left, DataType right, Operator opr);
 
 void pushToStack(string name, DataType type);
 void popFromStack(string name);
+void convtStack(DataType in, DataType out);
 
 #endif

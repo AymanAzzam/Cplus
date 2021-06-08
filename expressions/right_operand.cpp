@@ -28,12 +28,26 @@ void RightOpNode::checkError() {
     else if(r_ini && r_con && (opr == _INC_OPR || opr == _DEC_OPR))
         printf("\n\nConstant Error in line %d: %s is constant\n\n", \
                 this->line, right->getName().c_str());
+
+    if(opr != _LOGICAL_NOT && right->type != _TYPE_BOOL)
+    {
+        this->type = _TYPE_BOOL; 
+        
+        printf("\n\nWarning: Type mismatch, converting %s to bool", \
+                typeToString(right->type).c_str());
+    }
+    else
+        this->type = right->type;
+    
 }
 
 void RightOpNode::execute() {
     this->checkError();
 
     right->execute();
+    if(this->type != this->right->type)
+        convtStack(this->right->type, this->type);
+    
 
     switch (opr)
     {
@@ -63,15 +77,6 @@ void RightOpNode::execute() {
             return;
     }
 
-    if(opr != _LOGICAL_NOT && right->type != _TYPE_BOOL)
-    {
-        this->type = _TYPE_BOOL; 
-        
-        printf("\n\nWarning: Type mismatch, converting %s to bool", \
-                typeToString(right->type).c_str());
-    }
-    else
-        this->type = right->type;
     printf("\n\nError occured in RightOpNode::execute() in right_operand.cpp\n\n");
 }
 

@@ -42,6 +42,8 @@ void TwoOpNode::checkError() {
             opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
         printf("\n\nConstant Error in line %d: %s is constant\n\n", \
                 this->line, left->getName().c_str());
+    
+    this->type = typeConversion(left->type, right->type, opr);
 }
 
 void TwoOpNode::execute() {
@@ -49,8 +51,13 @@ void TwoOpNode::execute() {
     this->checkError();
 
     left->execute();
+    if(this->type != this->left->type)
+        convtStack(this->left->type, this->type);
+    
     right->execute();
-
+    if(this->type != this->right->type)
+        convtStack(this->right->type, this->type);
+    
     switch (opr)
     {
         // arithmetic operators
@@ -140,8 +147,6 @@ void TwoOpNode::execute() {
             printf("\tlogicOR\n");
             return;
     }
-
-    this->type = typeConversion(left->type, right->type, opr);
     
     printf("\n\nError occured in TwoOpNode::execute() in two_operand.cpp\n\n");
 }

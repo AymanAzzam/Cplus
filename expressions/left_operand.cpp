@@ -28,13 +28,18 @@ void LeftOpNode::checkError() {
     else if(l_ini && l_con)
         printf("\n\nConstant Error in line %d: %s is constant\n\n", \
                 this->line, left->getName().c_str());
+
+    this->type = left->type;
+
 }
 
 void LeftOpNode::execute() {
     this->checkError();
 
     left->execute();
-
+    if(this->type != this->left->type)
+        convtStack(this->left->type, this->type);
+    
     switch (opr)
     {
         case _INC_OPR:
@@ -50,8 +55,6 @@ void LeftOpNode::execute() {
             printf("\tPOP\t%s\n", left->getName().c_str());
             return;
     }
-
-    this->type = left->type;
 
     printf("\n\nError occured in LeftOpNode::execute() in left_operand.cpp\n\n");
 }

@@ -189,3 +189,11 @@ void pushToStack(string name, DataType type) {
 void popFromStack(string name) {
     printf("\tPOP\t%s\n", name.c_str());
 }
+
+
+void convtStack(DataType in, DataType out) {
+    string s_in = typeToString(in);
+    string s_out = typeToString(out);
+    
+    printf("\tCONVT\t%s\t%s", s_in.c_str(), s_out.c_str());
+}
