@@ -8,7 +8,7 @@ Compiler for C++ using Lex and Yacc, that compiles:
 6. break, continue.
 
 ### Team Members
-1. (https://github.com/AymanAzzam)[Ayman Azzam]
-2. (https://github.com/aymanElakwah)[Ayman Elakwah]
-3. (https://github.com/AymanAbdelnaby)[AymanAbdelnaby]
-4. (https://github.com/KhaledMoataz)[Khaled Moataz]
+1. [Ayman Azzam](https://github.com/AymanAzzam)
+2. [Ayman Elakwah](https://github.com/aymanElakwah)
+3. [AymanAbdelnaby](https://github.com/AymanAbdelnaby)
+4. [Khaled Moataz](https://github.com/KhaledMoataz)
