@@ -7,7 +7,7 @@
 
 #include "../Node.h"
 #include "../expressions/expressions.h"
-#include "../StmtList.h"
+#include "../Stmt.h"
 #include "../Variables/Declaration.h"
 
 class FunctionParameters : public Node
@@ -36,11 +36,11 @@ public:
 class Function : public Node
 {
     FunctionHeader *header;
-    StmtList *block;
+    Stmt *block;
     int lineNo;
 
 public:
-    Function(FunctionHeader *hdr, StmtList *blck, int line);
+    Function(FunctionHeader *hdr, Stmt *blck, int line);
     void execute() override;
 };
 

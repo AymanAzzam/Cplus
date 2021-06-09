@@ -42,7 +42,7 @@ void FunctionHeader::execute()
     st->insertFunc(funcIdentifier->getName(), lineNo, type->getType(), parameterList);
 }
 
-Function::Function(FunctionHeader *hdr, StmtList *blck, int line) : header(hdr), block(blck), lineNo(line) {}
+Function::Function(FunctionHeader *hdr, Stmt *blck, int line) : header(hdr), block(blck), lineNo(line) {}
 
 void Function::execute()
 {
