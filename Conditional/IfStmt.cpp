@@ -1,5 +1,6 @@
 #include "IfStmt.h"
 #include "../SymbolTable/SymbolTable.h"
+#include "../utilities.h"
 #include <iostream>
 
 using namespace std;
@@ -16,12 +17,13 @@ void IfStmt::execute() {
     cout << "JZ L" << (label1 = labelNumber++) << endl;
     ifBody->execute();
     if (elseBody) {
-        cout << "JMP L" << (label2 = labelNumber++) << endl;
-        cout << "L" << label1 << ":" << endl;
+        writeAssembly(string_format("\tJMP L%i", (label2 = labelNumber++)));
+        writeAssembly(string_format("L%d:", label1));
         elseBody->execute();
-        cout << "L" << label2 << ":" << endl;
+        writeAssembly(string_format("L%d:", label2));
+
     } else {
-        cout << "L" << label1 << ":" << endl;
+        writeAssembly(string_format("L%d:", label1));
     }
     sym->finishScope();
 }
