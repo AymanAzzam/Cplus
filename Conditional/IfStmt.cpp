@@ -4,7 +4,7 @@
 
 using namespace std;
 
-IfStmt::IfStmt(CondExpr *condExpr, Stmt *ifBody, Stmt *elseBody) :
+IfStmt::IfStmt(Node *condExpr, Stmt *ifBody, Stmt *elseBody) :
         condExpr(condExpr), ifBody(ifBody), elseBody(elseBody) {
 }
 

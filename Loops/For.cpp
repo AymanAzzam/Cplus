@@ -2,7 +2,7 @@
 #include "For.h"
 #include "../SymbolTable/SymbolTable.h"
 
-For::For(Node* a, Node* b, Node* c, Node* s) {
+For::For(Node* a, Node* b, Node* c, Stmt* s) {
     f1 = a;
     f2 = b;
     f3 = c;

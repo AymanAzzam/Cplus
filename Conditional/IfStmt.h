@@ -3,15 +3,15 @@
 
 
 #include "../Stmt.h"
-#include "../SubExpr/CondExpr.h"
+// #include "../SubExpr/CondExpr.h"
 
 class IfStmt : public Stmt {
 public:
-    CondExpr *condExpr;
+    Node *condExpr;
     Stmt *ifBody;
     Stmt *elseBody;
 
-    IfStmt(CondExpr *condExpr, Stmt *ifBody, Stmt *elseBody = nullptr);
+    IfStmt(Node *condExpr, Stmt *ifBody, Stmt *elseBody = nullptr);
     void execute() override;
     ~IfStmt();
 };

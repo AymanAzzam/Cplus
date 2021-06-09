@@ -5,7 +5,7 @@
 #include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include "../StmtList.h"
-#include "../SubExpr/CondExpr.h"
+// #include "../SubExpr/CondExpr.h"
 #include <vector>
 #include <iostream>
 #include "../utilities.h"
@@ -92,11 +92,10 @@ public:
                 continue;
             }
             aCase->evalExp();
-            // TODO push_datatype
-            writeAssembly(string_format("PUSH %d_SWITCH", switchVariable));
-            writeAssembly(string_format("JNZ L%d", (aCase->hasBody() ? labelNumber++ : labelNumber)));
+            cout << "push " << switchVariable << "_switch" << endl;
+            cout << "jnz " << "L" << (aCase->hasBody() ? labelNumber++ : labelNumber) << endl;
         }
-        writeAssembly(string_format("JMP L%d", (defaultLabel != -1 ? defaultLabel : breakLabel.top())));
+        cout << "jmp L" << (defaultLabel != -1 ? defaultLabel : breakLabel.top()) << endl;
         for (Case *aCase:cases) {
             if (!aCase->hasBody()) continue;
             aCase->setCaseLabel(startLabelNumber++);
@@ -113,18 +112,19 @@ public:
 class SwitchStmt : public Stmt {
 private:
     Cases *cases;
-    CondExpr *condExpr;
+    Node *condExpr;
 
+    // CondExpr *condExpr;
     bool validateSwitchExpression() {
         return true;
     }
 
 public:
-    SwitchStmt(CondExpr *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
+    SwitchStmt(Node *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
 
     // empty body switch
-    explicit SwitchStmt(CondExpr *condExpr) : condExpr(condExpr), cases(nullptr) {}
+    explicit SwitchStmt(Node *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
         SymbolTable *sym = SymbolTable::GetInstance();

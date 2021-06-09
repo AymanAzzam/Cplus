@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class MultiVarDef : public Stmt {
+class MultiVarDef : public Node {
     TypeNode* type;
     std::vector<VarDeclare*> definitions;
 public:

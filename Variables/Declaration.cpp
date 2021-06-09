@@ -23,7 +23,7 @@ IdentifierNode *VarDeclare::getName() {
 void VarDeclare::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
 
-    if (sym->insertId(name->getName(), 1, type->getType(), false, false)) {
+    if (sym->insertId(name->getName(), lineno, type->getType(), false, false)) {
         /*no quadruples produced*/;
     }
     else {
