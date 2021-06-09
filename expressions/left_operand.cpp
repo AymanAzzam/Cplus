@@ -1,10 +1,9 @@
 #include "expressions.h"
-string oprToString(Operator opr);
-string typeToString(DataType type);
 
-LeftOpNode::LeftOpNode(ExprNode* l, Operator o): ExprNode(){
-    left = l;
-    opr = o;
+LeftOpNode::LeftOpNode(ExprNode* left, Operator opr, int line): ExprNode(){
+    this->left = left;
+    this->opr = opr;
+    this-> line = line;
 }
 
 void LeftOpNode::checkError() {
@@ -21,35 +20,41 @@ void LeftOpNode::checkError() {
     }
     
     if(!dec)
-        printf("\n\nError: undeclared variable %s\n\n", getName().c_str());
+        printf("\n\nError in line %d: undeclared variable %s\n\n", \
+                this->line, getName().c_str());
     else if(!l_ini)
-        printf("\n\nError: uninitialized variable %s\n\n", left->getName().c_str());
+        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
+                this->line, left->getName().c_str());
     else if(l_ini && l_con)
-        printf("\n\nConstant Error: %s is constant\n\n", left->getName().c_str());
+        printf("\n\nConstant Error in line %d: %s is constant\n\n", \
+                this->line, left->getName().c_str());
+
+    this->type = left->type;
+
 }
 
 void LeftOpNode::execute() {
     this->checkError();
 
     left->execute();
-
+    if(this->type != this->left->type)
+        convtStack(this->left->type, this->type);
+    
     switch (opr)
     {
         case _INC_OPR:
-            printf("\tPUSH\t1\n");
+            pushToStack("1", _TYPE_INT);
             left->execute();
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _DEC_OPR:
-            printf("\tPUSH\tx\t1\n");
+            pushToStack("1", _TYPE_INT);
             left->execute();
             printf("\tSUB\n");
             printf("\tPOP\t%s\n", left->getName().c_str());
             return;
     }
-
-    this->type = left->type;
 
     printf("\n\nError occured in LeftOpNode::execute() in left_operand.cpp\n\n");
 }
