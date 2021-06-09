@@ -29,7 +29,7 @@ void RightOpNode::checkError() {
         printf("\n\nConstant Error in line %d: %s is constant\n\n", \
                 this->line, right->getName().c_str());
 
-    if(opr != _LOGICAL_NOT && right->type != _TYPE_BOOL)
+    if(opr == _LOGICAL_NOT && right->type != _TYPE_BOOL)
     {
         this->type = _TYPE_BOOL; 
         
@@ -47,7 +47,6 @@ void RightOpNode::execute() {
     right->execute();
     if(this->type != this->right->type)
         convtStack(this->right->type, this->type);
-    
 
     switch (opr)
     {
