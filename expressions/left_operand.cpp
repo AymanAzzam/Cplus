@@ -27,7 +27,7 @@ void LeftOpNode::execute() {
 
     left->execute();
     if(getType() != left->getType())
-        convtStack(left->getType(), getType());
+        convtStack(left->getType(), type);
     
     updateSymbolTable(left->getName(), true, true);
 
