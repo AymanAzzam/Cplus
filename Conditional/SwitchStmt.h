@@ -10,9 +10,6 @@
 #include "../utilities.h"
 #include "../constants.h"
 
-// TODO check switch expression type
-
-
 using namespace std;
 
 class Case : public Node {
