@@ -19,7 +19,7 @@ void LeftOpNode::checkError() {
         l_dec = symbolTable->lookupId(casted->getName(), left->type, l_ini, l_con); 
     }
     
-    if(!dec)
+    if(!l_dec)
         printf("\n\nError in line %d: undeclared variable %s\n\n", \
                 this->line, getName().c_str());
     else if(!l_ini)
