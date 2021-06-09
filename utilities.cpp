@@ -182,6 +182,25 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
     return out;
 };
 
+void pushToStack(string name, DataType type) {
+    string t = typeToString(type);
+
+    printf("\tPUSH\t%s\t%s\n", t.c_str(), name.c_str());
+}
+
+
+void popFromStack(string name) {
+    printf("\tPOP\t%s\n", name.c_str());
+}
+
+
+void convtStack(DataType in, DataType out) {
+    string s_in = typeToString(in);
+    string s_out = typeToString(out);
+
+    printf("\tCONVT\t%s\t%s", s_in.c_str(), s_out.c_str());
+}
+
 template<typename ... Args>
 string string_format( const std::string& format, Args ... args )
 {

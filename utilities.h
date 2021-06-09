@@ -14,9 +14,15 @@ string typeToString(DataType type);
 
 DataType typeConversion(DataType left, DataType right, Operator opr);
 
-void writeAssembly(const string& s);
+void pushToStack(string name, DataType type);
 
-void log(const string& s);
+void popFromStack(string name);
+
+void convtStack(DataType in, DataType out);
+
+void writeAssembly(const string &s);
+
+void log(const string &s);
 
 template<typename ... Args>
 string string_format(const std::string &format, Args ... args);

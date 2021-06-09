@@ -1,11 +1,10 @@
 #include "expressions.h"
-#include "../utilities.h"
 
 
-TwoOpNode::TwoOpNode(ExprNode* l, ExprNode* r, Operator o, int line): ExprNode() {
-    left = l;
-    right = r;
-    opr = o;
+TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): ExprNode() {
+    this->left = left;
+    this->right = right;
+    this->opr = opr;
     this->line = line;
 }
 
@@ -43,6 +42,8 @@ void TwoOpNode::checkError() {
             opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
         printf("\n\nConstant Error in line %d: %s is constant\n\n", \
                 this->line, left->getName().c_str());
+    
+    this->type = typeConversion(left->type, right->type, opr);
 }
 
 void TwoOpNode::execute() {
@@ -50,8 +51,13 @@ void TwoOpNode::execute() {
     this->checkError();
 
     left->execute();
+    if(this->type != this->left->type)
+        convtStack(this->left->type, this->type);
+    
     right->execute();
-
+    if(this->type != this->right->type)
+        convtStack(this->right->type, this->type);
+    
     switch (opr)
     {
         // arithmetic operators
@@ -74,26 +80,26 @@ void TwoOpNode::execute() {
         // assignment operators
         case _MOD_EQ:
             printf("\tREM\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _MULT_EQ:
             printf("\tMUL\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _DIV_EQ:
             printf("\tDIV\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _MINUS_EQ:
             printf("\tSUB\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _PLUS_EQ:
             printf("\tADD\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
         case _EQ:
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
 
         // comparison operators
@@ -141,8 +147,6 @@ void TwoOpNode::execute() {
             printf("\tlogicOR\n");
             return;
     }
-
-    this->type = typeConversion(left->type, right->type, opr);
     
     printf("\n\nError occured in TwoOpNode::execute() in two_operand.cpp\n\n");
 }

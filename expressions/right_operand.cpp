@@ -1,10 +1,8 @@
 #include "expressions.h"
-string oprToString(Operator opr);
-string typeToString(DataType type);
 
-RightOpNode::RightOpNode(ExprNode* r, Operator o, int line): ExprNode(){
-    right = r;
-    opr = o;
+RightOpNode::RightOpNode(ExprNode* right, Operator opr, int line): ExprNode(){
+    this->right = right;
+    this->opr = opr;
     this->line = line;
 }
 
@@ -30,40 +28,6 @@ void RightOpNode::checkError() {
     else if(r_ini && r_con && (opr == _INC_OPR || opr == _DEC_OPR))
         printf("\n\nConstant Error in line %d: %s is constant\n\n", \
                 this->line, right->getName().c_str());
-}
-
-void RightOpNode::execute() {
-    this->checkError();
-
-    right->execute();
-
-    switch (opr)
-    {
-        case _BIT_NOT:
-            printf("\tNOT\n");
-            return;
-        case _LOGICAL_NOT:
-            printf("\tlogicNOT\n");
-            return;
-        case _INC_OPR:
-            printf("\tPUSH\t1\n");
-            printf("\tADD\n");
-            printf("\tPOP\t%s\n", right->getName().c_str());
-            printf("\tPUSH\t%s\n", right->getName().c_str());
-            return;
-        case _DEC_OPR:
-            printf("\tPUSH\t1\n");
-            printf("\tSUB\n");
-            printf("\tPOP\t%s\n", right->getName().c_str());
-            printf("\tPUSH\t%s\n", right->getName().c_str());
-            return;
-        case _ADD:
-            printf("\tADD\n");
-            return;
-        case _SUB:
-            printf("\tSUB\n");
-            return;
-    }
 
     if(opr != _LOGICAL_NOT && right->type != _TYPE_BOOL)
     {
@@ -74,6 +38,45 @@ void RightOpNode::execute() {
     }
     else
         this->type = right->type;
+    
+}
+
+void RightOpNode::execute() {
+    this->checkError();
+
+    right->execute();
+    if(this->type != this->right->type)
+        convtStack(this->right->type, this->type);
+    
+
+    switch (opr)
+    {
+        case _BIT_NOT:
+            printf("\tNOT\n");
+            return;
+        case _LOGICAL_NOT:
+            printf("\tlogicNOT\n");
+            return;
+        case _INC_OPR:
+            pushToStack("1", _TYPE_INT);
+            printf("\tADD\n");
+            popFromStack(right->getName());
+            printf("\tPUSH\t%s\n", right->getName().c_str());
+            return;
+        case _DEC_OPR:
+            pushToStack("1", _TYPE_INT);
+            printf("\tSUB\n");
+            popFromStack(right->getName());
+            pushToStack(right->getName(), right->type);
+            return;
+        case _ADD:
+            printf("\tADD\n");
+            return;
+        case _SUB:
+            printf("\tSUB\n");
+            return;
+    }
+
     printf("\n\nError occured in RightOpNode::execute() in right_operand.cpp\n\n");
 }
 
