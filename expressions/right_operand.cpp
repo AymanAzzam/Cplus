@@ -16,6 +16,8 @@ DataType RightOpNode::getType() {
     }
     else
         this->type = right->getType();
+
+    return type;
 }
 
 bool RightOpNode::checkError(bool check_ini, bool check_cons) {    
@@ -29,7 +31,8 @@ bool RightOpNode::checkError(bool check_ini, bool check_cons) {
 
 
 void RightOpNode::execute() {
-    this->checkError();
+    if(this->checkError())
+        return;
 
     right->execute();
     if(getType() != right->getType())

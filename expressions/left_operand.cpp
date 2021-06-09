@@ -8,6 +8,8 @@ LeftOpNode::LeftOpNode(ExprNode* left, Operator opr, int line): ExprNode(){
 
 DataType LeftOpNode::getType() {
     this->type = left->getType();
+
+    return type;
 }
 
 bool LeftOpNode::checkError(bool check_ini, bool check_cons) {   
@@ -20,7 +22,8 @@ bool LeftOpNode::checkError(bool check_ini, bool check_cons) {
 
 
 void LeftOpNode::execute() {
-    this->checkError();
+    if(this->checkError())
+        return;
 
     left->execute();
     if(getType() != left->getType())

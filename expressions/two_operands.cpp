@@ -10,6 +10,8 @@ TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): E
 
 DataType TwoOpNode::getType() {
     this->type = typeConversion(left->getType(), right->getType(), opr);
+    
+    return type;
 }
 
 bool TwoOpNode::checkError(bool check_ini, bool check_cons) {
@@ -27,7 +29,8 @@ bool TwoOpNode::checkError(bool check_ini, bool check_cons) {
 
 void TwoOpNode::execute() {
 
-    this->checkError();
+    if(this->checkError())
+        return;
 
     LeftOpNode* right_casted = dynamic_cast<LeftOpNode*>(right);
     if(right_casted != NULL)
