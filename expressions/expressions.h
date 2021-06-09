@@ -96,7 +96,7 @@ class IdentifierNode: public ExprNode {
             bool ini, con;
             
             symbolTable->lookupId(name, type, ini, con);
-
+            
             return type;
         }
 
@@ -123,6 +123,9 @@ class IdentifierNode: public ExprNode {
         };
 
         virtual void execute(){
+            if(checkError())
+                return;
+                
             pushToStack(name, getType());
         }
 };
