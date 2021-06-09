@@ -9,7 +9,10 @@ TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): E
 }
 
 DataType TwoOpNode::getType() {
-    this->type = typeConversion(left->getType(), right->getType(), opr);
+    if(isAssignmentOp(opr))
+        this->type = left->getType();
+    else
+        this->type = typeConversion(left->getType(), right->getType(), opr);
     
     return type;
 }
