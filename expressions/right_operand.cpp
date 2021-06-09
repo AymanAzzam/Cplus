@@ -13,6 +13,7 @@ DataType RightOpNode::getType() {
         
         log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
                 typeToString(right->getType()).c_str()));
+        convtStack(right->getType(), _TYPE_BOOL);
     }
     else
         this->type = right->getType();
