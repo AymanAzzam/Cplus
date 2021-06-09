@@ -3,7 +3,6 @@
 **/**/*.tab.h
 *.tab.*
 lex.yy.*
-*.exe
 **/**/*.out
 Phase 1 - Deliverables.zip
 /commands/
@@ -16,3 +15,12 @@ SymbolTable/Makefile
 .vscode
 CMakeListHelper.py
 build/
+Executables/*.txt
+Executables/source.cp
+GUI/.idea/
+GUI/out/
+GUI/META-INF/
+GUI/GUI.iml
+*.class
+GUI/*.txt
+/GUI/src/META-INF/MANIFEST.MF
