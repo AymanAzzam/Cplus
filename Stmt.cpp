@@ -1,13 +1,15 @@
 #include "Stmt.h"
 #include <iostream>
+
 using namespace std;
 
-Stmt::Stmt(Node* s) {
+Stmt::Stmt(Node *s) {
     stmt = s;
 }
 
 void Stmt::execute() {
-    stmt->execute();
+    if (stmt)
+        stmt->execute();
 }
 
 Stmt::~Stmt() {

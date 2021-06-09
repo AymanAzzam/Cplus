@@ -144,7 +144,7 @@ stmt:   multi_var_definition ';'        {$$ = new Stmt($1);}
     |   if_stmt		{$$ = $1;}
     |   switch_stmt	{$$ = $1;}
     |   block		{$$ = $1;}
-    |   ';'		{$$ = nullptr;}
+    |   ';'		{$$ = new Stmt();}
     ;
 
 block:  '{' stmt_list '}'	{$$ = $2;}
