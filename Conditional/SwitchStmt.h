@@ -11,6 +11,8 @@
 
 // TODO check switch expression type
 // TODO check case expression type
+// TODO make sure it is a constant expression
+
 
 using namespace std;
 
@@ -20,7 +22,6 @@ private:
     ExprNode *expr;
     StmtList *stmtList;
 public:
-//    TODO make sure it is a constant expression
     Case(ExprNode *expr, StmtList *stmtList)
             : expr(expr), stmtList(stmtList) {}
 
@@ -111,6 +112,9 @@ class SwitchStmt : public Stmt {
 private:
     Cases *cases;
     CondExpr *condExpr;
+    bool validateSwitchExpression() {
+        return true;
+    }
 public:
     SwitchStmt(CondExpr *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
@@ -119,7 +123,9 @@ public:
     explicit SwitchStmt(CondExpr *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
-        cout << "#ex switch" << endl;
+        SymbolTable* sym = SymbolTable::GetInstance();
+        sym->startScope(_SWITCH);
+        validateSwitchExpression();
         condExpr->execute();
         int switchVariable = labelNumber++;
         cout << "pop " << switchVariable << "_switch" << endl;
@@ -129,6 +135,7 @@ public:
         cases->execute();
         cout << "L" << switchBreakLabel << ":" << endl;
         breakLabel.pop();
+        sym->finishScope();
     }
 
     ~SwitchStmt() {
