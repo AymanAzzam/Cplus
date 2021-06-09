@@ -33,7 +33,7 @@ void RightOpNode::checkError() {
     {
         this->type = _TYPE_BOOL; 
         
-        printf("\n\nWarning: Type mismatch, converting %s to bool", \
+        printf("\n\nWarning: Type mismatch, converting %s to bool\n\n", \
                 typeToString(right->type).c_str());
     }
     else

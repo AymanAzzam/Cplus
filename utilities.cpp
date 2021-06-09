@@ -154,11 +154,11 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
     if(isLogicalOpr(opr))
     {
         if(left != _TYPE_BOOL)
-            printf("\n\nWarning: Type mismatch, converting %s to bool", \
+            printf("\n\nWarning: Type mismatch, converting %s to bool\n\n", \
                 left_s.c_str());
         
         if(right != _TYPE_BOOL)
-            printf("\n\nWarning: Type mismatch, converting %s to bool", \
+            printf("\n\nWarning: Type mismatch, converting %s to bool\n\n", \
                 right_s.c_str());
                 
         return _TYPE_BOOL;
@@ -170,11 +170,11 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
             out = right;
 
     if(out == right && right != left)
-        printf("\n\nWarning: Type mismatch, converting %s to %s", \
+        printf("\n\nWarning: Type mismatch, converting %s to %s\n\n", \
                 left_s.c_str(), right_s.c_str());
 
     if(out == left && right != left)
-        printf("\n\nWarning: Type mismatch, converting %s to %s", \
+        printf("\n\nWarning: Type mismatch, converting %s to %s\n\n", \
                 right_s.c_str(), left_s.c_str());
 
     return out;
