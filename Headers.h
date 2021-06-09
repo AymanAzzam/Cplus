@@ -20,4 +20,5 @@
 #include "Variables/MultiVarDef.h"
 #include "Variables/MultiConstInit.h"
 #include "Functions/Function.h"
+#include "SymbolTable/SymbolTable.h"
 #endif //LEX_AND_YACC_HEADERS_H

@@ -62,10 +62,10 @@ void RightOpNode::execute() {
             pushToStack(right->getName(), right->getType());
             return;
         case _ADD:
-            writeAssembly(string_format("\tADD\n"));
+            // writeAssembly(string_format("\tADD\n"));
             return;
         case _SUB:
-            writeAssembly(string_format("\tSUB\n"));
+            writeAssembly(string_format("\tNEG\n"));
             return;
     }
 
