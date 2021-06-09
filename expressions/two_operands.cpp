@@ -50,14 +50,17 @@ void TwoOpNode::execute() {
 
     this->checkError();
 
-    left->execute();
-    if(this->type != this->left->type)
-        convtStack(this->left->type, this->type);
-    
     right->execute();
     if(this->type != this->right->type)
         convtStack(this->right->type, this->type);
     
+    if(opr != _EQ)
+    {
+        left->execute();
+        if(this->type != this->left->type)
+            convtStack(this->left->type, this->type);
+    }
+
     switch (opr)
     {
         // arithmetic operators
