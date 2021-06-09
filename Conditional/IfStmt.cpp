@@ -1,4 +1,5 @@
 #include "IfStmt.h"
+#include "../SymbolTable/SymbolTable.h"
 #include <iostream>
 
 using namespace std;
@@ -8,18 +9,21 @@ IfStmt::IfStmt(Node *condExpr, Stmt *ifBody, Stmt *elseBody) :
 }
 
 void IfStmt::execute() {
+    SymbolTable* sym = SymbolTable::GetInstance();
+    sym->startScope(BLOCK);
     condExpr->execute();
     int label1, label2;
-    cout << "jz L" << (label1 = labelNumber++) << endl;
+    cout << "JZ L" << (label1 = labelNumber++) << endl;
     ifBody->execute();
     if (elseBody) {
-        cout << "jmp L" << (label2 = labelNumber++) << endl;
+        cout << "JMP L" << (label2 = labelNumber++) << endl;
         cout << "L" << label1 << ":" << endl;
         elseBody->execute();
         cout << "L" << label2 << ":" << endl;
     } else {
         cout << "L" << label1 << ":" << endl;
     }
+    sym->finishScope();
 }
 
 IfStmt::~IfStmt() {

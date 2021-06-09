@@ -200,8 +200,8 @@ default_with_body:
 
 // master expression
 expr:     '(' expr ')'                          {$$ = $2;}
-        |       ADD expr %prec U_PLUS           {Operator o = _ADD; $$ = new RightOpNode($2, o);}
-        |       SUB expr %prec U_MINUS          {Operator o = _SUB; $$ = new RightOpNode($2, o);}
+        |       ADD expr %prec U_PLUS           {Operator o = _ADD; $$ = new RightOpNode($2, o, yylineno);}
+        |       SUB expr %prec U_MINUS          {Operator o = _SUB; $$ = new RightOpNode($2, o, yylineno);}
         |       single_opr_expr
         |       logic_expr
         |       bit_expr
@@ -247,18 +247,18 @@ multi_const_init: multi_const_init additional_const_init                {$$ = $1
                 ;
 
  /* arithmetic operators */
-arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o);}
-                |   expr SUB expr               {Operator o = _SUB; $$ = new TwoOpNode($1, $3, o);}
-                |   expr MUL expr               {Operator o = _MUL; $$ = new TwoOpNode($1, $3, o);}
-                |   expr DIV expr               {Operator o = _DIV; $$ = new TwoOpNode($1, $3, o);}
-                |   expr REM expr               {Operator o = _REM; $$ = new TwoOpNode($1, $3, o);}
+arithmetic_expr:    expr ADD expr               {Operator o = _ADD; $$ = new TwoOpNode($1, $3, o, yylineno);}
+                |   expr SUB expr               {Operator o = _SUB; $$ = new TwoOpNode($1, $3, o, yylineno);}
+                |   expr MUL expr               {Operator o = _MUL; $$ = new TwoOpNode($1, $3, o, yylineno);}
+                |   expr DIV expr               {Operator o = _DIV; $$ = new TwoOpNode($1, $3, o, yylineno);}
+                |   expr REM expr               {Operator o = _REM; $$ = new TwoOpNode($1, $3, o, yylineno);}
                 ;
 
  /* single operators */
-single_opr_expr: INC_OPR identifier %prec PRE_SNGL      {Operator o = _INC_OPR; $$ = new RightOpNode($2, o);}
-                | identifier INC_OPR %prec POST_SNGL    {Operator o = _INC_OPR; $$ = new LeftOpNode($1, o);}
-                | DEC_OPR identifier %prec PRE_SNGL     {Operator o = _DEC_OPR; $$ = new RightOpNode($2, o);}
-                | identifier DEC_OPR %prec POST_SNGL    {Operator o = _DEC_OPR; $$ = new LeftOpNode($1, o);}
+single_opr_expr: INC_OPR identifier %prec PRE_SNGL      {Operator o = _INC_OPR; $$ = new RightOpNode($2, o, yylineno);}
+                | identifier INC_OPR %prec POST_SNGL    {Operator o = _INC_OPR; $$ = new LeftOpNode($1, o, yylineno);}
+                | DEC_OPR identifier %prec PRE_SNGL     {Operator o = _DEC_OPR; $$ = new RightOpNode($2, o, yylineno);}
+                | identifier DEC_OPR %prec POST_SNGL    {Operator o = _DEC_OPR; $$ = new LeftOpNode($1, o, yylineno);}
                 ;
 
 literal: INTEGER                            {DataType t = _TYPE_INT; $$ = new ValueNode(to_string($1), t);}
@@ -274,33 +274,33 @@ data_type: TYPE_INT                         {DataType t = _TYPE_INT; $$ = new Ty
         ;
 
 // logical operators
-logic_expr:     expr LOGICAL_AND expr       {Operator o = _LOGICAL_AND; $$ = new TwoOpNode($1, $3, o);}
-        |       expr LOGICAL_OR expr        {Operator o = _LOGICAL_OR; $$ = new TwoOpNode($1, $3, o);}
-        |       LOGICAL_NOT expr            {Operator o = _LOGICAL_NOT; $$ = new RightOpNode($2, o);}
+logic_expr:     expr LOGICAL_AND expr       {Operator o = _LOGICAL_AND; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr LOGICAL_OR expr        {Operator o = _LOGICAL_OR; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       LOGICAL_NOT expr            {Operator o = _LOGICAL_NOT; $$ = new RightOpNode($2, o, yylineno);}
 
 // bitwise operators
-bit_expr:       expr BIT_AND expr           {Operator o = _BIT_AND; $$ = new TwoOpNode($1, $3, o);}
-        |       expr BIT_OR expr            {Operator o = _BIT_OR; $$ = new TwoOpNode($1, $3, o);}
-        |       expr BIT_XOR expr           {Operator o = _BIT_XOR; $$ = new TwoOpNode($1, $3, o);}
-        |       BIT_NOT expr                {Operator o = _BIT_NOT; $$ = new RightOpNode($2, o);}
-        |       expr SHR expr               {Operator o = _SHR; $$ = new TwoOpNode($1, $3, o);}
-        |       expr SHL expr               {Operator o = _SHL; $$ = new TwoOpNode($1, $3, o);}
+bit_expr:       expr BIT_AND expr           {Operator o = _BIT_AND; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr BIT_OR expr            {Operator o = _BIT_OR; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr BIT_XOR expr           {Operator o = _BIT_XOR; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       BIT_NOT expr                {Operator o = _BIT_NOT; $$ = new RightOpNode($2, o, yylineno);}
+        |       expr SHR expr               {Operator o = _SHR; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr SHL expr               {Operator o = _SHL; $$ = new TwoOpNode($1, $3, o, yylineno);}
 
 // comparison operators
-rel_expr:       expr IS_EQ expr             {Operator o = _IS_EQ; $$ = new TwoOpNode($1, $3, o);}
-        |       expr NOT_EQ expr            {Operator o = _NOT_EQ; $$ = new TwoOpNode($1, $3, o);}
-        |       expr GT expr                {Operator o = _GT; $$ = new TwoOpNode($1, $3, o);}
-        |       expr LT expr                {Operator o = _LT; $$ = new TwoOpNode($1, $3, o);}
-        |       expr GTE expr               {Operator o = _GTE; $$ = new TwoOpNode($1, $3, o);}
-        |       expr LTE expr               {Operator o = _LTE; $$ = new TwoOpNode($1, $3, o);}
+rel_expr:       expr IS_EQ expr             {Operator o = _IS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr NOT_EQ expr            {Operator o = _NOT_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr GT expr                {Operator o = _GT; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr LT expr                {Operator o = _LT; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr GTE expr               {Operator o = _GTE; $$ = new TwoOpNode($1, $3, o, yylineno);}
+        |       expr LTE expr               {Operator o = _LTE; $$ = new TwoOpNode($1, $3, o, yylineno);}
 
 // assignment operators
-assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNode($1, $3, o);}
-	|	expr PLUS_EQ expr           {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o);}
-	|       expr MINUS_EQ expr          {Operator o = _MINUS_EQ; $$ = new TwoOpNode($1, $3, o);}
-	|	expr DIV_EQ expr            {Operator o = _DIV_EQ; $$ = new TwoOpNode($1, $3, o);}
-	|	expr MULT_EQ expr           {Operator o = _MULT_EQ; $$ = new TwoOpNode($1, $3, o);}
-	|	expr MOD_EQ expr            {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o);}
+assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	expr PLUS_EQ expr           {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|       expr MINUS_EQ expr          {Operator o = _MINUS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	expr DIV_EQ expr            {Operator o = _DIV_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	expr MULT_EQ expr           {Operator o = _MULT_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	expr MOD_EQ expr            {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
         ;
 
 cond_expr:   expr		{$$ = $1;}
@@ -310,11 +310,11 @@ cond_expr:   expr		{$$ = $1;}
 
 // functions
 
-func:	func_header block	{$$ = new Function($1, $2);}
+func:	func_header block	{$$ = new Function($1, $2, yylineno);}
     ;
 
-func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4);}
-        |       data_type identifier '(' paramater ')'	{$$ = new FunctionHeader($1, $2, $4);}
+func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4, yylineno);}
+        |       data_type identifier '(' paramater ')'	{$$ = new FunctionHeader($1, $2, $4, yylineno);}
         ;
 
 paramater:      /* epsilon */	{$$ = nullptr;}
@@ -325,7 +325,7 @@ parameter_decl: 	parameter_decl ',' variable_declaration	{$$ = $1; $$->push($3);
 		|	variable_declaration			{$$ = new FunctionParameters($1);}
 		;
 
-func_call:      identifier '(' args ')'	{$$ = new FunctionCall($1, $3);}
+func_call:      identifier '(' args ')'	{$$ = new FunctionCall($1, $3, yylineno);}
         ;
 
 identifier:     IDENTIFIER              {$$ = new IdentifierNode($1);}
@@ -339,7 +339,7 @@ args_ext:       expr			{$$ = new FunctionArguments($1);}
         |       args_ext ',' expr	{$$ = $1; $$->push($3);}
         ;
 
-return_stmt:    RETURN eps_expr		{$$ = new FunctionReturn($2);}
+return_stmt:    RETURN eps_expr		{$$ = new FunctionReturn($2, yylineno);}
         ;
 
 

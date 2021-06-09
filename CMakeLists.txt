@@ -3,8 +3,11 @@ project(Lex_and_Yacc)
 
 set(CMAKE_CXX_STANDARD 14)
 
+#add_executable(test Test.cpp)
+
 add_executable(
-        test Conditional/IfStmt.cpp
+        test
+        Conditional/IfStmt.cpp
         Conditional/IfStmt.h
         Conditional/SwitchStmt.h
         constants.h
@@ -37,11 +40,17 @@ add_executable(
         SymbolTable/SymbolTable.cpp
         SymbolTable/SymbolTable.h
         utilities.h
+        utilities.cpp
         Variables/Declaration.cpp
         Variables/Declaration.h
         Variables/Initialization.cpp
         Variables/Initialization.h
-        #        Test.cpp
+        Variables/ConstDef.h
+        Variables/ConstDef.cpp
+        Variables/MultiConstInit.h
+        Variables/MultiConstInit.cpp
+        Variables/MultiVarDef.h
+        Variables/MultiVarDef.cpp
         Functions/Function.cpp
         Functions/Function.h
 )

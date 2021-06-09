@@ -12,9 +12,9 @@
 
 class FunctionParameters : public Node
 {
+public:
     vector<VarDeclare *> parameters;
 
-public:
     explicit FunctionParameters(VarDeclare *baseParam);
     FunctionParameters *push(VarDeclare *otherParam);
     void execute() override;
@@ -23,29 +23,32 @@ public:
 class FunctionHeader : public Node
 {
     TypeNode *type;
-    IdentifierNode *funcIdentifier;
     FunctionParameters *parameter;
+    int lineNo;
 
 public:
-    FunctionHeader(TypeNode *tnode, IdentifierNode *id, FunctionParameters *param);
+    FunctionHeader(TypeNode *tnode, IdentifierNode *id, FunctionParameters *param, int line);
     void execute() override;
+
+    IdentifierNode *funcIdentifier;
 };
 
 class Function : public Node
 {
     FunctionHeader *header;
     StmtList *block;
+    int lineNo;
 
 public:
-    Function(FunctionHeader *hdr, StmtList *blck);
+    Function(FunctionHeader *hdr, StmtList *blck, int line);
     void execute() override;
 };
 
 class FunctionArguments : public Node
 {
+public:
     vector<ExprNode *> expressions;
 
-public:
     FunctionArguments(ExprNode *baseExpr);
     FunctionArguments *push(ExprNode *otherExpr);
     void execute() override;
@@ -55,17 +58,21 @@ class FunctionCall : public ExprNode
 {
     IdentifierNode *funcIdentifier;
     FunctionArguments *funcArgs;
+    int lineNo;
 
 public:
-    FunctionCall(IdentifierNode *fId, FunctionArguments *args);
+    FunctionCall(IdentifierNode *fId, FunctionArguments *args, int line);
     string getName() override;
     void execute() override;
 };
 
-class FunctionReturn : public Node
+class FunctionReturn : public Stmt
 {
+    ExprNode* retExpr;
+    int lineNo;
+
 public:
-    FunctionReturn(ExprNode *ret);
+    FunctionReturn(ExprNode *ret, int line);
     void execute() override;
 };
 
