@@ -19,7 +19,7 @@ void FunctionParameters::execute()
     {
         DataType type = param->getType();
         string name = param->getName();
-        printf("POP %s %s\n", typeToString(type).c_str(), name.c_str());
+        writeAssembly(string_format("POP %s %s\n", typeToString(type).c_str(), name.c_str()));
     }
 }
 
@@ -28,15 +28,15 @@ FunctionHeader::FunctionHeader(TypeNode *tnode, IdentifierNode *id, FunctionPara
 
 void FunctionHeader::execute()
 {
-    printf("PROC %s\n", funcIdentifier->getName().c_str());
+    writeAssembly(string_format("PROC %s\n", funcIdentifier->getName().c_str()));
     vector<pair<string, DataType>> parameterList;
     if (parameter)
     {
         parameter->execute();
-        for (VarDeclare *var : parameter->parameters)
-        {
-            parameterList.emplace_back(var->getName(), var->getType());
-        }
+        vector<VarDeclare *> &parameters = parameter->parameters;
+        // TODO @KhaledMoataz Check this
+        for (auto it= parameters.rbegin(); it != parameters.rend(); it++)
+            parameterList.emplace_back((*it)->getName(), (*it)->getType());
     }
     SymbolTable *st = SymbolTable::GetInstance();
     st->insertFunc(funcIdentifier->getName(), lineNo, type->getType(), parameterList);
@@ -52,7 +52,7 @@ void Function::execute()
 
     SymbolTable *st = SymbolTable::GetInstance();
     st->finishScope();
-    printf("ENDP %s\n", header->funcIdentifier->getName().c_str());
+    writeAssembly(string_format("ENDP %s\n", header->funcIdentifier->getName().c_str()));
 }
 
 FunctionCall::FunctionCall(IdentifierNode *fId, FunctionArguments *args, int line)
@@ -76,8 +76,8 @@ void FunctionCall::execute()
         type = parameterList[0];
         if (funcArgs != nullptr && funcArgs->expressions.size() != parameterList.size() - 1)
         {
-            printf("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.\n",
-                   lineNo, parameterList.size(), funcArgs->expressions.size());
+            log(string_format("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.\n",
+                   lineNo, parameterList.size(), funcArgs->expressions.size()));
         }
         else
         {
@@ -86,12 +86,12 @@ void FunctionCall::execute()
                 DataType curr = funcArgs->expressions[i]->type, expected = parameterList[i + 1];
                 if (curr != expected)
                 {
-                    printf("Warning:%i: conversion from type %s to %s.\n",
-                           lineNo, typeToString(curr).c_str(), typeToString(expected).c_str());
+                    log(string_format("Warning:%i: conversion from type %s to %s.\n",
+                           lineNo, typeToString(curr).c_str(), typeToString(expected).c_str()));
                     convtStack(curr, expected);
                 }
             }
-            printf("CALL %s\n", funcIdentifier->getName().c_str());
+            writeAssembly(string_format("CALL %s\n", funcIdentifier->getName().c_str()));
         }
     }
 }
@@ -130,11 +130,12 @@ void FunctionReturn::execute()
     if (!st->canReturn(expType))
     {
         if (expType == _TYPE_VOID)
-            printf("Error:%i: Can't return void in %s function.\n", lineNo, typeToString(expType).c_str());
+            log(string_format("Error:%i: Can't return void in %s function.\n", lineNo, typeToString(expType).c_str()));
         else if (st->canReturn(_TYPE_VOID))
-            printf("Error:%i: Can't return %s expression in void function.\n", lineNo, typeToString(expType).c_str());
+            log(string_format("Error:%i: Can't return %s expression in void function.\n", lineNo,
+                              typeToString(expType).c_str()));
         else
-            printf("Warning:%i: Return type mismatch.\n", lineNo);
+            log(string_format("Warning:%i: Return type mismatch.\n", lineNo));
     }
-    printf("RET\n");
+    writeAssembly(string_format("RET\n"));
 }
