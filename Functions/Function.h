@@ -58,11 +58,13 @@ class FunctionCall : public ExprNode
 {
     IdentifierNode *funcIdentifier;
     FunctionArguments *funcArgs;
+    DataType type;
     int lineNo;
 
 public:
     FunctionCall(IdentifierNode *fId, FunctionArguments *args, int line);
     string getName() override;
+    DataType getType() override;
     void execute() override;
 };
 
