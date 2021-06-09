@@ -363,7 +363,7 @@ void yyerror(const char *s) {
 
 int main(int argc, char** argv) {
     yyin = fopen("in.txt", "r");
-    yydebug = 1;
+    yydebug = 0;
     yyparse();
     return 0;
 }

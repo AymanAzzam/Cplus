@@ -23,7 +23,7 @@ class ExprNode: public Node {
             this->type = type; 
         }
 
-        virtual DataType getType(){};
+        virtual DataType getType(){ return type; };
 
         virtual bool checkError(bool check_ini = true, bool check_cons = false) {return false;};
 
