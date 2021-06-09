@@ -17,7 +17,7 @@ void VarInit::execute() {
                         initType = typeToString(getType());
             log(string_format("\nWarning:%i: Type mismatch, converting %s to %s.\n",
                                 lineno, exprType.c_str(), initType.c_str()));
-            writeAssembly(string_format("\tCONVT\t%s\t%s\n", exprType.c_str(), initType.c_str()));
+            convtStack(expr->getType(), getType());
         }
         popFromStack(name->getName(), getType());
     }
