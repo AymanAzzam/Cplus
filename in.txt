@@ -4,7 +4,7 @@ void main() {
     x = 'a';
     y = 1.45;
 
-    int a = 1, b(2.5), c(true);
+    const int a = 1, b(2.5), c(true);
 
     c=z;
     x=b;
