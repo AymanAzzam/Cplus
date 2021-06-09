@@ -154,12 +154,12 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
     if(isLogicalOpr(opr))
     {
         if(left != _TYPE_BOOL)
-            printf("\nWarning: Type mismatch, converting %s to bool\n", \
-                left_s.c_str());
+            log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+                left_s.c_str()));
         
         if(right != _TYPE_BOOL)
-            printf("\nWarning: Type mismatch, converting %s to bool\n", \
-                right_s.c_str());
+            log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+                right_s.c_str()));
                 
         return _TYPE_BOOL;
     }
@@ -170,12 +170,12 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
             out = right;
 
     if(out == right && right != left)
-        printf("\nWarning: Type mismatch, converting %s to %s\n", \
-                left_s.c_str(), right_s.c_str());
+        log(string_format("\nWarning: Type mismatch, converting %s to %s\n", \
+                left_s.c_str(), right_s.c_str()));
 
     if(out == left && right != left)
-        printf("\nWarning: Type mismatch, converting %s to %s\n", \
-                right_s.c_str(), left_s.c_str());
+        log(string_format("\nWarning: Type mismatch, converting %s to %s\n", \
+                right_s.c_str(), left_s.c_str()));
 
     return out;
 };
@@ -183,12 +183,12 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
 void pushToStack(string name, DataType type) {
     string t = typeToString(type);
 
-    printf("\tPUSH\t%s\t%s\n", t.c_str(), name.c_str());
+    writeAssembly(string_format("\tPUSH\t%s\t%s\n", t.c_str(), name.c_str()));
 }
 
 
 void popFromStack(string name) {
-    printf("\tPOP\t%s\n", name.c_str());
+    writeAssembly(string_format("\tPOP\t%s\n", name.c_str()));
 }
 
 
@@ -196,7 +196,7 @@ void convtStack(DataType in, DataType out) {
     string s_in = typeToString(in);
     string s_out = typeToString(out);
 
-    printf("\tCONVT\t%s\t%s\n", s_in.c_str(), s_out.c_str());
+    writeAssembly(string_format("\tCONVT\t%s\t%s\n", s_in.c_str(), s_out.c_str()));
 }
 
 

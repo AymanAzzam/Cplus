@@ -35,11 +35,11 @@ void LeftOpNode::execute() {
     switch (opr)
     {
         case _INC_OPR:
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             popFromStack(left->getName());
             return;
         case _DEC_OPR:
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             popFromStack(left->getName());
             return;
     }

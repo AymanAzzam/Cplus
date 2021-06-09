@@ -9,8 +9,8 @@ RightOpNode::RightOpNode(ExprNode* right, Operator opr, int line): ExprNode(){
     {
         this->type = _TYPE_BOOL; 
         
-        printf("\nWarning: Type mismatch, converting %s to bool\n", \
-                typeToString(right->getType()).c_str());
+        log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+                typeToString(right->getType()).c_str()));
     }
     else
         this->type = right->getType();
@@ -38,28 +38,28 @@ void RightOpNode::execute() {
     switch (opr)
     {
         case _BIT_NOT:
-            printf("\tNOT\n");
+            writeAssembly(string_format("\tNOT\n"));
             return;
         case _LOGICAL_NOT:
-            printf("\tlogicNOT\n");
+            writeAssembly(string_format("\tlogicNOT\n"));
             return;
         case _INC_OPR:
             pushToStack("1", _TYPE_INT);
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             popFromStack(right->getName());
-            printf("\tPUSH\t%s\n", right->getName().c_str());
+            writeAssembly(string_format("\tPUSH\t%s\n", right->getName().c_str()));
             return;
         case _DEC_OPR:
             pushToStack("1", _TYPE_INT);
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             popFromStack(right->getName());
             pushToStack(right->getName(), right->getType());
             return;
         case _ADD:
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             return;
         case _SUB:
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             return;
     }
 
