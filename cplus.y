@@ -94,10 +94,10 @@ void yyerror(const char *);
 
 %type <intermediate> for_expr extended_for_expr
 
-%type <stmt> stmt
+%type <stmt> stmt no_scope_stmt no_scope_block bare_block
 %type <ifStmt> if_stmt
 // %type <condExpr> cond_expr
-%type <stmtList> stmt_list block
+%type <stmtList> stmt_list
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
@@ -135,30 +135,39 @@ program:  program multi_var_definition ';'      {$$ = $1; $1->push($2);}
 stmt:   multi_var_definition ';'        {$$ = new Stmt($1);}
     |   multi_const_init ';'            {$$ = new Stmt($1);}
     |   expr ';'                        {$$ = new Stmt($1);}
-    |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5);}
-    |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5);}
-    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9);}
+    |   WHILE '(' cond_expr ')' no_scope_stmt            {$$ = new While($3, $5);}
+    |   DO no_scope_stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5);}
+    |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' no_scope_stmt     {$$ = new For($3, $5, $7, $9);}
     |   BREAK ';'	{$$ = new BreakStmt();}
     |   CONTINUE ';'	{$$ = new ContinueStmt();}
     |   return_stmt ';'	{$$ = $1;}
     |   if_stmt		{$$ = $1;}
     |   switch_stmt	{$$ = $1;}
-    |   block		{$$ = $1;}
     |   ';'		{$$ = new Stmt();}
     ;
 
-block:  '{' stmt_list '}'	{$$ = $2;}
-        |   '{' '}'		{$$ = new StmtList();}
+no_scope_stmt:
+	stmt	{$$ = $1;}
+	| no_scope_block	{$$ = $1;}
+
+no_scope_block:  '{' stmt_list '}'	{$$ = $2;}
+        |   '{' '}'		{$$ = nullptr;}
         ;
+
+bare_block:
+	'{' stmt_list '}'	{$$ = $2; $2->setShouldOpenScope(true);}
+	|   '{' '}'		{$$ = nullptr;}
 
 stmt_list:
 	stmt	{$$ = new StmtList($1);}
+	| bare_block	{$$ = new StmtList($1);}
         | stmt_list stmt	{$$ = $1; $$->push($2);}
+        | stmt_list bare_block	{$$ = $1; $$->push($2);}
         ;
 
 if_stmt:
-	IF '(' cond_expr ')' stmt %prec IFX		{$$ = new IfStmt($3, $5);}
-	| IF '(' cond_expr ')' stmt ELSE stmt		{$$ = new IfStmt($3, $5, $7);}
+	IF '(' cond_expr ')' no_scope_stmt %prec IFX		{$$ = new IfStmt($3, $5);}
+	| IF '(' cond_expr ')' no_scope_stmt ELSE no_scope_stmt		{$$ = new IfStmt($3, $5, $7);}
 	;
 
 switch_stmt:
@@ -305,7 +314,7 @@ assign_expr:    identifier EQ expr          {Operator o = _EQ; $$ = new TwoOpNod
 
 // functions
 
-func:	func_header block	{$$ = new Function($1, $2, yylineno);}
+func:	func_header no_scope_block	{$$ = new Function($1, $2, yylineno);}
     ;
 
 func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4, yylineno);}
@@ -364,7 +373,7 @@ void yyerror(const char *s) {
 int main(int argc, char** argv) {
     ofstream file("quad.txt");
     ofstream file2("log.txt");
-    
+
     yyin = fopen("source.cp", "r");
     yydebug = 0;
     yyparse();
