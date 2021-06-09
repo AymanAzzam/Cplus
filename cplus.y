@@ -140,7 +140,7 @@ stmt:   multi_var_definition ';'        {$$ = new Stmt($1);}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9);}
     |   BREAK ';'	{$$ = new BreakStmt();}
     |   CONTINUE ';'	{$$ = new ContinueStmt();}
-    |   return_stmt ';'	{$$ = new Stmt();}
+    |   return_stmt ';'	{$$ = $1;}
     |   if_stmt		{$$ = $1;}
     |   switch_stmt	{$$ = $1;}
     |   block		{$$ = $1;}
@@ -363,7 +363,7 @@ void yyerror(const char *s) {
 }
 
 int main(int argc, char** argv) {
-    yyin = fopen(argv[1], "r");
+    yyin = fopen("in.txt", "r");
     yydebug = 0;
     yyparse();
     return 0;

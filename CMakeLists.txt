@@ -53,4 +53,6 @@ add_executable(
         Variables/MultiVarDef.cpp
         Functions/Function.cpp
         Functions/Function.h
+        Program.h
+        Program.cpp
 )

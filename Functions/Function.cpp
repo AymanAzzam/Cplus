@@ -24,21 +24,24 @@ FunctionHeader::FunctionHeader(TypeNode *tnode, IdentifierNode *id, FunctionPara
         :type(tnode), funcIdentifier(id), parameter(param), lineNo(line){}
 
 void FunctionHeader::execute() {
-    parameter->execute();
-    SymbolTable* st = SymbolTable::GetInstance();
-    vector<pair<string, DataType>> parameterList;
-    for (VarDeclare* var: parameter->parameters){
-        parameterList.emplace_back(var->getName()->getName(), var->getType()->getType());
-    }
-    st->insertFunc(funcIdentifier->getName(), lineNo, type->getType(), parameterList);
     printf("PROC %s\n", funcIdentifier->getName().c_str());
+    vector<pair<string, DataType>> parameterList;
+    if (parameter) {
+        parameter->execute();
+        for (VarDeclare* var: parameter->parameters){
+            parameterList.emplace_back(var->getName()->getName(), var->getType()->getType());
+        }
+    }
+    SymbolTable* st = SymbolTable::GetInstance();
+    st->insertFunc(funcIdentifier->getName(), lineNo, type->getType(), parameterList);
 }
 
 Function::Function(FunctionHeader *hdr, StmtList *blck, int line) :header(hdr), block(blck), lineNo(line){}
 
 void Function::execute() {
     header->execute();
-    block->execute();
+    if (block)
+        block->execute();
 
     SymbolTable* st = SymbolTable::GetInstance();
     st->finishScope();
@@ -53,11 +56,13 @@ string FunctionCall::getName() {
 }
 
 void FunctionCall::execute() {
-    funcArgs->execute();
+    if (funcArgs) {
+        funcArgs->execute();
+    }
     SymbolTable* st = SymbolTable::GetInstance();
     vector<DataType>parameterList;
     if(st->lookupFunc(funcIdentifier->getName(), parameterList)) {
-        if (funcArgs->expressions.size() != parameterList.size()){
+        if (funcArgs != nullptr && funcArgs->expressions.size() != parameterList.size()){
             printf("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.\n",
                    lineNo, parameterList.size(), funcArgs->expressions.size());
 
@@ -92,9 +97,10 @@ void FunctionArguments::execute() {
 FunctionReturn::FunctionReturn(ExprNode* ret, int line):retExpr(ret), lineNo(line){}
 
 void FunctionReturn::execute() {
-    retExpr->execute();
+    if (retExpr)
+        retExpr->execute();
     SymbolTable* st = SymbolTable::GetInstance();
-    if (!st->canReturn(retExpr->getType())){
+    if (!st->canReturn(retExpr?retExpr->getType():_TYPE_VOID)){
         printf("Warning:%i: Return type mismatch.\n", lineNo);
     }
     printf("RET\n");
