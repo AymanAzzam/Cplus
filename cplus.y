@@ -368,5 +368,9 @@ int main(int argc, char** argv) {
     yyin = fopen("source.cp", "r");
     yydebug = 0;
     yyparse();
+
+    SymbolTable *symbolTable = SymbolTable::GetInstance();
+    symbolTable->print();
+
     return 0;
 }
