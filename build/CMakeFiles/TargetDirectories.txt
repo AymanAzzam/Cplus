@@ -1,3 +1,0 @@
-/home/ayman/Desktop/Lex_and_Yacc/build/CMakeFiles/rebuild_cache.dir
-/home/ayman/Desktop/Lex_and_Yacc/build/CMakeFiles/constants.h.dir
-/home/ayman/Desktop/Lex_and_Yacc/build/CMakeFiles/edit_cache.dir

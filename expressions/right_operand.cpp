@@ -48,6 +48,8 @@ void RightOpNode::execute() {
     if(this->type != this->right->type)
         convtStack(this->right->type, this->type);
 
+    updateSymbolTable(right->getName(), true, true);
+
     switch (opr)
     {
         case _BIT_NOT:

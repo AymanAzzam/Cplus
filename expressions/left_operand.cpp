@@ -40,6 +40,8 @@ void LeftOpNode::execute() {
     if(this->type != this->left->type)
         convtStack(this->left->type, this->type);
     
+    updateSymbolTable(left->getName(), true, true);
+
     switch (opr)
     {
         case _INC_OPR:
