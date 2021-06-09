@@ -92,7 +92,13 @@ class IdentifierNode: public ExprNode {
             return name;
         }
 
-        virtual void execute(){pushToStack(name, type);}
+        virtual void execute(){
+            SymbolTable *symbolTable = SymbolTable::GetInstance();
+            bool ini, con;
+            
+            symbolTable->lookupId(name, type, ini, con);
+            pushToStack(name, type);
+        }
 };
 
 
@@ -131,6 +137,7 @@ class LeftOpNode: public ExprNode {
     ExprNode* left;
     Operator opr;
     int line;
+    bool pushTwice;
 
     public:
         /**
@@ -142,6 +149,10 @@ class LeftOpNode: public ExprNode {
 
         virtual string getName() {
             return "-1";
+        };
+
+        void setPushTwice(bool twice) {
+            pushTwice = twice;
         };
 
         /**

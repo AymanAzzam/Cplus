@@ -42,19 +42,20 @@ void LeftOpNode::execute() {
     
     updateSymbolTable(left->getName(), true, true);
 
+    pushToStack("1", _TYPE_INT);
+    
+    if(this->pushTwice)
+        left->execute();
+            
     switch (opr)
     {
         case _INC_OPR:
-            pushToStack("1", _TYPE_INT);
-            left->execute();
             printf("\tADD\n");
             popFromStack(left->getName());
             return;
         case _DEC_OPR:
-            pushToStack("1", _TYPE_INT);
-            left->execute();
             printf("\tSUB\n");
-            printf("\tPOP\t%s\n", left->getName().c_str());
+            popFromStack(left->getName());
             return;
     }
 
