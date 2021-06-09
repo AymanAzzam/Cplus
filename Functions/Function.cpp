@@ -14,8 +14,8 @@ FunctionParameters *FunctionParameters::push(VarDeclare *otherParam) {
 
 void FunctionParameters::execute() {
     for (VarDeclare* param: parameters){
-        DataType type = param->getType()->getType();
-        string name = param->getName()->getName();
+        DataType type = param->getType();
+        string name = param->getName();
         printf("POP %s %s\n", typeToString(type).c_str(), name.c_str());
     }
 }
@@ -29,7 +29,7 @@ void FunctionHeader::execute() {
     if (parameter) {
         parameter->execute();
         for (VarDeclare* var: parameter->parameters){
-            parameterList.emplace_back(var->getName()->getName(), var->getType()->getType());
+            parameterList.emplace_back(var->getName(), var->getType());
         }
     }
     SymbolTable* st = SymbolTable::GetInstance();

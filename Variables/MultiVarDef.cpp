@@ -9,11 +9,11 @@ void MultiVarDef::push(VarDeclare* s) {
     definitions.push_back(s);
 }
 
-void MultiVarDef::setType(TypeNode* t) {
+void MultiVarDef::setType(DataType t) {
     type = t;
 }
 
-TypeNode* MultiVarDef::getType() {
+DataType MultiVarDef::getType() {
     return type;
 }
 

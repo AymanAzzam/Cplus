@@ -92,7 +92,7 @@ void yyerror(const char *);
 
 %type <pgm> program root
 
-%type <intermediate> for_expr cond_expr extended_for_expr
+%type <intermediate> for_expr extended_for_expr
 
 %type <stmt> stmt
 %type <ifStmt> if_stmt
@@ -101,7 +101,7 @@ void yyerror(const char *);
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
-%type <exprNode> expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <exprNode> cond_expr expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 %type <typeNode> data_type TYPE_VOID
 %type <valueNode> literal
 %type <identifierNode> identifier
@@ -162,10 +162,10 @@ if_stmt:
 	;
 
 switch_stmt:
-	SWITCH '(' cond_expr ')' '{' top_cases default_with_body  '}'	{$6->push($7); $$ = new SwitchStmt($3, $6);}
+	SWITCH '(' cond_expr ')' '{' top_cases default_with_body  '}'	        {$6->push($7); $$ = new SwitchStmt($3, $6);}
 	| SWITCH '(' cond_expr ')' '{' top_cases default_case bottom_cases'}'	{$6->push($7)->push($8); $$ = new SwitchStmt($3, $6);}
-	| SWITCH '(' cond_expr ')' '{' bottom_cases '}'	{$$ = new SwitchStmt($3, $6);}
-	| SWITCH '(' cond_expr ')' '{' '}'	{$$ = new SwitchStmt($3);}
+	| SWITCH '(' cond_expr ')' '{' bottom_cases '}'	                        {$$ = new SwitchStmt($3, $6);}
+	| SWITCH '(' cond_expr ')' '{' '}'                                      {$$ = new SwitchStmt($3);}
 	;
 
 top_cases:
@@ -303,11 +303,6 @@ assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNod
 	|	expr MOD_EQ expr            {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
         ;
 
-cond_expr:   expr		{$$ = $1;}
-        |   variable_init	{$$ = $1;}
-        |   const_init		{$$ = $1;}
-        ;
-
 // functions
 
 func:	func_header block	{$$ = new Function($1, $2, yylineno);}
@@ -342,9 +337,13 @@ args_ext:       expr			{$$ = new FunctionArguments($1);}
 return_stmt:    RETURN eps_expr		{$$ = new FunctionReturn($2, yylineno);}
         ;
 
+cond_expr:   expr		{$$ = $1;}
+        |   variable_init	{$$ = $1;}
+        |   const_init		{$$ = $1;}
+        ;
 
-eps_expr: expr                          {$$ = $1;}
-        |                               {$$ = nullptr;}
+eps_expr: expr                  {$$ = $1;}
+        |                       {$$ = nullptr;}
         ;
 
 extended_for_expr: for_expr                     {$$ = $1;}

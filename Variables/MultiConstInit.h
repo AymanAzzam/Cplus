@@ -6,13 +6,13 @@
 #include <vector>
 
 class MultiConstInit : public Node {
-    TypeNode* type;
+    DataType type;
     std::vector<ConstDef*> definitions;
 public:
     MultiConstInit(ConstDef* s);
     void push(ConstDef* s);
-    void setType(TypeNode* t);
-    TypeNode* getType();
+    void setType(DataType t);
+    DataType getType();
     void execute();
     ~MultiConstInit();
 };

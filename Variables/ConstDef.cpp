@@ -2,37 +2,30 @@
 #include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
-ConstDef::ConstDef(TypeNode* t, IdentifierNode* n, ExprNode* e, int l) {
-    type = t;
-    name = n;
-    expr = e;
-    lineno = l;
-}
-
-void ConstDef::setType(TypeNode* t) {
-    type = t;
-}
-
-TypeNode* ConstDef::getType() {
-    return type;
+ConstDef::ConstDef(TypeNode* t, IdentifierNode* n, ExprNode* e, int l) : VarInit(t, n, e, l) {
 }
 
 void ConstDef::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
 
-    if (sym->insertId(name->getName(), lineno, type->getType(), true, true)) {
+    if (sym->insertId(name->getName(), lineno, getType(), true, true)) {
         expr->execute();
-        // printf("push %s\n", expr);
-        name->execute();
-        // printf("pop %s\n", name);
+        
+        if (expr->getType() != getType()) {
+            std::string exprType = typeToString(expr->getType()),
+                        initType = typeToString(getType());
+            log(string_format("Warning:%i: Type mismatch, converting %s to %s.\n",
+                                lineno, exprType.c_str(), initType.c_str()));
+            writeAssembly(string_format("CVT %s %s", exprType.c_str(), initType.c_str()));
+        }
+        
+        writeAssembly(string_format("POP %s %s\n", typeToString(getType()).c_str(), name->getName().c_str()));
     }
     else {
-        printf("Error:%i: Redeclaration of variable: const %s %s\n", lineno, typeToString(type->getType()).c_str(), name->getName().c_str());
+        log(string_format("Error:%i: Redeclaration of variable: const %s %s\n",
+                            lineno, typeToString(getType()).c_str(), name->getName().c_str()));
     }
 }
 
 ConstDef::~ConstDef() {
-    delete type;
-    delete name;
-    delete expr;
 }

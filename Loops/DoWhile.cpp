@@ -1,5 +1,6 @@
 #include <iostream>
 #include "DoWhile.h"
+#include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
 DoWhile::DoWhile(Node* a, Node* z) {
@@ -15,18 +16,18 @@ void DoWhile::execute() {
     continueLabel.push(labelNumber++);
     breakLabel.push(labelNumber++);
 
-    printf("L%i:\n", continueLabel.top());
+    writeAssembly(string_format("L%i:\n", continueLabel.top()));
     stmt->execute();
     cond->execute();
-    printf("JNZ L%i\n", continueLabel.top());
-    printf("L%i:\n", breakLabel.top());
+    writeAssembly(string_format("JNZ L%i\n", continueLabel.top()));
+    writeAssembly(string_format("L%i:\n", breakLabel.top()));
 
     continueLabel.pop();
     breakLabel.pop();
 
     vector<pair<string, int>> unused = sym->finishScope();
     for (auto u: unused) {
-        printf("Warning:%i: Variable %s declared but not used.\n", u.second, u.first.c_str());
+        log(string_format("Warning:%i: Variable %s declared but not used.\n", u.second, u.first.c_str()));
     }
 }
 

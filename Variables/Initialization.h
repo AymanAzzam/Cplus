@@ -5,14 +5,10 @@
 #include <string>
 
 class VarInit : public VarDeclare {
-    // TypeNode* type;
-    // IdentifierNode* name;
+protected:
     ExprNode* expr;
-    int lineno;
 public:
     VarInit(TypeNode* t, IdentifierNode* n, ExprNode* e, int l);
-    void setType(TypeNode* t);
-    TypeNode* getType();
     void execute();
     ~VarInit();
 };

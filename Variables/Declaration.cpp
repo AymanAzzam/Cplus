@@ -2,32 +2,33 @@
 #include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
-VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n, int l) {
+VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n, int l) : ExprNode(t->getType()) {
     type = t;
     name = n;
     lineno = l;
 }
 
-void VarDeclare::setType(TypeNode* t) {
-    type = t;
+void VarDeclare::setType(DataType t) {
+    delete type;
+    type = new TypeNode(t);
 }
 
-TypeNode* VarDeclare::getType() {
-    return type;
+DataType VarDeclare::getType() {
+    return type->getType();
 }
 
-IdentifierNode *VarDeclare::getName() {
-    return name;
+std::string VarDeclare::getName() {
+    return name->getName();
 }
 
 void VarDeclare::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
 
-    if (sym->insertId(name->getName(), lineno, type->getType(), false, false)) {
+    if (sym->insertId(name->getName(), lineno, getType(), false, false)) {
         /*no quadruples produced*/;
     }
     else {
-        printf("Error:%i: Redeclaration of variable: %s %s\n", lineno, typeToString(type->getType()).c_str(), name->getName().c_str());
+        log(string_format("Error:%i: Redeclaration of variable: %s %s\n", lineno, typeToString(getType()).c_str(), name->getName().c_str()));
     }
 }
 

@@ -6,13 +6,13 @@
 #include <vector>
 
 class MultiVarDef : public Node {
-    TypeNode* type;
+    DataType type;
     std::vector<VarDeclare*> definitions;
 public:
     MultiVarDef(VarDeclare* s);
     void push(VarDeclare* s);
-    void setType(TypeNode* t);
-    TypeNode* getType();
+    void setType(DataType t);
+    DataType getType();
     void execute();
     ~MultiVarDef();
 };

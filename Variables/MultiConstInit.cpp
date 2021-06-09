@@ -9,11 +9,11 @@ void MultiConstInit::push(ConstDef* c) {
     definitions.push_back(c);
 }
 
-void MultiConstInit::setType(TypeNode* t) {
+void MultiConstInit::setType(DataType t) {
     type = t;
 }
 
-TypeNode* MultiConstInit::getType() {
+DataType MultiConstInit::getType() {
     return type;
 }
 
@@ -24,7 +24,7 @@ void MultiConstInit::execute() {
 }
 
 MultiConstInit::~MultiConstInit() {
-    for (Stmt* c : definitions) {
+    for (ConstDef* c : definitions) {
         delete c;
     }
 }

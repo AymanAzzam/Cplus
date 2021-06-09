@@ -1,0 +1,6 @@
+int main() {
+    int y;
+    int y;
+    int x;
+    x = y;
+}

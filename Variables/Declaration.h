@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../Stmt.h"
+#include "../SubExpr/CondExpr.h"
 #include "../expressions/expressions.h"
 #include <string>
 
-class VarDeclare : public Stmt {
+class VarDeclare : public ExprNode {
 protected:
     TypeNode* type;
     IdentifierNode* name;
     int lineno;
 public:
     VarDeclare(TypeNode* t, IdentifierNode* n, int l);
-    virtual void setType(TypeNode* t);
-    virtual TypeNode* getType();
-    virtual IdentifierNode* getName();
+    virtual void setType(DataType t);
+    virtual DataType getType() override;
+    virtual std::string getName();
     void execute();
     ~VarDeclare();
 };

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "For.h"
+#include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
 For::For(Node* a, Node* b, Node* c, Stmt* s) {
@@ -20,21 +21,21 @@ void For::execute() {
     breakLabel.push(labelNumber++);
 
     f1->execute();
-    printf("L%i:\n", startLabel);
+    writeAssembly(string_format("L%i:\n", startLabel));
     f2->execute();
-    printf("JZ L%i\n", breakLabel.top());
+    writeAssembly(string_format("JZ L%i\n", breakLabel.top()));
     stmt->execute();
-    printf("L%i:\n", continueLabel.top());
+    writeAssembly(string_format("L%i:\n", continueLabel.top()));
     f3->execute();
-    printf("JMP L%i\n", startLabel);
-    printf("L%i:\n", breakLabel.top());
+    writeAssembly(string_format("JMP L%i\n", startLabel));
+    writeAssembly(string_format("L%i:\n", breakLabel.top()));
 
     continueLabel.pop();
     breakLabel.pop();
 
     vector<pair<string, int>> unused = sym->finishScope();
     for (auto u: unused) {
-        printf("Warning:%i: Variable declared but not used: %s.\n", u.second, u.first.c_str());
+        log(string_format("Warning:%i: Variable declared but not used: %s.\n", u.second, u.first.c_str()));
     }
 }
 

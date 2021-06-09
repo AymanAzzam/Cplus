@@ -5,9 +5,10 @@
 #include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include "../StmtList.h"
-// #include "../SubExpr/CondExpr.h"
+#include "../SubExpr/CondExpr.h"
 #include <vector>
 #include <iostream>
+#include <string>
 #include "../utilities.h"
 #include "../constants.h"
 
@@ -125,7 +126,7 @@ public:
 class SwitchStmt : public Stmt {
 private:
     Cases *cases;
-    Node *condExpr;
+    ExprNode *condExpr;
 
     // CondExpr *condExpr;
     bool validateSwitchExpression() {
@@ -133,11 +134,11 @@ private:
     }
 
 public:
-    SwitchStmt(Node *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
+    SwitchStmt(ExprNode *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
 
     // empty body switch
-    explicit SwitchStmt(Node *condExpr) : condExpr(condExpr), cases(nullptr) {}
+    explicit SwitchStmt(ExprNode *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
         SymbolTable *sym = SymbolTable::GetInstance();
@@ -146,7 +147,7 @@ public:
         condExpr->execute();
         int switchVariable = labelNumber++;
         // TODO pop_datatype
-        writeAssembly(string_format("POP %d_SWITCH", switchVariable));
+        writeAssembly(string_format("POP %s %d_SWITCH", typeToString(condExpr->getType()).c_str(), switchVariable));
         cases->switchVariable = switchVariable;
         int switchBreakLabel = labelNumber++;
         breakLabel.push(switchBreakLabel);
