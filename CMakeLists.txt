@@ -45,6 +45,12 @@ add_executable(
         Variables/Declaration.h
         Variables/Initialization.cpp
         Variables/Initialization.h
+        Variables/ConstDef.h
+        Variables/ConstDef.cpp
+        Variables/MultiConstInit.h
+        Variables/MultiConstInit.cpp
+        Variables/MultiVarDef.h
+        Variables/MultiVarDef.cpp
         Functions/Function.cpp
         Functions/Function.h
 )
