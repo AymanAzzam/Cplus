@@ -19,7 +19,7 @@ DataType typeConversion(DataType left, DataType right, Operator opr);
 
 void pushToStack(string name, DataType type);
 
-void popFromStack(string name);
+void popFromStack(string name, DataType type);
 
 void convtStack(DataType in, DataType out);
 

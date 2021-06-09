@@ -75,26 +75,26 @@ void TwoOpNode::execute() {
         // assignment operators
         case _MOD_EQ:
             writeAssembly(string_format("\tREM\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
         case _MULT_EQ:
             writeAssembly(string_format("\tMUL\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
         case _DIV_EQ:
             writeAssembly(string_format("\tDIV\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
         case _MINUS_EQ:
             writeAssembly(string_format("\tSUB\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
         case _PLUS_EQ:
             writeAssembly(string_format("\tADD\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
         case _EQ:
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
 
         // comparison operators

@@ -48,13 +48,13 @@ void RightOpNode::execute() {
         case _INC_OPR:
             pushToStack("1", _TYPE_INT);
             writeAssembly(string_format("\tADD\n"));
-            popFromStack(right->getName());
+            popFromStack(right->getName(), right->getType());
             writeAssembly(string_format("\tPUSH\t%s\n", right->getName().c_str()));
             return;
         case _DEC_OPR:
             pushToStack("1", _TYPE_INT);
             writeAssembly(string_format("\tSUB\n"));
-            popFromStack(right->getName());
+            popFromStack(right->getName(), right->getType());
             pushToStack(right->getName(), right->getType());
             return;
         case _ADD:

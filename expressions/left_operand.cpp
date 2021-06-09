@@ -37,11 +37,11 @@ void LeftOpNode::execute() {
     {
         case _INC_OPR:
             writeAssembly(string_format("\tADD\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
         case _DEC_OPR:
             writeAssembly(string_format("\tSUB\n"));
-            popFromStack(left->getName());
+            popFromStack(left->getName(), left->getType());
             return;
     }
 

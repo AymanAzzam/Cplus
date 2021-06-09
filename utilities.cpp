@@ -187,8 +187,10 @@ void pushToStack(string name, DataType type) {
 }
 
 
-void popFromStack(string name) {
-    writeAssembly(string_format("\tPOP\t%s\n", name.c_str()));
+void popFromStack(string name, DataType type) {
+    string t = typeToString(type);
+    
+    writeAssembly(string_format("\tPOP\t%s\t%s\n", t.c_str(), name.c_str()));
 }
 
 
