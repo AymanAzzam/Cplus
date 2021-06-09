@@ -9,10 +9,11 @@ TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): E
 }
 
 DataType TwoOpNode::getType() {
+    
+    this->type = typeConversion(left->getType(), right->getType(), opr);
+    
     if(isAssignmentOp(opr))
         this->type = left->getType();
-    else
-        this->type = typeConversion(left->getType(), right->getType(), opr);
     
     return type;
 }
@@ -41,7 +42,7 @@ void TwoOpNode::execute() {
 
     right->execute();
     if(this->getType() != this->right->getType())
-        convtStack(this->right->getType(), this->getType());
+        convtStack(this->right->getType(), type);
     
     if(opr != _EQ)
     {
@@ -50,8 +51,8 @@ void TwoOpNode::execute() {
             left_casted->setPushTwice(true);
 
         left->execute();
-        if(this->getType() != this->left->getType())
-            convtStack(this->left->getType(), this->getType());
+        if(type != this->left->getType())
+            convtStack(this->left->getType(), type);
 
         updateSymbolTable(left->getName(), true, true);
     }
