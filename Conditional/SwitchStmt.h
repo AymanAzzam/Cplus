@@ -8,6 +8,7 @@
 // #include "../SubExpr/CondExpr.h"
 #include <vector>
 #include <iostream>
+#include "../utilities.h"
 
 // TODO check switch expression type
 // TODO check case expression type
@@ -50,11 +51,11 @@ public:
     }
 
     bool isDefault() {
-        return !expr;
+        return expr == nullptr;
     }
 
     bool hasBody() {
-        return stmtList;
+        return stmtList != nullptr;
     }
 
     ~Case() {
@@ -112,10 +113,12 @@ class SwitchStmt : public Stmt {
 private:
     Cases *cases;
     Node *condExpr;
+
     // CondExpr *condExpr;
     bool validateSwitchExpression() {
         return true;
     }
+
 public:
     SwitchStmt(Node *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
@@ -124,17 +127,18 @@ public:
     explicit SwitchStmt(Node *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
-        SymbolTable* sym = SymbolTable::GetInstance();
+        SymbolTable *sym = SymbolTable::GetInstance();
         sym->startScope(_SWITCH);
         validateSwitchExpression();
         condExpr->execute();
         int switchVariable = labelNumber++;
-        cout << "pop " << switchVariable << "_switch" << endl;
+        // TODO pop_datatype
+        writeAssembly(string_format("POP %d_SWITCH", switchVariable));
         cases->switchVariable = switchVariable;
         int switchBreakLabel = labelNumber++;
         breakLabel.push(switchBreakLabel);
         cases->execute();
-        cout << "L" << switchBreakLabel << ":" << endl;
+        writeAssembly(string_format("L%d:", switchBreakLabel));
         breakLabel.pop();
         sym->finishScope();
     }
