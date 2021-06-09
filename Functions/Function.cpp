@@ -73,6 +73,7 @@ void FunctionCall::execute()
     vector<DataType> parameterList;
     if (st->lookupFunc(funcIdentifier->getName(), parameterList))
     {
+        type = parameterList[0];
         if (funcArgs != nullptr && funcArgs->expressions.size() != parameterList.size() - 1)
         {
             printf("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.\n",
@@ -92,6 +93,10 @@ void FunctionCall::execute()
             printf("CALL %s\n", funcIdentifier->getName().c_str());
         }
     }
+}
+
+DataType FunctionCall::getType() {
+    return type;
 }
 
 FunctionArguments::FunctionArguments(ExprNode *baseExpr)
