@@ -107,17 +107,17 @@ class IdentifierNode: public ExprNode {
             dec = symbolTable->lookupId(name, type, ini, con);
 
             if(!dec){
-                log(string_format("\nError in line %d: undeclared variable %s\n", \
+                log(string_format("Error in line %d: undeclared variable %s", \
                         line, name.c_str()));
                 return true;
             }
             else if(!ini && check_ini) {
-                log(string_format("\nError in line %d: uninitialized variable %s\n", \
+                log(string_format("Error in line %d: uninitialized variable %s", \
                         this->line, name.c_str()));
                 return true;
             }
             else if(ini && con && check_cons) {
-                log(string_format("\nConstant Error in line %d: %s is constant\n", \
+                log(string_format("Constant Error in line %d: %s is constant", \
                         this->line, name.c_str()));
                 return true;
             }

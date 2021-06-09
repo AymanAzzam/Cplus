@@ -103,14 +103,14 @@ int SymbolTable::removeId(const string& name)
 bool SymbolTable::insertFunc(const string& name, int line, DataType returnType, const vector<pair<string, DataType>>& parameterList)
 {
     if (!isGlobal()) {
-        log(string_format("Error:%i: can't create function in local scope.\n", line));
+        log(string_format("Error:%i: can't create function in local scope.", line));
         return false;
     }
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
     {
         if (id == name) {
-            log(string_format("Error:%i: identifier %s is already declared.\n", line, name.c_str()));
+            log(string_format("Error:%i: identifier %s is already declared.", line, name.c_str()));
             return false;
         }
     }
@@ -121,7 +121,7 @@ bool SymbolTable::insertFunc(const string& name, int line, DataType returnType, 
     for (const pair<string, DataType>& p : parameterList)
     {
         if (!insertId(p.first, line, p.second, true)) {
-            log(string_format("Error:%i:  multiple parameters with the same name %s.\n", line, p.first.c_str()));
+            log(string_format("Error:%i:  multiple parameters with the same name %s.", line, p.first.c_str()));
             ret = false;
         }
         funcTable[name].push_back(p.second);
@@ -208,7 +208,7 @@ void SymbolTable::print()
             cout << "| " << left << setw(15) << name;
             cout << "| " << left << setw(6) << dataType;
             cout << "| " << left << setw(15) << scopeType;
-            cout << "| " << left << setw(6) << used << "|\n";
+            cout << "| " << left << setw(6) << used << "|";
         }
     }
     cout << "--------------------------------------------------------------" << endl;

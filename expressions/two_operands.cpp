@@ -66,40 +66,40 @@ void TwoOpNode::execute() {
     {
         // arithmetic operators
         case _REM:
-            writeAssembly(string_format("\tREM\n"));
+            writeAssembly(string_format("\tREM"));
             return;
         case _MUL:
-            writeAssembly(string_format("\tMUL\n"));
+            writeAssembly(string_format("\tMUL"));
             return;
         case _DIV:
-            writeAssembly(string_format("\tDIV\n"));
+            writeAssembly(string_format("\tDIV"));
             return;
         case _SUB:
-            writeAssembly(string_format("\tSUB\n"));
+            writeAssembly(string_format("\tSUB"));
             return;
         case _ADD:
-            writeAssembly(string_format("\tADD\n"));
+            writeAssembly(string_format("\tADD"));
             return;
 
         // assignment operators
         case _MOD_EQ:
-            writeAssembly(string_format("\tREM\n"));
+            writeAssembly(string_format("\tREM"));
             popFromStack(left->getName(), left->getType());
             return;
         case _MULT_EQ:
-            writeAssembly(string_format("\tMUL\n"));
+            writeAssembly(string_format("\tMUL"));
             popFromStack(left->getName(), left->getType());
             return;
         case _DIV_EQ:
-            writeAssembly(string_format("\tDIV\n"));
+            writeAssembly(string_format("\tDIV"));
             popFromStack(left->getName(), left->getType());
             return;
         case _MINUS_EQ:
-            writeAssembly(string_format("\tSUB\n"));
+            writeAssembly(string_format("\tSUB"));
             popFromStack(left->getName(), left->getType());
             return;
         case _PLUS_EQ:
-            writeAssembly(string_format("\tADD\n"));
+            writeAssembly(string_format("\tADD"));
             popFromStack(left->getName(), left->getType());
             return;
         case _EQ:
@@ -108,51 +108,51 @@ void TwoOpNode::execute() {
 
         // comparison operators
         case _LTE:
-            writeAssembly(string_format("\tcompLTE\n"));
+            writeAssembly(string_format("\tcompLTE"));
             return;
         case _GTE:
-            writeAssembly(string_format("\tcompGTE\n"));
+            writeAssembly(string_format("\tcompGTE"));
             return;
         case _LT:
-            writeAssembly(string_format("\tcompLT\n"));
+            writeAssembly(string_format("\tcompLT"));
             return;
         case _GT:
-            writeAssembly(string_format("\tcompGT\n"));
+            writeAssembly(string_format("\tcompGT"));
             return;
         case _NOT_EQ:
-            writeAssembly(string_format("\tcompNE\n"));
+            writeAssembly(string_format("\tcompNE"));
             return;
         case _IS_EQ:
-            writeAssembly(string_format("\tcompEQ\n"));
+            writeAssembly(string_format("\tcompEQ"));
             return;
         
         // bitwise operators
         case _SHL:
-            writeAssembly(string_format("\tSHL\n"));
+            writeAssembly(string_format("\tSHL"));
             return;
         case _SHR:
-            writeAssembly(string_format("\tSHR\n"));
+            writeAssembly(string_format("\tSHR"));
             return;
         case _BIT_XOR:
-            writeAssembly(string_format("\tXOR\n"));
+            writeAssembly(string_format("\tXOR"));
             return;
         case _BIT_OR:
-            writeAssembly(string_format("\tOR\n"));
+            writeAssembly(string_format("\tOR"));
             return;
         case _BIT_AND:
-            writeAssembly(string_format("\tAND\n"));
+            writeAssembly(string_format("\tAND"));
             return;
         
         // logical operators
         case _LOGICAL_AND:
-            writeAssembly(string_format("\tlogicAND\n"));
+            writeAssembly(string_format("\tlogicAND"));
             return;
         case _LOGICAL_OR:
-            writeAssembly(string_format("\tlogicOR\n"));
+            writeAssembly(string_format("\tlogicOR"));
             return;
     }
             
-    // printf("\nError occured in TwoOpNode::execute() in two_operand.cpp\n");
+    // printf("Error occured in TwoOpNode::execute() in two_operand.cpp");
 }
  
 

@@ -19,7 +19,7 @@ void FunctionParameters::execute()
     {
         DataType type = param->getType();
         string name = param->getName();
-        writeAssembly(string_format("POP %s %s\n", typeToString(type).c_str(), name.c_str()));
+        writeAssembly(string_format("POP %s %s", typeToString(type).c_str(), name.c_str()));
     }
 }
 
@@ -28,7 +28,7 @@ FunctionHeader::FunctionHeader(TypeNode *tnode, IdentifierNode *id, FunctionPara
 
 void FunctionHeader::execute()
 {
-    writeAssembly(string_format("PROC %s\n", funcIdentifier->getName().c_str()));
+    writeAssembly(string_format("PROC %s", funcIdentifier->getName().c_str()));
     vector<pair<string, DataType>> parameterList;
     if (parameter)
     {
@@ -52,7 +52,7 @@ void Function::execute()
 
     SymbolTable *st = SymbolTable::GetInstance();
     st->finishScope();
-    writeAssembly(string_format("ENDP %s\n", header->funcIdentifier->getName().c_str()));
+    writeAssembly(string_format("ENDP %s", header->funcIdentifier->getName().c_str()));
 }
 
 FunctionCall::FunctionCall(IdentifierNode *fId, FunctionArguments *args, int line)
@@ -76,7 +76,7 @@ void FunctionCall::execute()
         type = parameterList[0];
         if (funcArgs != nullptr && funcArgs->expressions.size() != parameterList.size() - 1)
         {
-            log(string_format("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.\n",
+            log(string_format("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.",
                    lineNo, parameterList.size(), funcArgs->expressions.size()));
         }
         else
@@ -86,12 +86,12 @@ void FunctionCall::execute()
                 DataType curr = funcArgs->expressions[i]->type, expected = parameterList[i + 1];
                 if (curr != expected)
                 {
-                    log(string_format("Warning:%i: conversion from type %s to %s.\n",
+                    log(string_format("Warning:%i: conversion from type %s to %s.",
                            lineNo, typeToString(curr).c_str(), typeToString(expected).c_str()));
                     convtStack(curr, expected);
                 }
             }
-            writeAssembly(string_format("CALL %s\n", funcIdentifier->getName().c_str()));
+            writeAssembly(string_format("CALL %s", funcIdentifier->getName().c_str()));
         }
     }
 }
@@ -130,12 +130,12 @@ void FunctionReturn::execute()
     if (!st->canReturn(expType))
     {
         if (expType == _TYPE_VOID)
-            log(string_format("Error:%i: Can't return void in %s function.\n", lineNo, typeToString(expType).c_str()));
+            log(string_format("Error:%i: Can't return void in %s function.", lineNo, typeToString(expType).c_str()));
         else if (st->canReturn(_TYPE_VOID))
-            log(string_format("Error:%i: Can't return %s expression in void function.\n", lineNo,
+            log(string_format("Error:%i: Can't return %s expression in void function.", lineNo,
                               typeToString(expType).c_str()));
         else
-            log(string_format("Warning:%i: Return type mismatch.\n", lineNo));
+            log(string_format("Warning:%i: Return type mismatch.", lineNo));
     }
-    writeAssembly(string_format("RET\n"));
+    writeAssembly(string_format("RET"));
 }

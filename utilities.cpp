@@ -155,11 +155,11 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
     if(isLogicalOpr(opr))
     {
         if(left != _TYPE_BOOL)
-            log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+            log(string_format("Warning: Type mismatch, converting %s to bool", \
                 left_s.c_str()));
         
         if(right != _TYPE_BOOL)
-            log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+            log(string_format("Warning: Type mismatch, converting %s to bool", \
                 right_s.c_str()));
                 
         return _TYPE_BOOL;
@@ -171,11 +171,11 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
             out = right;
 
     if(out == right && right != left)
-        log(string_format("\nWarning: Type mismatch, converting %s to %s\n", \
+        log(string_format("Warning: Type mismatch, converting %s to %s", \
                 left_s.c_str(), right_s.c_str()));
 
     if(out == left && right != left)
-        log(string_format("\nWarning: Type mismatch, converting %s to %s\n", \
+        log(string_format("Warning: Type mismatch, converting %s to %s", \
                 right_s.c_str(), left_s.c_str()));
 
     return out;
@@ -184,14 +184,14 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
 void pushToStack(string name, DataType type) {
     string t = typeToString(type);
 
-    writeAssembly(string_format("\tPUSH\t%s\t%s\n", t.c_str(), name.c_str()));
+    writeAssembly(string_format("\tPUSH\t%s\t%s", t.c_str(), name.c_str()));
 }
 
 
 void popFromStack(string name, DataType type) {
     string t = typeToString(type);
 
-    writeAssembly(string_format("\tPOP\t%s\t%s\n", t.c_str(), name.c_str()));
+    writeAssembly(string_format("\tPOP\t%s\t%s", t.c_str(), name.c_str()));
 }
 
 
@@ -199,7 +199,7 @@ void convtStack(DataType in, DataType out) {
     string s_in = typeToString(in);
     string s_out = typeToString(out);
 
-    writeAssembly(string_format("\tCONVT\t%s\t%s\n", s_in.c_str(), s_out.c_str()));
+    writeAssembly(string_format("\tCONVT\t%s\t%s", s_in.c_str(), s_out.c_str()));
 }
 
 
@@ -226,10 +226,10 @@ bool updateSymbolTable(const string& name, bool init, bool use) {
 }
 
 bool isAssignmentOp(Operator opr) {
-    
+
     if(opr == _EQ || opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ ||\
         opr == _PLUS_EQ || opr == _MINUS_EQ)
         return true;
-    
+
     return false;
 }

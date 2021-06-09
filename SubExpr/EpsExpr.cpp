@@ -7,5 +7,5 @@ EpsExpr::EpsExpr(Node* rule) { //Expression
 
 void EpsExpr::execute() {
     //expand->execute();
-    printf("-- placeholder for EpsExpr\n");
+    printf("-- placeholder for EpsExpr");
 }
