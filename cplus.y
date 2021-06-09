@@ -293,11 +293,11 @@ cond_expr:   expr		{$$ = new CondExpr();}
 
 // functions
 
-func:	func_header block	{$$ = new Function($1, $2);}
+func:	func_header block	{$$ = new Function($1, $2, yylineno);}
     ;
 
-func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4);}
-        |       data_type identifier '(' paramater ')'	{$$ = new FunctionHeader($1, $2, $4);}
+func_header:    TYPE_VOID identifier '(' paramater ')'	{$1 = new TypeNode(_TYPE_VOID);$$ = new FunctionHeader($1, $2, $4, yylineno);}
+        |       data_type identifier '(' paramater ')'	{$$ = new FunctionHeader($1, $2, $4, yylineno);}
         ;
 
 paramater:      /* epsilon */	{$$ = nullptr;}
@@ -308,7 +308,7 @@ parameter_decl: 	parameter_decl ',' variable_declaration	{$$ = $1; $$->push($3);
 		|	variable_declaration			{$$ = new FunctionParameters($1);}
 		;
 
-func_call:      identifier '(' args ')'	{$$ = new FunctionCall($1, $3);}
+func_call:      identifier '(' args ')'	{$$ = new FunctionCall($1, $3, yylineno);}
         ;
 
 identifier:     IDENTIFIER              {$$ = new IdentifierNode($1);}
@@ -322,7 +322,7 @@ args_ext:       expr			{$$ = new FunctionArguments($1);}
         |       args_ext ',' expr	{$$ = $1; $$->push($3);}
         ;
 
-return_stmt:    RETURN eps_expr		{$$ = new FunctionReturn($2);}
+return_stmt:    RETURN eps_expr		{$$ = new FunctionReturn($2, yylineno);}
         ;
 
 

@@ -99,23 +99,31 @@ int SymbolTable::removeId(const string& name)
 
 bool SymbolTable::insertFunc(const string& name, int line, DataType returnType, const vector<pair<string, DataType>>& parameterList)
 {
-    if (!isGlobal())
+    if (!isGlobal()) {
+        printf("Error:%i: can't create function in local scope.\n", line);
         return false;
+    }
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
     {
-        if (id == name)
+        if (id == name) {
+            printf("Error:%i: identifier %s is already declared.\n", line, name.c_str());
             return false;
+        }
     }
     currentScope.push_back(name);
     startScope(static_cast<ScopeType>(INT_FUNC + returnType));
     funcTable[name].push_back(returnType);
+    bool ret = true;
     for (const pair<string, DataType>& p : parameterList)
     {
-        insertId(p.first, line, p.second, true);
+        if (!insertId(p.first, line, p.second, true)) {
+            printf("Error:%i:  multiple parameters with the same name %s.\n", line, p.first.c_str());
+            ret = false;
+        }
         funcTable[name].push_back(p.second);
     }
-    return true;
+    return ret;
 }
 
 bool SymbolTable::lookupFunc(const string& name, vector<DataType> &parameterList)
