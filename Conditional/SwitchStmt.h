@@ -5,15 +5,10 @@
 #include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include "../StmtList.h"
-#include "../SubExpr/CondExpr.h"
 #include <vector>
-#include <iostream>
 #include <string>
 #include "../utilities.h"
 #include "../constants.h"
-
-// TODO check switch expression type
-
 
 using namespace std;
 
@@ -51,7 +46,8 @@ public:
 
     void execute() override {
         if (caseLabel != -1)
-            cout << "L" << caseLabel << ":" << endl;
+            writeAssembly(string_format("L%d:", caseLabel));
+
         if (stmtList)
             stmtList->execute();
     }
