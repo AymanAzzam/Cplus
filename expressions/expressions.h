@@ -130,9 +130,7 @@ class IdentifierNode: public ExprNode {
 
         virtual void execute(){
             if(checkError()){
-                printf("trueeeee\n");
                 return;}
-            printf("falseeeeeee\n");
                 
             pushToStack(name, getType());
         }
