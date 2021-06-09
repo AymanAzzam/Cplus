@@ -175,6 +175,8 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 
 void SymbolTable::print()
 {
+    freopen("table.txt","w",stdout);
+    
     cout << "--------------------------------------------------------------" << endl;
     cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
     cout << "--------------------------------------------------------------" << endl;
@@ -207,6 +209,8 @@ void SymbolTable::print()
         }
     }
     cout << "--------------------------------------------------------------" << endl;
+
+    fclose (stdout);
 }
 
 bool SymbolTable::canBreak() const

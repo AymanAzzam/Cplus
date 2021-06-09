@@ -7,11 +7,11 @@ StmtList::~StmtList() {
 }
 
 void StmtList::execute() {
-    SymbolTable* sym = SymbolTable::GetInstance();
+    SymbolTable *sym = SymbolTable::GetInstance();
     if (shouldOpenScope)
         sym->startScope(BLOCK);
     for (Stmt *stmt:statements)
-        stmt->execute();
+        if (stmt) stmt->execute();
     if (shouldOpenScope)
         sym->finishScope();
 }

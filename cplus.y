@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include <fstream>
 #include <vector>
 #include "Headers.h"
 
@@ -370,8 +371,15 @@ void yyerror(const char *s) {
 }
 
 int main(int argc, char** argv) {
-    yyin = fopen("in.txt", "r");
+    ofstream file("quad.txt");
+    ofstream file2("log.txt");
+
+    yyin = fopen("source.cp", "r");
     yydebug = 0;
     yyparse();
+
+    SymbolTable *symbolTable = SymbolTable::GetInstance();
+    symbolTable->print();
+
     return 0;
 }

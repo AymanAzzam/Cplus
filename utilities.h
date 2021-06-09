@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <fstream>
 #include <memory>
 #include <stdexcept>
 #include "constants.h"

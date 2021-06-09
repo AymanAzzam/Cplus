@@ -1,5 +1,6 @@
 #include "utilities.h"
 #include <iostream>
+using namespace std;
 
 string oprToString(Operator opr) {
     string out;
@@ -189,7 +190,7 @@ void pushToStack(string name, DataType type) {
 
 void popFromStack(string name, DataType type) {
     string t = typeToString(type);
-    
+
     writeAssembly(string_format("\tPOP\t%s\t%s\n", t.c_str(), name.c_str()));
 }
 
@@ -203,10 +204,18 @@ void convtStack(DataType in, DataType out) {
 
 
 void log(const string& s) {
+    ofstream file;
+    file.open("log.txt", ios_base::app);
+    file << s <<endl;
+
     cout << s << endl;
 }
 
 void writeAssembly(const string& s) {
+    ofstream file;
+    file.open("quad.txt", ios_base::app);
+    file << s <<endl;
+
     cout << s << endl;
 }
 

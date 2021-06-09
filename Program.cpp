@@ -14,8 +14,8 @@ void Program::execute() {
     }
 }
 
-// Program::~Program() {
-//     for (Node* g : global) {
-//         delete g;
-//     }
-// }
+Program::~Program() {
+    for (Node* g : global) {
+        delete g;
+    }
+}

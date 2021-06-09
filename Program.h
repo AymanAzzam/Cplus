@@ -9,5 +9,5 @@ public:
     Program(Node* g = nullptr);
     void push(Node* g);
     void execute();
-    // ~Program();
+    ~Program();
 };

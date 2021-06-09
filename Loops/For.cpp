@@ -20,13 +20,13 @@ void For::execute() {
     continueLabel.push(labelNumber++);
     breakLabel.push(labelNumber++);
 
-    f1->execute();
+    if (f1) f1->execute();
     writeAssembly(string_format("L%i:\n", startLabel));
-    f2->execute();
+    if (f2) f2->execute();
     writeAssembly(string_format("JZ L%i\n", breakLabel.top()));
     stmt->execute();
     writeAssembly(string_format("L%i:\n", continueLabel.top()));
-    f3->execute();
+    if (f3) f3->execute();
     writeAssembly(string_format("JMP L%i\n", startLabel));
     writeAssembly(string_format("L%i:\n", breakLabel.top()));
 
