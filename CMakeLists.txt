@@ -31,8 +31,6 @@ add_executable(
         Stmt.h
         StmtList.cpp
         StmtList.h
-        SubExpr/CondExpr.cpp
-        SubExpr/CondExpr.h
         SubExpr/EpsExpr.cpp
         SubExpr/EpsExpr.h
         SubExpr/ForExpr.cpp

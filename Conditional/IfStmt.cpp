@@ -14,7 +14,7 @@ void IfStmt::execute() {
     sym->startScope(BLOCK);
     condExpr->execute();
     int label1, label2;
-    cout << "JZ L" << (label1 = labelNumber++) << endl;
+    writeAssembly(string_format("\tJZ L%i", (label1 = labelNumber++)));
     ifBody->execute();
     if (elseBody) {
         writeAssembly(string_format("\tJMP L%i", (label2 = labelNumber++)));
