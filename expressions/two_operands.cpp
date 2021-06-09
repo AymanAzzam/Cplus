@@ -6,44 +6,25 @@ TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): E
     this->right = right;
     this->opr = opr;
     this->line = line;
+
+    this->type = typeConversion(left->getType(), right->getType(), opr);
 }
 
-void TwoOpNode::checkError() {
-    string left_s, right_s;
-    bool l_con = true, l_ini = true, l_dec = true, \
-            r_con = true, r_ini = true, r_dec = true;
-    IdentifierNode* casted;
-
-    casted = dynamic_cast<IdentifierNode*>(left);
-    if(casted != NULL)
-    {
-        SymbolTable *symbolTable = SymbolTable::GetInstance();
-        l_dec = symbolTable->lookupId(casted->getName(), left->type, l_ini, l_con); 
-    }
-    casted = dynamic_cast<IdentifierNode*>(right);
-    if(casted != NULL)
-    {
-        SymbolTable *symbolTable = SymbolTable::GetInstance();
-        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con);
-    }
-    if(!r_dec)
-         printf("\n\nError in line %d: undeclared variable %s\n\n", \
-                this->line, right->getName().c_str());
-    else if(!l_dec)
-         printf("\n\nError in line %d: undeclared variable %s\n\n", \
-                this->line, left->getName().c_str());
-    else if(!r_ini)
-        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
-                this->line, right->getName().c_str());
-    else if(!l_ini && opr != _EQ)
-        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
-                this->line, left->getName().c_str());
-    else if(l_con && ( opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ ||\
-            opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
-        printf("\n\nConstant Error in line %d: %s is constant\n\n", \
-                this->line, left->getName().c_str());
+bool TwoOpNode::checkError(bool check_ini, bool check_cons) {
+    check_ini = opr != _EQ;
+    check_cons = isAssignmentOp(opr);
+    bool l_err, r_err;
     
-    this->type = typeConversion(left->type, right->type, opr);
+    r_err = right->checkError();
+
+    l_err = left->checkError(check_ini, check_cons);
+
+
+    return l_err || r_err;
+
+    /* printf("left = %s \t right = %s \t me = %s\n", typeToString(left->type).c_str(), \
+             typeToString(right->type).c_str(), typeToString(this->type).c_str());
+    */
 }
 
 void TwoOpNode::execute() {
@@ -60,14 +41,18 @@ void TwoOpNode::execute() {
     
     if(opr != _EQ)
     {
+        LeftOpNode* left_casted = dynamic_cast<LeftOpNode*>(left);
+        if(left_casted != NULL)
+            left_casted->setPushTwice(true);
+
         left->execute();
         if(this->type != this->left->type)
             convtStack(this->left->type, this->type);
 
-        updateSymbolTable(left->getName(), true, false);
+        updateSymbolTable(left->getName(), true, true);
     }
     else
-        updateSymbolTable(left->getName(), true, true);
+        updateSymbolTable(left->getName(), true, false);
 
         
     switch (opr)
@@ -160,7 +145,7 @@ void TwoOpNode::execute() {
             return;
     }
             
-    printf("\n\nError occured in TwoOpNode::execute() in two_operand.cpp\n\n");
+    // printf("\nError occured in TwoOpNode::execute() in two_operand.cpp\n");
 }
  
 

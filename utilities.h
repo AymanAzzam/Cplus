@@ -29,6 +29,8 @@ void log(const string &s);
 
 bool updateSymbolTable(const string& name, bool init, bool use);
 
+bool isAssignmentOp(Operator opr);
+
 template<typename ... Args>
 string string_format( const std::string& format, Args ... args )
 {

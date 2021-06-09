@@ -295,12 +295,12 @@ rel_expr:       expr IS_EQ expr             {Operator o = _IS_EQ; $$ = new TwoOp
         |       expr LTE expr               {Operator o = _LTE; $$ = new TwoOpNode($1, $3, o, yylineno);}
 
 // assignment operators
-assign_expr:    expr EQ expr                {Operator o = _EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
-	|	expr PLUS_EQ expr           {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
-	|       expr MINUS_EQ expr          {Operator o = _MINUS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
-	|	expr DIV_EQ expr            {Operator o = _DIV_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
-	|	expr MULT_EQ expr           {Operator o = _MULT_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
-	|	expr MOD_EQ expr            {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+assign_expr:    identifier EQ expr          {Operator o = _EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	identifier PLUS_EQ expr     {Operator o = _PLUS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|       identifier MINUS_EQ expr    {Operator o = _MINUS_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	identifier DIV_EQ expr      {Operator o = _DIV_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	identifier MULT_EQ expr     {Operator o = _MULT_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
+	|	identifier MOD_EQ expr      {Operator o = _MOD_EQ; $$ = new TwoOpNode($1, $3, o, yylineno);}
         ;
 
 cond_expr:   expr		{$$ = $1;}
@@ -328,7 +328,7 @@ parameter_decl: 	parameter_decl ',' variable_declaration	{$$ = $1; $$->push($3);
 func_call:      identifier '(' args ')'	{$$ = new FunctionCall($1, $3, yylineno);}
         ;
 
-identifier:     IDENTIFIER              {$$ = new IdentifierNode($1);}
+identifier:     IDENTIFIER              {$$ = new IdentifierNode($1, yylineno);}
         ;
 
 args:           /* epsilon */		{$$ = nullptr;}

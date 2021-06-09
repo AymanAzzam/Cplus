@@ -26,6 +26,8 @@ class ExprNode: public Node{
             return type;
         }
 
+        virtual bool checkError(bool check_ini = true, bool check_cons = false) {return false;};
+
         virtual string getName() = 0;
         
         virtual void execute() = 0;
@@ -51,7 +53,7 @@ class TypeNode: public Node {
 
 class ValueNode: public ExprNode {
     string value;
-   
+    
     public:
         /**
         * @param value: The value of node
@@ -77,26 +79,45 @@ class ValueNode: public ExprNode {
 
 class IdentifierNode: public ExprNode {
     string name;
+    int line;
+    
     public:
         /**
         * @param name: The name of identifier
         */
-        IdentifierNode(string name): ExprNode() {
+        IdentifierNode(string name, int line): ExprNode() {
             this->name = name;
-        }
+            this->line = line;
 
-        /**
-        * @brief return the value
-        */
-        virtual string getName() {
-            return name;
-        }
-
-        virtual void execute(){
             SymbolTable *symbolTable = SymbolTable::GetInstance();
             bool ini, con;
             
             symbolTable->lookupId(name, type, ini, con);
+        }
+
+        virtual bool checkError(bool check_ini = true, bool check_cons = false) {
+
+            bool dec, ini, con;
+            SymbolTable *symbolTable = SymbolTable::GetInstance();
+            
+            dec = symbolTable->lookupId(name, type, ini, con);
+
+            if(!dec)
+                printf("\nError in line %d: undeclared variable %s\n", \
+                        line, name.c_str());
+            else if(!ini && check_ini)
+                printf("\nError in line %d: uninitialized variable %s\n", \
+                        this->line, name.c_str());
+            else if(ini && con && check_cons)
+                printf("\nConstant Error in line %d: %s is constant\n", \
+                        this->line, name.c_str());
+        }
+
+        virtual string getName() {
+            return name;
+        };
+
+        virtual void execute(){
             pushToStack(name, type);
         }
 };
@@ -119,11 +140,11 @@ class TwoOpNode: public ExprNode {
         virtual string getName() {
             return "-1";
         };
-        
+
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
         */
-        void checkError();
+        virtual bool checkError(bool check_ini = true, bool check_cons = false);
         
         /**
         * @brief Push the Two variables into the stack then apply the operation
@@ -158,7 +179,7 @@ class LeftOpNode: public ExprNode {
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
         */
-        void checkError();
+        virtual bool checkError(bool check_ini = true, bool check_cons = false);
 
         /**
         * @brief Push the variable into the stack then apply the operation
@@ -188,7 +209,7 @@ class RightOpNode: public ExprNode {
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
         */
-        void checkError();
+        virtual bool checkError(bool check_ini = true, bool check_cons = false);
 
         /**
         * @brief Push the variable into the stack then apply the operation
