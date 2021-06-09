@@ -6,7 +6,9 @@ TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): E
     this->right = right;
     this->opr = opr;
     this->line = line;
+}
 
+DataType TwoOpNode::getType() {
     this->type = typeConversion(left->getType(), right->getType(), opr);
 }
 

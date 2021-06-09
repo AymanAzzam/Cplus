@@ -4,8 +4,9 @@ LeftOpNode::LeftOpNode(ExprNode* left, Operator opr, int line): ExprNode(){
     this->left = left;
     this->opr = opr;
     this-> line = line;
+}
 
-
+DataType LeftOpNode::getType() {
     this->type = left->getType();
 }
 

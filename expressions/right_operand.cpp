@@ -4,7 +4,9 @@ RightOpNode::RightOpNode(ExprNode* right, Operator opr, int line): ExprNode(){
     this->right = right;
     this->opr = opr;
     this->line = line;
+}
 
+DataType RightOpNode::getType() {
     if(opr == _LOGICAL_NOT && right->getType() != _TYPE_BOOL)
     {
         this->type = _TYPE_BOOL; 

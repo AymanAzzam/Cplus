@@ -91,10 +91,15 @@ class IdentifierNode: public ExprNode {
         IdentifierNode(string name, int line): ExprNode() {
             this->name = name;
             this->line = line;
+        }
 
+        virtual DataType getType() {
             SymbolTable *symbolTable = SymbolTable::GetInstance();
             bool ini, con;
+            
             symbolTable->lookupId(name, type, ini, con);
+
+            return type;
         }
 
         virtual bool checkError(bool check_ini = true, bool check_cons = false) {
@@ -142,6 +147,9 @@ class TwoOpNode: public ExprNode {
         virtual string getName() {
             return "-1";
         };
+        
+
+        virtual DataType getType();
 
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
@@ -178,6 +186,8 @@ class LeftOpNode: public ExprNode {
             pushTwice = twice;
         };
 
+        virtual DataType getType();
+
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
         */
@@ -207,6 +217,8 @@ class RightOpNode: public ExprNode {
         virtual string getName() {
             return "-1";
         };        
+
+        virtual DataType getType();
 
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch

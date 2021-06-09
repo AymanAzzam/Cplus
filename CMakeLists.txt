@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 #add_executable(test Test.cpp)
 
 add_executable(
-        test
+        # test
         constants.h
         Conditional/IfStmt.h
         Conditional/IfStmt.cpp
