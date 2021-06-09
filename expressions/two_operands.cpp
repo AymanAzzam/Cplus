@@ -34,8 +34,8 @@ void TwoOpNode::execute() {
         right_casted->setPushTwice(true);
 
     right->execute();
-    if(this->type != this->right->type)
-        convtStack(this->right->type, this->type);
+    if(this->getType() != this->right->getType())
+        convtStack(this->right->getType(), this->getType());
     
     if(opr != _EQ)
     {
@@ -44,8 +44,8 @@ void TwoOpNode::execute() {
             left_casted->setPushTwice(true);
 
         left->execute();
-        if(this->type != this->left->type)
-            convtStack(this->left->type, this->type);
+        if(this->getType() != this->left->getType())
+            convtStack(this->left->getType(), this->getType());
 
         updateSymbolTable(left->getName(), true, true);
     }
