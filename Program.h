@@ -6,8 +6,8 @@
 class Program : public Node {
     std::vector<Node*> global;
 public:
-    Program();
+    Program(Node* g = nullptr);
     void push(Node* g);
     void execute();
-    ~Program();
+    // ~Program();
 };

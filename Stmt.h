@@ -4,8 +4,11 @@
 #include "Node.h"
 
 class Stmt : public Node {
+    Node* stmt;
 public:
+    Stmt(Node* s = nullptr);
     virtual void execute() override;
+    ~Stmt();
 };
 
 

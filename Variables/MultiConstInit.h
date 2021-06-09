@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class MultiConstInit : public Stmt {
+class MultiConstInit : public Node {
     TypeNode* type;
     std::vector<ConstDef*> definitions;
 public:

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class ExprNode: public Stmt{
+class ExprNode: public Node{
     public:
         DataType type;
 
@@ -25,22 +25,6 @@ class ExprNode: public Stmt{
         virtual string getName() = 0;
         
         virtual void execute() = 0;
-};
-
-class ExprStmt : public Stmt {
-    ExprNode* expr;
-public:
-    ExprStmt(ExprNode* e) {
-        expr = e;
-    }
-
-    void execute() {
-        expr->execute();
-    }
-    
-    ~ExprStmt() {
-        delete expr;
-    }
 };
 
 class TypeNode: public Node {

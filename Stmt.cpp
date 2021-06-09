@@ -2,6 +2,14 @@
 #include <iostream>
 using namespace std;
 
+Stmt::Stmt(Node* s) {
+    stmt = s;
+}
+
 void Stmt::execute() {
-    cout << "# executing statement" << endl;
+    stmt->execute();
+}
+
+Stmt::~Stmt() {
+    delete stmt;
 }

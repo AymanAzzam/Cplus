@@ -20,7 +20,7 @@ TypeNode* ConstDef::getType() {
 void ConstDef::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
 
-    if (sym->insertId(name->getName(), 1, type->getType(), true, true)) {
+    if (sym->insertId(name->getName(), lineno, type->getType(), true, true)) {
         expr->execute();
         // printf("push %s\n", expr);
         name->execute();

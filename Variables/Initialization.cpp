@@ -20,7 +20,7 @@ TypeNode* VarInit::getType() {
 void VarInit::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
 
-    if (sym->insertId(name->getName(), 1, type->getType(), true, false)) {
+    if (sym->insertId(name->getName(), lineno, type->getType(), true, false)) {
         expr->execute();
         // printf("push %s\n", expr);
         name->execute();

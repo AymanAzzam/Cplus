@@ -4,6 +4,11 @@
 #include "Headers.h"
 
 extern int yylineno;
+extern FILE* yyin;
+
+#define YYDEBUG 1
+
+// Program* root = new Program();
 
 int yylex(void);
 void yyerror(const char *);
@@ -28,7 +33,6 @@ void yyerror(const char *);
     Cases* cases;
     SwitchStmt* switchStmt;
     ExprNode* exprNode;
-    ExprStmt* exprStmt;
     TypeNode* typeNode;
     ValueNode* valueNode;
     IdentifierNode* identifierNode;
@@ -52,7 +56,7 @@ void yyerror(const char *);
     FunctionReturn* funcReturn;
 }
 
-%start program
+%start root
 
 %token <i> INTEGER
 %token <f> FLOAT
@@ -86,9 +90,9 @@ void yyerror(const char *);
 %right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
 %left POST_SNGL     // postfix inc/dec xddd
 
-%type <pgm> program
+%type <pgm> program root
 
-%type <intermediate> for_expr cond_expr eps_expr extended_for_expr
+%type <intermediate> for_expr cond_expr extended_for_expr
 
 %type <stmt> stmt
 %type <ifStmt> if_stmt
@@ -97,7 +101,7 @@ void yyerror(const char *);
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
-%type <exprNode> expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <exprNode> expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 %type <typeNode> data_type TYPE_VOID
 %type <valueNode> literal
 %type <identifierNode> identifier
@@ -117,15 +121,20 @@ void yyerror(const char *);
 %type <funcReturn> return_stmt
 %%
 
-program:  program multi_var_definition  {$$ = $1; $1->push($2);}
-        | program multi_const_init      {$$ = $1; $1->push($2);}
-        | program func
-        |                               {$$ = new Program(); $$->execute(); /* works? destructor maybe? */}
+root: program           {$$ = $1; $1->execute();}
+
+program:  program multi_var_definition ';'      {$$ = $1; $1->push($2);}
+        | program multi_const_init ';'          {$$ = $1; $1->push($2);}
+        | program func                          {$$ = $1; $1->push($2);}
+        | multi_var_definition ';'              {$$ = new Program($1);}
+        | multi_const_init ';'                  {$$ = new Program($1);}
+        | func                                  {$$ = new Program($1);}
         ;
 
-stmt:   multi_var_definition ';'        {$$ = $1;}
-    |   multi_const_init ';'            {$$ = $1;}
-    |   expr ';'                        {$$ = new ExprStmt($1);}
+
+stmt:   multi_var_definition ';'        {$$ = new Stmt($1);}
+    |   multi_const_init ';'            {$$ = new Stmt($1);}
+    |   expr ';'                        {$$ = new Stmt($1);}
     |   WHILE '(' cond_expr ')' stmt            {$$ = new While($3, $5);}
     |   DO stmt WHILE '(' cond_expr ')' ';'     {$$ = new DoWhile($2, $5);}
     |   FOR '(' extended_for_expr ';' for_expr ';' eps_expr ')' stmt     {$$ = new For($3, $5, $7, $9);}
@@ -353,7 +362,9 @@ void yyerror(const char *s) {
     fprintf(stderr, "%s\n", s);
 }
 
-int main(void) {
+int main(int argc, char** argv) {
+    yyin = fopen(argv[1], "r");
+    yydebug = 0;
     yyparse();
     return 0;
 }

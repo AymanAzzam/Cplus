@@ -1,5 +1,9 @@
 #include "Program.h"
 
+Program::Program(Node* g) {
+    push(g);
+}
+
 void Program::push(Node* g) {
     global.push_back(g);
 }
@@ -10,8 +14,8 @@ void Program::execute() {
     }
 }
 
-Program::~Program() {
-    for (Node* g : global) {
-        delete g;
-    }
-}
+// Program::~Program() {
+//     for (Node* g : global) {
+//         delete g;
+//     }
+// }
