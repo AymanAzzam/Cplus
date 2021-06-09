@@ -88,6 +88,7 @@ void FunctionCall::execute()
                 {
                     printf("Warning:%i: conversion from type %s to %s.\n",
                            lineNo, typeToString(curr).c_str(), typeToString(expected).c_str());
+                    convtStack(curr, expected);
                 }
             }
             printf("CALL %s\n", funcIdentifier->getName().c_str());
