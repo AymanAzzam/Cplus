@@ -148,8 +148,6 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
     DataType out = left;
     string left_s, right_s;
 
-    printf("opr = %s", oprToString(opr).c_str());
-
     left_s = typeToString(left);
     right_s = typeToString(right);
 

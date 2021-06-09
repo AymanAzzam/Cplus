@@ -25,9 +25,6 @@ void TwoOpNode::checkError() {
     {
         SymbolTable *symbolTable = SymbolTable::GetInstance();
         r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con);
-        printf("right_name = %s \t right_type = %s \t r_ini = %d \t \
-                r_cons = %d \t r_dec = %d", casted->getName().c_str(), \
-                typeToString(right->type).c_str(), r_ini, r_con, r_dec);
     }
     if(!r_dec)
          printf("\n\nError in line %d: undeclared variable %s\n\n", \
@@ -67,7 +64,7 @@ void TwoOpNode::execute() {
     }
     else
         updateSymbolTable(left->getName(), true, true);
-        
+
         
     switch (opr)
     {
