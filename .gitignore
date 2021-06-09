@@ -15,4 +15,4 @@ SymbolTable/main.cpp
 SymbolTable/Makefile
 .vscode
 CMakeListHelper.py
-build/*
+build/
