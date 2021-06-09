@@ -8,6 +8,7 @@
 #include "../SubExpr/CondExpr.h"
 #include <vector>
 #include <iostream>
+#include "../utilities.h"
 
 // TODO check switch expression type
 // TODO check case expression type
@@ -50,11 +51,11 @@ public:
     }
 
     bool isDefault() {
-        return !expr;
+        return expr == nullptr;
     }
 
     bool hasBody() {
-        return stmtList;
+        return stmtList != nullptr;
     }
 
     ~Case() {
@@ -91,10 +92,11 @@ public:
                 continue;
             }
             aCase->evalExp();
-            cout << "push " << switchVariable << "_switch" << endl;
-            cout << "jnz " << "L" << (aCase->hasBody() ? labelNumber++ : labelNumber) << endl;
+            // TODO push_datatype
+            writeAssembly(string_format("PUSH %d_SWITCH", switchVariable));
+            writeAssembly(string_format("JNZ L%d", (aCase->hasBody() ? labelNumber++ : labelNumber)));
         }
-        cout << "jmp L" << (defaultLabel != -1 ? defaultLabel : breakLabel.top()) << endl;
+        writeAssembly(string_format("JMP L%d", (defaultLabel != -1 ? defaultLabel : breakLabel.top())));
         for (Case *aCase:cases) {
             if (!aCase->hasBody()) continue;
             aCase->setCaseLabel(startLabelNumber++);
@@ -112,9 +114,11 @@ class SwitchStmt : public Stmt {
 private:
     Cases *cases;
     CondExpr *condExpr;
+
     bool validateSwitchExpression() {
         return true;
     }
+
 public:
     SwitchStmt(CondExpr *condExpr, Cases *cases) : condExpr(condExpr), cases(cases) {
     }
@@ -123,17 +127,18 @@ public:
     explicit SwitchStmt(CondExpr *condExpr) : condExpr(condExpr), cases(nullptr) {}
 
     void execute() override {
-        SymbolTable* sym = SymbolTable::GetInstance();
+        SymbolTable *sym = SymbolTable::GetInstance();
         sym->startScope(_SWITCH);
         validateSwitchExpression();
         condExpr->execute();
         int switchVariable = labelNumber++;
-        cout << "pop " << switchVariable << "_switch" << endl;
+        // TODO pop_datatype
+        writeAssembly(string_format("POP %d_SWITCH", switchVariable));
         cases->switchVariable = switchVariable;
         int switchBreakLabel = labelNumber++;
         breakLabel.push(switchBreakLabel);
         cases->execute();
-        cout << "L" << switchBreakLabel << ":" << endl;
+        writeAssembly(string_format("L%d:", switchBreakLabel));
         breakLabel.pop();
         sym->finishScope();
     }
