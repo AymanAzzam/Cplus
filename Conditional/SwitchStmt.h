@@ -9,10 +9,9 @@
 #include <vector>
 #include <iostream>
 #include "../utilities.h"
+#include "../constants.h"
 
 // TODO check switch expression type
-// TODO check case expression type
-// TODO make sure it is a constant expression
 
 
 using namespace std;
@@ -22,24 +21,34 @@ private:
     int caseLabel = -1;
     ExprNode *expr;
     StmtList *stmtList;
+    int line;
 public:
-    Case(ExprNode *expr, StmtList *stmtList)
-            : expr(expr), stmtList(stmtList) {}
+    Case(ExprNode *expr, StmtList *stmtList, int line)
+            : expr(expr), stmtList(stmtList), line(line) {}
 
-    explicit Case(ExprNode *expr)
-            : expr(expr), stmtList(nullptr) {}
+    Case(ExprNode *expr, int line)
+            : expr(expr), stmtList(nullptr), line(line) {}
 
-    explicit Case(StmtList *stmtList)
-            : expr(nullptr), stmtList(stmtList) {}
+    Case(StmtList *stmtList, int line)
+            : expr(nullptr), stmtList(stmtList), line(line) {}
 
-    Case() : expr(nullptr), stmtList(nullptr) {}
+    Case(int line) : expr(nullptr), stmtList(nullptr), line(line) {}
 
     void setCaseLabel(int label) {
         caseLabel = label;
     }
 
+    bool validateCaseExpression() {
+        DataType type = expr->getType();
+        if (type == _TYPE_FLOAT || type == _TYPE_VOID) {
+            log(string_format("Error in line %d: case expression must be integer", line));
+            return false;
+        }
+//        TODO is Expression constant
+        return true;
+    }
+
     void execute() override {
-        cout << "ex case" << endl;
         if (caseLabel != -1)
             cout << "L" << caseLabel << ":" << endl;
         if (stmtList)
@@ -47,7 +56,12 @@ public:
     }
 
     void evalExp() {
+        validateCaseExpression();
         expr->execute();
+        DataType type = expr->getType();
+        if (type == _TYPE_BOOL || type == _TYPE_CHAR) {
+            writeAssembly("CONVERT_TO_INT");
+        }
     }
 
     bool isDefault() {
@@ -83,7 +97,6 @@ public:
     }
 
     void execute() override {
-        cout << "ex cases" << endl;
         int startLabelNumber = labelNumber;
         int defaultLabel = -1;
         for (Case *aCase : cases) {

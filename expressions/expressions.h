@@ -29,6 +29,8 @@ class ExprNode: public Node{
         virtual string getName() = 0;
         
         virtual void execute() = 0;
+
+        virtual ~ExprNode() {};
 };
 
 class TypeNode: public Node {

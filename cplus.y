@@ -180,20 +180,20 @@ bottom_cases:
 
 case:
 	case_with_body
-	| CASE expr ':'			{$$ = new Case($2);}
+	| CASE expr ':'			{$$ = new Case($2, yylineno);}
 	;
 
 case_with_body:
-	CASE expr ':' stmt_list		{$$ = new Case($2, $4);}
+	CASE expr ':' stmt_list		{$$ = new Case($2, $4, yylineno);}
 	;
 
 default_case:
 	default_with_body
-	| DEFAULT ':'			{$$ = new Case();}
+	| DEFAULT ':'			{$$ = new Case(yylineno);}
 	;
 
 default_with_body:
-	DEFAULT ':' stmt_list		{$$ = new Case($3);}
+	DEFAULT ':' stmt_list		{$$ = new Case($3, yylineno);}
 	;
 
 
