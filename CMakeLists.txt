@@ -6,11 +6,10 @@ set(CMAKE_CXX_STANDARD 14)
 #add_executable(test Test.cpp)
 
 add_executable(
-#        test
-        Conditional/IfStmt.cpp
-        Conditional/IfStmt.h
-        Conditional/SwitchStmt.h
         constants.h
+        Conditional/IfStmt.h
+        Conditional/IfStmt.cpp
+        Conditional/SwitchStmt.h
         cplus.tab.cpp
         expressions/expressions.h
         expressions/left_operand.cpp
