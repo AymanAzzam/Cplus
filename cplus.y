@@ -144,11 +144,11 @@ stmt:   multi_var_definition ';'        {$$ = new Stmt($1);}
     |   if_stmt		{$$ = $1;}
     |   switch_stmt	{$$ = $1;}
     |   block		{$$ = $1;}
-    |   ';'		{$$ = nullptr;}
+    |   ';'		{$$ = new Stmt();}
     ;
 
 block:  '{' stmt_list '}'	{$$ = $2;}
-        |   '{' '}'		{$$ = nullptr;}
+        |   '{' '}'		{$$ = new StmtList();}
         ;
 
 stmt_list:
@@ -363,7 +363,7 @@ void yyerror(const char *s) {
 
 int main(int argc, char** argv) {
     yyin = fopen("in.txt", "r");
-    yydebug = 0;
+    yydebug = 1;
     yyparse();
     return 0;
 }

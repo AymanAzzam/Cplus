@@ -8,7 +8,7 @@ StmtList::~StmtList() {
 
 void StmtList::execute() {
     for (Stmt *stmt:statements)
-        stmt->execute();
+        if (stmt) stmt->execute();
 }
 
 void StmtList::push(Stmt *stmt) {

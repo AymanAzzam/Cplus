@@ -19,6 +19,7 @@ DataType MultiVarDef::getType() {
 
 void MultiVarDef::execute() {
     for (VarDeclare* s : definitions) {
+        printf("~~~ %s ~~~\n", typeToString(getType()).c_str());
         s->execute();
     }
 }

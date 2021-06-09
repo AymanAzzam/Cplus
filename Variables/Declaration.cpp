@@ -2,7 +2,7 @@
 #include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
-VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n, int l) : ExprNode(t->getType()) {
+VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n, int l) : ExprNode() {
     type = t;
     name = n;
     lineno = l;

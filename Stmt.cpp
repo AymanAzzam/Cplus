@@ -7,7 +7,7 @@ Stmt::Stmt(Node* s) {
 }
 
 void Stmt::execute() {
-    stmt->execute();
+    if (stmt) stmt->execute();
 }
 
 Stmt::~Stmt() {
