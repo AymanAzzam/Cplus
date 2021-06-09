@@ -3,9 +3,10 @@
 
 
 #include <string>
-#include "constants.h"
 #include <memory>
 #include <stdexcept>
+#include "constants.h"
+#include "SymbolTable/SymbolTable.h"
 
 using namespace std;
 
@@ -25,6 +26,8 @@ void convtStack(DataType in, DataType out);
 void writeAssembly(const string &s);
 
 void log(const string &s);
+
+bool updateSymbolTable(const string& name, bool init, bool use);
 
 template<typename ... Args>
 string string_format( const std::string& format, Args ... args )

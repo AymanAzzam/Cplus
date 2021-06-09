@@ -148,6 +148,8 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
     DataType out = left;
     string left_s, right_s;
 
+    printf("opr = %s", oprToString(opr).c_str());
+
     left_s = typeToString(left);
     right_s = typeToString(right);
 
@@ -163,6 +165,12 @@ DataType typeConversion(DataType left, DataType right, Operator opr) {
                 
         return _TYPE_BOOL;
     }
+
+    // just to solve an error (TODO)
+    if(right == _TYPE_VOID)
+        return left;
+    else if(left == _TYPE_VOID)
+        return right;
 
     if(right == _TYPE_FLOAT || \
       (right == _TYPE_INT && (left == _TYPE_CHAR || left == _TYPE_BOOL)) || \
@@ -206,4 +214,10 @@ void log(const string& s) {
 
 void writeAssembly(const string& s) {
     cout << s << endl;
+}
+
+bool updateSymbolTable(const string& name, bool init, bool use) {
+    SymbolTable *symbolTable = SymbolTable::GetInstance();
+
+    return symbolTable->modifyId(name, init, use);
 }

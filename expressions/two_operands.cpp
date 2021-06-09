@@ -24,7 +24,10 @@ void TwoOpNode::checkError() {
     if(casted != NULL)
     {
         SymbolTable *symbolTable = SymbolTable::GetInstance();
-        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con); 
+        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con);
+        printf("right_name = %s \t right_type = %s \t r_ini = %d \t \
+                r_cons = %d \t r_dec = %d", casted->getName().c_str(), \
+                typeToString(right->type).c_str(), r_ini, r_con, r_dec);
     }
     if(!r_dec)
          printf("\n\nError in line %d: undeclared variable %s\n\n", \
@@ -33,7 +36,7 @@ void TwoOpNode::checkError() {
          printf("\n\nError in line %d: undeclared variable %s\n\n", \
                 this->line, left->getName().c_str());
     else if(!r_ini)
-        printf("\n\nErrorin line %d: uninitialized variable %s\n\n", \
+        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
                 this->line, right->getName().c_str());
     else if(!l_ini && opr != _EQ)
         printf("\n\nError in line %d: uninitialized variable %s\n\n", \
@@ -59,8 +62,13 @@ void TwoOpNode::execute() {
         left->execute();
         if(this->type != this->left->type)
             convtStack(this->left->type, this->type);
-    }
 
+        updateSymbolTable(left->getName(), true, false);
+    }
+    else
+        updateSymbolTable(left->getName(), true, true);
+        
+        
     switch (opr)
     {
         // arithmetic operators
@@ -150,7 +158,7 @@ void TwoOpNode::execute() {
             printf("\tlogicOR\n");
             return;
     }
-    
+            
     printf("\n\nError occured in TwoOpNode::execute() in two_operand.cpp\n\n");
 }
  

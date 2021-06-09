@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 project(Lex_and_Yacc)
 
 set(CMAKE_CXX_STANDARD 14)
