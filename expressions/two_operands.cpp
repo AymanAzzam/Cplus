@@ -36,14 +36,12 @@ void TwoOpNode::execute() {
     if(this->checkError())
         return;
 
+    this->getType();
+
     LeftOpNode* right_casted = dynamic_cast<LeftOpNode*>(right);
     if(right_casted != NULL)
         right_casted->setPushTwice(true);
 
-    right->execute();
-    if(this->getType() != this->right->getType())
-        convtStack(this->right->getType(), type);
-    
     if(opr != _EQ)
     {
         LeftOpNode* left_casted = dynamic_cast<LeftOpNode*>(left);
@@ -59,6 +57,10 @@ void TwoOpNode::execute() {
     else
         updateSymbolTable(left->getName(), true, false);
 
+    right->execute();
+    if(this->type != this->right->getType())
+        convtStack(this->right->getType(), type);
+    
         
     switch (opr)
     {
