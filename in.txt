@@ -1,12 +1,2 @@
-void main() {
-    int x, z=-1, y;
-
-    x = 'a';
-    y = 1.45;
-
-    int a = 1, b(2.5), c(true);
-
-    c=z;
-    x=b;
-    z=b;
-}
+int x = 1;
+int y = -x;
