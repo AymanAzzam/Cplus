@@ -27,7 +27,6 @@ void yyerror(const char *);
 
     Stmt* stmt;
     IfStmt* ifStmt;
-//     CondExpr* condExpr;
     StmtList* stmtList;
     Case* aCase;
     Cases* cases;

@@ -1,8 +1,9 @@
 #ifndef LEX_AND_YACC_JMPSTMT_H
 #define LEX_AND_YACC_JMPSTMT_H
 
-#include <iostream>
 #include "Stmt.h"
+#include "utilities.h"
+#include "SymbolTable/SymbolTable.h"
 
 using namespace std;
 
@@ -24,7 +25,6 @@ public:
 
     void execute() override {
         SymbolTable* sym = SymbolTable::GetInstance();
-        cout << "jmp L" << continueLabel.top() << endl;
         if (sym->canContinue()) {
             writeAssembly(string_format("\tJMP L%i", continueLabel.top()));
         } else {
