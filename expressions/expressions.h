@@ -110,7 +110,9 @@ class TwoOpNode: public ExprNode {
         */
         TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line);
         
-        virtual string getName() {};
+        virtual string getName() {
+            return "-1";
+        };
         
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
@@ -138,7 +140,9 @@ class LeftOpNode: public ExprNode {
         */
         LeftOpNode(ExprNode* left, Operator opr, int line);
 
-        virtual string getName() {};
+        virtual string getName() {
+            return "-1";
+        };
 
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
@@ -166,7 +170,9 @@ class RightOpNode: public ExprNode {
         */
         RightOpNode(ExprNode* right, Operator opr, int line);
 
-        virtual string getName() {};        
+        virtual string getName() {
+            return "-1";
+        };        
 
         /**
         * @brief Check the error of declaration, initialization, constant and Type mismatch
