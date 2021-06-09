@@ -94,7 +94,6 @@ class IdentifierNode: public ExprNode {
 
             SymbolTable *symbolTable = SymbolTable::GetInstance();
             bool ini, con;
-            
             symbolTable->lookupId(name, type, ini, con);
         }
 
