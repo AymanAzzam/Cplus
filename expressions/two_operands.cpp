@@ -6,49 +6,30 @@ TwoOpNode::TwoOpNode(ExprNode* left, ExprNode* right, Operator opr, int line): E
     this->right = right;
     this->opr = opr;
     this->line = line;
+
+    this->type = typeConversion(left->getType(), right->getType(), opr);
 }
 
-void TwoOpNode::checkError() {
-    string left_s, right_s;
-    bool l_con = true, l_ini = true, l_dec = true, \
-            r_con = true, r_ini = true, r_dec = true;
-    IdentifierNode* casted;
-
-    casted = dynamic_cast<IdentifierNode*>(left);
-    if(casted != NULL)
-    {
-        SymbolTable *symbolTable = SymbolTable::GetInstance();
-        l_dec = symbolTable->lookupId(casted->getName(), left->type, l_ini, l_con); 
-    }
-    casted = dynamic_cast<IdentifierNode*>(right);
-    if(casted != NULL)
-    {
-        SymbolTable *symbolTable = SymbolTable::GetInstance();
-        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con);
-    }
-    if(!r_dec)
-         printf("\n\nError in line %d: undeclared variable %s\n\n", \
-                this->line, right->getName().c_str());
-    else if(!l_dec)
-         printf("\n\nError in line %d: undeclared variable %s\n\n", \
-                this->line, left->getName().c_str());
-    else if(!r_ini)
-        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
-                this->line, right->getName().c_str());
-    else if(!l_ini && opr != _EQ)
-        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
-                this->line, left->getName().c_str());
-    else if(l_con && ( opr == _MOD_EQ || opr == _MULT_EQ || opr == _DIV_EQ ||\
-            opr == _MINUS_EQ || opr == _PLUS_EQ || opr == _EQ ))
-        printf("\n\nConstant Error in line %d: %s is constant\n\n", \
-                this->line, left->getName().c_str());
+bool TwoOpNode::checkError(bool check_ini, bool check_cons) {
+    check_ini = opr != _EQ;
+    check_cons = isAssignmentOp(opr);
+    bool l_err, r_err;
     
-    this->type = typeConversion(left->type, right->type, opr);
+    r_err = right->checkError();
+
+    l_err = left->checkError(check_ini, check_cons);
+
+
+    return l_err || r_err;
 }
 
 void TwoOpNode::execute() {
 
     this->checkError();
+
+    LeftOpNode* right_casted = dynamic_cast<LeftOpNode*>(right);
+    if(right_casted != NULL)
+        right_casted->setPushTwice(true);
 
     right->execute();
     if(this->type != this->right->type)
@@ -56,54 +37,58 @@ void TwoOpNode::execute() {
     
     if(opr != _EQ)
     {
+        LeftOpNode* left_casted = dynamic_cast<LeftOpNode*>(left);
+        if(left_casted != NULL)
+            left_casted->setPushTwice(true);
+
         left->execute();
         if(this->type != this->left->type)
             convtStack(this->left->type, this->type);
 
-        updateSymbolTable(left->getName(), true, false);
+        updateSymbolTable(left->getName(), true, true);
     }
     else
-        updateSymbolTable(left->getName(), true, true);
+        updateSymbolTable(left->getName(), true, false);
 
         
     switch (opr)
     {
         // arithmetic operators
         case _REM:
-            printf("\tREM\n");
+            writeAssembly(string_format("\tREM\n"));
             return;
         case _MUL:
-            printf("\tMUL\n");
+            writeAssembly(string_format("\tMUL\n"));
             return;
         case _DIV:
-            printf("\tDIV\n");
+            writeAssembly(string_format("\tDIV\n"));
             return;
         case _SUB:
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             return;
         case _ADD:
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             return;
 
         // assignment operators
         case _MOD_EQ:
-            printf("\tREM\n");
+            writeAssembly(string_format("\tREM\n"));
             popFromStack(left->getName());
             return;
         case _MULT_EQ:
-            printf("\tMUL\n");
+            writeAssembly(string_format("\tMUL\n"));
             popFromStack(left->getName());
             return;
         case _DIV_EQ:
-            printf("\tDIV\n");
+            writeAssembly(string_format("\tDIV\n"));
             popFromStack(left->getName());
             return;
         case _MINUS_EQ:
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             popFromStack(left->getName());
             return;
         case _PLUS_EQ:
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             popFromStack(left->getName());
             return;
         case _EQ:
@@ -112,51 +97,51 @@ void TwoOpNode::execute() {
 
         // comparison operators
         case _LTE:
-            printf("\tcompLTE\n");
+            writeAssembly(string_format("\tcompLTE\n"));
             return;
         case _GTE:
-            printf("\tcompGTE\n");
+            writeAssembly(string_format("\tcompGTE\n"));
             return;
         case _LT:
-            printf("\tcompLT\n");
+            writeAssembly(string_format("\tcompLT\n"));
             return;
         case _GT:
-            printf("\tcompGT\n");
+            writeAssembly(string_format("\tcompGT\n"));
             return;
         case _NOT_EQ:
-            printf("\tcompNE\n");
+            writeAssembly(string_format("\tcompNE\n"));
             return;
         case _IS_EQ:
-            printf("\tcompEQ\n");
+            writeAssembly(string_format("\tcompEQ\n"));
             return;
         
         // bitwise operators
         case _SHL:
-            printf("\tSHL\n");
+            writeAssembly(string_format("\tSHL\n"));
             return;
         case _SHR:
-            printf("\tSHR\n");
+            writeAssembly(string_format("\tSHR\n"));
             return;
         case _BIT_XOR:
-            printf("\tXOR\n");
+            writeAssembly(string_format("\tXOR\n"));
             return;
         case _BIT_OR:
-            printf("\tOR\n");
+            writeAssembly(string_format("\tOR\n"));
             return;
         case _BIT_AND:
-            printf("\tAND\n");
+            writeAssembly(string_format("\tAND\n"));
             return;
         
         // logical operators
         case _LOGICAL_AND:
-            printf("\tlogicAND\n");
+            writeAssembly(string_format("\tlogicAND\n"));
             return;
         case _LOGICAL_OR:
-            printf("\tlogicOR\n");
+            writeAssembly(string_format("\tlogicOR\n"));
             return;
     }
             
-    printf("\n\nError occured in TwoOpNode::execute() in two_operand.cpp\n\n");
+    // printf("\nError occured in TwoOpNode::execute() in two_operand.cpp\n");
 }
  
 

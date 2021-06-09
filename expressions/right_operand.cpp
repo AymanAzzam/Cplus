@@ -4,81 +4,66 @@ RightOpNode::RightOpNode(ExprNode* right, Operator opr, int line): ExprNode(){
     this->right = right;
     this->opr = opr;
     this->line = line;
-}
 
-void RightOpNode::checkError() {
-    string s, o;
-    bool r_con = true, r_ini = true, r_dec = true;
-    
-    IdentifierNode* casted;
-
-    casted = dynamic_cast<IdentifierNode*>(right);
-    if(casted != NULL)
-    {
-        SymbolTable *symbolTable = SymbolTable::GetInstance();
-        r_dec = symbolTable->lookupId(casted->getName(), right->type, r_ini, r_con); 
-    }
-    
-    if(!r_dec)
-        printf("\n\nError in line %d: undeclared variable %s\n\n", \
-                this->line, getName().c_str());
-    else if(!r_ini)
-        printf("\n\nError in line %d: uninitialized variable %s\n\n", \
-                this->line, right->getName().c_str());
-    else if(r_ini && r_con && (opr == _INC_OPR || opr == _DEC_OPR))
-        printf("\n\nConstant Error in line %d: %s is constant\n\n", \
-                this->line, right->getName().c_str());
-
-    if(opr == _LOGICAL_NOT && right->type != _TYPE_BOOL)
+    if(opr == _LOGICAL_NOT && right->getType() != _TYPE_BOOL)
     {
         this->type = _TYPE_BOOL; 
         
-        printf("\n\nWarning: Type mismatch, converting %s to bool\n\n", \
-                typeToString(right->type).c_str());
+        log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+                typeToString(right->getType()).c_str()));
     }
     else
-        this->type = right->type;
-    
+        this->type = right->getType();
 }
+
+bool RightOpNode::checkError(bool check_ini, bool check_cons) {    
+    check_cons = (opr == _INC_OPR || opr == _DEC_OPR);
+    bool r_error;
+
+    r_error = right->checkError(true, check_cons);
+
+    return r_error;
+}
+
 
 void RightOpNode::execute() {
     this->checkError();
 
     right->execute();
-    if(this->type != this->right->type)
-        convtStack(this->right->type, this->type);
+    if(getType() != right->getType())
+        convtStack(right->getType(), getType());
 
     updateSymbolTable(right->getName(), true, true);
 
     switch (opr)
     {
         case _BIT_NOT:
-            printf("\tNOT\n");
+            writeAssembly(string_format("\tNOT\n"));
             return;
         case _LOGICAL_NOT:
-            printf("\tlogicNOT\n");
+            writeAssembly(string_format("\tlogicNOT\n"));
             return;
         case _INC_OPR:
             pushToStack("1", _TYPE_INT);
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             popFromStack(right->getName());
-            printf("\tPUSH\t%s\n", right->getName().c_str());
+            writeAssembly(string_format("\tPUSH\t%s\n", right->getName().c_str()));
             return;
         case _DEC_OPR:
             pushToStack("1", _TYPE_INT);
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             popFromStack(right->getName());
-            pushToStack(right->getName(), right->type);
+            pushToStack(right->getName(), right->getType());
             return;
         case _ADD:
-            printf("\tADD\n");
+            writeAssembly(string_format("\tADD\n"));
             return;
         case _SUB:
-            printf("\tSUB\n");
+            writeAssembly(string_format("\tSUB\n"));
             return;
     }
 
-    printf("\n\nError occured in RightOpNode::execute() in right_operand.cpp\n\n");
+    // printf("\nError occured in RightOpNode::execute() in right_operand.cpp\n");
 }
 
 
