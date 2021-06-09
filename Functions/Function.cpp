@@ -73,7 +73,7 @@ void FunctionCall::execute()
     vector<DataType> parameterList;
     if (st->lookupFunc(funcIdentifier->getName(), parameterList))
     {
-        if (funcArgs != nullptr && funcArgs->expressions.size() != parameterList.size())
+        if (funcArgs != nullptr && funcArgs->expressions.size() != parameterList.size() - 1)
         {
             printf("Error:%i:  number of parameters mismatch. required: %zu, found: %zu.\n",
                    lineNo, parameterList.size(), funcArgs->expressions.size());
@@ -82,7 +82,7 @@ void FunctionCall::execute()
         {
             for (int i = 0; i < funcArgs->expressions.size(); i++)
             {
-                DataType curr = funcArgs->expressions[i]->type, expected = parameterList[i];
+                DataType curr = funcArgs->expressions[i]->type, expected = parameterList[i + 1];
                 if (curr != expected)
                 {
                     printf("Warning:%i: conversion from type %s to %s.\n",
