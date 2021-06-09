@@ -68,7 +68,7 @@ public:
 
 class FunctionReturn : public Stmt
 {
-    ExprNode* retExpr;
+    ExprNode *retExpr;
     int lineNo;
 
 public:
