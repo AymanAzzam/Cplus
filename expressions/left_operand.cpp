@@ -29,7 +29,7 @@ void LeftOpNode::execute() {
     if(getType() != left->getType())
         convtStack(left->getType(), type);
     
-    updateSymbolTable(left->getName(), true, true);
+    // updateSymbolTable(left->getName(), true, true);
 
     pushToStack("1", _TYPE_INT);
     

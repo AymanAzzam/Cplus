@@ -35,6 +35,7 @@ class SymbolTable
 private:
     SymbolTable();
     static SymbolTable *symbolTable;
+    static ofstream file;
 
     unordered_map<string, vector<Identifier>> idTable;
     unordered_map<string, vector<DataType>> funcTable;

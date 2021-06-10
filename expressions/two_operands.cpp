@@ -52,10 +52,10 @@ void TwoOpNode::execute() {
         if(type != this->left->getType())
             convtStack(this->left->getType(), type);
 
-        updateSymbolTable(left->getName(), true, true);
+        // updateSymbolTable(left->getName(), true, true);
     }
-    else
-        updateSymbolTable(left->getName(), true, false);
+    // else
+        // updateSymbolTable(left->getName(), true, false);
 
     right->execute();
     if(this->type != this->right->getType())

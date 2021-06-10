@@ -132,6 +132,7 @@ class IdentifierNode: public ExprNode {
             if(checkError()){
                 return;}
                 
+            updateSymbolTable(name, true, true);
             pushToStack(name, getType());
         }
 };
