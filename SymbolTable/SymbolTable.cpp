@@ -6,10 +6,13 @@
 using namespace std;
 
 SymbolTable *SymbolTable::symbolTable = nullptr;
+ofstream SymbolTable::file;
 
 SymbolTable::SymbolTable()
 {
     scopeMask = 0;
+    file.open("table.txt");
+    file.close();
     startScope(GLOBAL);
 }
 
@@ -177,11 +180,11 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 
 void SymbolTable::print()
 {
-    freopen("table.txt","w",stdout);
-    cout << "Symbol Table at the end of " << scopeTypeEnumToString(static_cast<ScopeType>(scopeMask % 10)) << ".\n";
-    cout << "--------------------------------------------------------------" << endl;
-    cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
-    cout << "--------------------------------------------------------------" << endl;
+    file.open("table.txt", ios_base::app);
+    file << "Symbol Table at the end of " << scopeTypeEnumToString(static_cast<ScopeType>(scopeMask % 10)) << ".\n";
+    file << "--------------------------------------------------------------" << endl;
+    file << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
+    file << "--------------------------------------------------------------" << endl;
     unordered_map<string, int> idx;
     string scopeString = to_string(scopeMask);
     for (int i = 0; i < scope.size(); i++)
@@ -203,16 +206,16 @@ void SymbolTable::print()
                 dataType = dataTypeEnumToString(idTable[name][idIdx].type);
                 used = idTable[name][idIdx].used ? "True" : "False";
             }
-            cout << "| " << left << setw(9) << identifier;
-            cout << "| " << left << setw(15) << name;
-            cout << "| " << left << setw(6) << dataType;
-            cout << "| " << left << setw(15) << scopeType;
-            cout << "| " << left << setw(6) << used << "|\n";
+            file << "| " << left << setw(9) << identifier;
+            file << "| " << left << setw(15) << name;
+            file << "| " << left << setw(6) << dataType;
+            file << "| " << left << setw(15) << scopeType;
+            file << "| " << left << setw(6) << used << "|\n";
         }
     }
-    cout << "--------------------------------------------------------------" << endl;
+    file << "--------------------------------------------------------------" << endl;
 
-    fclose (stdout);
+    file.close();
 }
 
 bool SymbolTable::canBreak() const
