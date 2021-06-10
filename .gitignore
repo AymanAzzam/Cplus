@@ -17,6 +17,7 @@ CMakeListHelper.py
 build/
 Executables/*.txt
 Executables/source.cp
+Executables/cplus.exe
 GUI/.idea/
 GUI/out/
 GUI/META-INF/
