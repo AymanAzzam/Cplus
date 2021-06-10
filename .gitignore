@@ -25,3 +25,4 @@ GUI/GUI.iml
 GUI/*.txt
 /GUI/src/META-INF/MANIFEST.MF
 /GUI/source.cp
+/GUI/cplus.exe
