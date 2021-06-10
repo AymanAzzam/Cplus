@@ -24,3 +24,4 @@ GUI/GUI.iml
 *.class
 GUI/*.txt
 /GUI/src/META-INF/MANIFEST.MF
+/GUI/source.cp
