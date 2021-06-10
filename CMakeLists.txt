@@ -31,10 +31,6 @@ add_executable(
         Stmt.h
         StmtList.cpp
         StmtList.h
-        SubExpr/EpsExpr.cpp
-        SubExpr/EpsExpr.h
-        SubExpr/ForExpr.cpp
-        SubExpr/ForExpr.h
         SymbolTable/SymbolTable.cpp
         SymbolTable/SymbolTable.h
         utilities.h
