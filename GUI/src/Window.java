@@ -33,7 +33,10 @@ class Window extends JFrame implements ActionListener {
 
     private void buildLeftPanel() {
         sourceTextArea = new JTextPane();
-        sourceTextArea.setText("Source code");
+        sourceTextArea.setFont(new Font("monospaced", Font.PLAIN, 12));
+        sourceTextArea.setText("int main() {\n" +
+                "    return 0;\n" +
+                "}");
         leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(putLineNumbers(sourceTextArea), BorderLayout.CENTER);
         leftPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -52,6 +55,7 @@ class Window extends JFrame implements ActionListener {
 
     private void buildRightPanel() {
         outputTextArea = new JTextPane();
+        outputTextArea.setFont(new Font("monospaced", Font.PLAIN, 12));
         outputTextArea.setEditable(false);
         rightPanel = new JPanel(new BorderLayout());
         rightPanel.add(putLineNumbers(outputTextArea), BorderLayout.CENTER);

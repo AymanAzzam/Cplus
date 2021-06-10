@@ -208,7 +208,7 @@ void SymbolTable::print()
             cout << "| " << left << setw(15) << name;
             cout << "| " << left << setw(6) << dataType;
             cout << "| " << left << setw(15) << scopeType;
-            cout << "| " << left << setw(6) << used << "|";
+            cout << "| " << left << setw(6) << used << "|\n";
         }
     }
     cout << "--------------------------------------------------------------" << endl;
