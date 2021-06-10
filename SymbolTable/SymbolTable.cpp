@@ -79,7 +79,7 @@ vector<pair<string, int>> SymbolTable::finishScope()
     } catch (const char* msg) {
         cerr << msg << endl;
     }
-
+    print();
     scope.pop_back();
     scopeMask /= 10;
     return unusedId;
@@ -95,7 +95,6 @@ int SymbolTable::removeId(const string& name)
     }
     const Identifier &node = idTable[name].back();
     int line = (!node.used) * node.line;
-    // TODO @KhaledMoataz Check this
     idTable[name].pop_back();
     return line;
 }
@@ -179,7 +178,7 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 void SymbolTable::print()
 {
     freopen("table.txt","w",stdout);
-    
+    cout << "Symbol Table at the end of " << scopeTypeEnumToString(static_cast<ScopeType>(scopeMask % 10)) << ".\n";
     cout << "--------------------------------------------------------------" << endl;
     cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
     cout << "--------------------------------------------------------------" << endl;

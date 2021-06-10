@@ -34,7 +34,6 @@ void FunctionHeader::execute()
     {
         parameter->execute();
         vector<VarDeclare *> &parameters = parameter->parameters;
-        // TODO @KhaledMoataz Check this
         for (auto it= parameters.rbegin(); it != parameters.rend(); it++)
             parameterList.emplace_back((*it)->getName(), (*it)->getType());
     }
@@ -93,6 +92,8 @@ void FunctionCall::execute()
             }
             writeAssembly(string_format("CALL %s", funcIdentifier->getName().c_str()));
         }
+    } else{
+        log(string_format("Error:%i: Function %s doesn't exist.\n", lineNo, funcIdentifier->getName().c_str()));
     }
 }
 
