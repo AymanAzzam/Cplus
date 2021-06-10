@@ -3,9 +3,9 @@
 #include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
-DoWhile::DoWhile(Node* a, Node* z) {
-    stmt = a;
-    cond = z;
+DoWhile::DoWhile(Stmt* s, ExprNode* c) {
+    stmt = s;
+    cond = c;
 }
 
 void DoWhile::execute() {

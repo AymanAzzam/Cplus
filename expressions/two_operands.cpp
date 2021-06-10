@@ -51,11 +51,7 @@ void TwoOpNode::execute() {
         left->execute();
         if(type != this->left->getType())
             convtStack(this->left->getType(), type);
-
-        // updateSymbolTable(left->getName(), true, true);
     }
-    // else
-        // updateSymbolTable(left->getName(), true, false);
 
     right->execute();
     if(this->type != this->right->getType())
@@ -151,8 +147,6 @@ void TwoOpNode::execute() {
             writeAssembly(string_format("\tlogicOR"));
             return;
     }
-            
-    // printf("Error occured in TwoOpNode::execute() in two_operand.cpp");
 }
  
 

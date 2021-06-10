@@ -39,8 +39,6 @@ void RightOpNode::execute() {
     if(getType() != right->getType())
         convtStack(right->getType(), type);
 
-    // updateSymbolTable(right->getName(), true, true);
-
     switch (opr)
     {
         case _BIT_NOT:
@@ -62,14 +60,11 @@ void RightOpNode::execute() {
             pushToStack(right->getName(), right->getType());
             return;
         case _ADD:
-            // writeAssembly(string_format("\tADD"));
             return;
         case _SUB:
             writeAssembly(string_format("\tNEG"));
             return;
     }
-
-    // printf("Error occured in RightOpNode::execute() in right_operand.cpp");
 }
 
 

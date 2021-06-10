@@ -8,7 +8,7 @@ ConstDef::ConstDef(TypeNode* t, IdentifierNode* n, ExprNode* e, int l) : VarInit
 void ConstDef::execute() {
     SymbolTable* sym = SymbolTable::GetInstance();
 
-    if (sym->insertId(name->getName(), lineno, getType(), true, true)) {
+    if (sym->insertId(getName(), lineno, getType(), true, true)) {
         expr->execute();
         
         if (expr->getType() != getType()) {
@@ -19,11 +19,11 @@ void ConstDef::execute() {
             convtStack(expr->getType(), getType());
         }
         
-        popFromStack(name->getName(), getType());
+        popFromStack(getName(), getType());
     }
     else {
         log(string_format("Error:%i: Redeclaration of variable: const %s %s",
-                            lineno, typeToString(getType()).c_str(), name->getName().c_str()));
+                            lineno, typeToString(getType()).c_str(), getName().c_str()));
     }
 }
 

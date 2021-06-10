@@ -12,20 +12,16 @@ Compiler for C++ using Flex(Lex) and Bison(Yacc), that compiles:
 | ------ | ------ | ------ | ------ | ------ |
 | User | Dev | Dev | Dev | Dev |
 
-### Compile a program using the GUI
-Double click on Executables/GUI.jar or run the following command from the current directory:
+### Build
+Run the following script:
 ```sh
-java -jar ./Executables/GUI.jar
+./build.sh
 ```
 
-### Build Code to compile without GUI
-Run the following commands from the current directory:
+### Compile a program using the GUI
+Double click on Executables/GUI.jar or run the following command from the Executables directory:
 ```sh
-lex cplus.l && bison -d cplus.y
-mv cplus.tab.c cplus.tab.cpp && mv lex.yy.c lex.yy.cpp
-mkdir build && cd build
-cmake ..
-make
+java -jar /GUI.jar
 ```
 
 ### Compile a program without the GUI
