@@ -39,7 +39,7 @@ void RightOpNode::execute() {
     if(getType() != right->getType())
         convtStack(right->getType(), type);
 
-    updateSymbolTable(right->getName(), true, true);
+    // updateSymbolTable(right->getName(), true, true);
 
     switch (opr)
     {
