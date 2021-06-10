@@ -7,7 +7,6 @@
 #include "Node.h"
 #include "Stmt.h"
 #include "Conditional/IfStmt.h"
-// #include "SubExpr/CondExpr.h"
 // #include "SubExpr/ForExpr.h"
 // #include "SubExpr/EpsExpr.h"
 #include "Loops/For.h"
@@ -21,4 +20,6 @@
 #include "Variables/MultiVarDef.h"
 #include "Variables/MultiConstInit.h"
 #include "Functions/Function.h"
+#include "SymbolTable/SymbolTable.h"
+#include "utilities.h"
 #endif //LEX_AND_YACC_HEADERS_H

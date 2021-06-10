@@ -11,6 +11,7 @@ public:
     static stack<int> continueLabel;
 
     virtual void execute() = 0;
+    virtual ~Node() = default;
 };
 
 

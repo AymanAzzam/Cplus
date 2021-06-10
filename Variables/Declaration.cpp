@@ -2,7 +2,7 @@
 #include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
-VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n, int l) : ExprNode(t->getType()) {
+VarDeclare::VarDeclare(TypeNode* t, IdentifierNode* n, int l) : ExprNode() {
     type = t;
     name = n;
     lineno = l;
@@ -28,7 +28,7 @@ void VarDeclare::execute() {
         /*no quadruples produced*/;
     }
     else {
-        log(string_format("Error:%i: Redeclaration of variable: %s %s\n", lineno, typeToString(getType()).c_str(), name->getName().c_str()));
+        log(string_format("Error:%i: Redeclaration of variable: %s %s", lineno, typeToString(getType()).c_str(), name->getName().c_str()));
     }
 }
 

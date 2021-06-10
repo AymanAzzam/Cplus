@@ -7,6 +7,9 @@
 using namespace std;
 
 class StmtList : public Stmt {
+private:
+    vector<Stmt *> statements;
+    bool shouldOpenScope = false;
 public:
     StmtList() = default;
 
@@ -18,8 +21,9 @@ public:
 
     void push(Stmt *stmt);
 
-private:
-    vector<Stmt *> statements;
+    void setShouldOpenScope(bool value);
+
+
 };
 
 

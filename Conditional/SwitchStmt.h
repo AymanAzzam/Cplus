@@ -5,15 +5,10 @@
 #include "../Stmt.h"
 #include "../expressions/expressions.h"
 #include "../StmtList.h"
-#include "../SubExpr/CondExpr.h"
 #include <vector>
-#include <iostream>
 #include <string>
 #include "../utilities.h"
 #include "../constants.h"
-
-// TODO check switch expression type
-
 
 using namespace std;
 
@@ -45,23 +40,24 @@ public:
             log(string_format("Error in line %d: case expression must be integer", line));
             return false;
         }
-//        TODO is Expression constant
         return true;
     }
 
     void execute() override {
         if (caseLabel != -1)
-            cout << "L" << caseLabel << ":" << endl;
+            writeAssembly(string_format("L%d:", caseLabel));
+
         if (stmtList)
             stmtList->execute();
     }
 
     void evalExp() {
-        validateCaseExpression();
+        if (!validateCaseExpression())
+            return;
         expr->execute();
         DataType type = expr->getType();
         if (type == _TYPE_BOOL || type == _TYPE_CHAR) {
-            writeAssembly("CONVERT_TO_INT");
+            convtStack(type, _TYPE_INT);
         }
     }
 
@@ -83,7 +79,6 @@ public:
 class Cases : public Node {
 private:
     vector<Case *> cases;
-    vector<int> caseLabels;
 public:
     int switchVariable;
 
@@ -106,10 +101,11 @@ public:
                 continue;
             }
             aCase->evalExp();
-            cout << "push " << switchVariable << "_switch" << endl;
-            cout << "jnz " << "L" << (aCase->hasBody() ? labelNumber++ : labelNumber) << endl;
+            pushToStack(string_format("%d_SWITCH", switchVariable), _TYPE_INT);
+            writeAssembly(string_format("\tcompEQ"));
+            writeAssembly(string_format("\tJNZ L%i", (aCase->hasBody() ? labelNumber++ : labelNumber)));
         }
-        cout << "jmp L" << (defaultLabel != -1 ? defaultLabel : breakLabel.top()) << endl;
+        writeAssembly(string_format("\tJMP L%i", (defaultLabel != -1 ? defaultLabel : breakLabel.top())));
         for (Case *aCase:cases) {
             if (!aCase->hasBody()) continue;
             aCase->setCaseLabel(startLabelNumber++);
@@ -128,8 +124,12 @@ private:
     Cases *cases;
     ExprNode *condExpr;
 
-    // CondExpr *condExpr;
     bool validateSwitchExpression() {
+        DataType type = condExpr->getType();
+        if (type == _TYPE_VOID || type == _TYPE_FLOAT) {
+            log(string_format("Error: switch expression can't be of type float"));
+            return false;
+        }
         return true;
     }
 
@@ -143,11 +143,13 @@ public:
     void execute() override {
         SymbolTable *sym = SymbolTable::GetInstance();
         sym->startScope(_SWITCH);
-        validateSwitchExpression();
+        if (!validateSwitchExpression())
+            return;
         condExpr->execute();
         int switchVariable = labelNumber++;
-        // TODO pop_datatype
-        writeAssembly(string_format("POP %s %d_SWITCH", typeToString(condExpr->getType()).c_str(), switchVariable));
+        if (condExpr->getType() != _TYPE_INT)
+            convtStack(condExpr->getType(), _TYPE_INT);
+        popFromStack(string_format("%d_SWITCH", switchVariable), _TYPE_INT);
         cases->switchVariable = switchVariable;
         int switchBreakLabel = labelNumber++;
         breakLabel.push(switchBreakLabel);

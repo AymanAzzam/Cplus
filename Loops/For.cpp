@@ -20,22 +20,22 @@ void For::execute() {
     continueLabel.push(labelNumber++);
     breakLabel.push(labelNumber++);
 
-    f1->execute();
-    writeAssembly(string_format("L%i:\n", startLabel));
-    f2->execute();
-    writeAssembly(string_format("JZ L%i\n", breakLabel.top()));
+    if (f1) f1->execute();
+    writeAssembly(string_format("L%i:", startLabel));
+    if (f2) f2->execute();
+    writeAssembly(string_format("JZ L%i", breakLabel.top()));
     stmt->execute();
-    writeAssembly(string_format("L%i:\n", continueLabel.top()));
-    f3->execute();
-    writeAssembly(string_format("JMP L%i\n", startLabel));
-    writeAssembly(string_format("L%i:\n", breakLabel.top()));
+    writeAssembly(string_format("L%i:", continueLabel.top()));
+    if (f3) f3->execute();
+    writeAssembly(string_format("JMP L%i", startLabel));
+    writeAssembly(string_format("L%i:", breakLabel.top()));
 
     continueLabel.pop();
     breakLabel.pop();
 
     vector<pair<string, int>> unused = sym->finishScope();
     for (auto u: unused) {
-        log(string_format("Warning:%i: Variable declared but not used: %s.\n", u.second, u.first.c_str()));
+        log(string_format("Warning:%i: Variable declared but not used: %s.", u.second, u.first.c_str()));
     }
 }
 

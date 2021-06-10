@@ -11,8 +11,9 @@ DataType RightOpNode::getType() {
     {
         this->type = _TYPE_BOOL; 
         
-        log(string_format("\nWarning: Type mismatch, converting %s to bool\n", \
+        log(string_format("Warning: Type mismatch, converting %s to bool", \
                 typeToString(right->getType()).c_str()));
+        convtStack(right->getType(), _TYPE_BOOL);
     }
     else
         this->type = right->getType();
@@ -36,39 +37,39 @@ void RightOpNode::execute() {
 
     right->execute();
     if(getType() != right->getType())
-        convtStack(right->getType(), getType());
+        convtStack(right->getType(), type);
 
-    updateSymbolTable(right->getName(), true, true);
+    // updateSymbolTable(right->getName(), true, true);
 
     switch (opr)
     {
         case _BIT_NOT:
-            writeAssembly(string_format("\tNOT\n"));
+            writeAssembly(string_format("\tNOT"));
             return;
         case _LOGICAL_NOT:
-            writeAssembly(string_format("\tlogicNOT\n"));
+            writeAssembly(string_format("\tlogicNOT"));
             return;
         case _INC_OPR:
             pushToStack("1", _TYPE_INT);
-            writeAssembly(string_format("\tADD\n"));
+            writeAssembly(string_format("\tADD"));
             popFromStack(right->getName(), right->getType());
-            writeAssembly(string_format("\tPUSH\t%s\n", right->getName().c_str()));
+            writeAssembly(string_format("\tPUSH\t%s", right->getName().c_str()));
             return;
         case _DEC_OPR:
             pushToStack("1", _TYPE_INT);
-            writeAssembly(string_format("\tSUB\n"));
+            writeAssembly(string_format("\tSUB"));
             popFromStack(right->getName(), right->getType());
             pushToStack(right->getName(), right->getType());
             return;
         case _ADD:
-            writeAssembly(string_format("\tADD\n"));
+            // writeAssembly(string_format("\tADD"));
             return;
         case _SUB:
-            writeAssembly(string_format("\tSUB\n"));
+            writeAssembly(string_format("\tNEG"));
             return;
     }
 
-    // printf("\nError occured in RightOpNode::execute() in right_operand.cpp\n");
+    // printf("Error occured in RightOpNode::execute() in right_operand.cpp");
 }
 
 

@@ -1,4 +1,5 @@
 #include "SymbolTable.h"
+#include "../utilities.h"
 #include <iostream>
 #include <iomanip>
 
@@ -94,20 +95,22 @@ int SymbolTable::removeId(const string& name)
     }
     const Identifier &node = idTable[name].back();
     int line = (!node.used) * node.line;
+    // TODO @KhaledMoataz Check this
+    idTable[name].pop_back();
     return line;
 }
 
 bool SymbolTable::insertFunc(const string& name, int line, DataType returnType, const vector<pair<string, DataType>>& parameterList)
 {
     if (!isGlobal()) {
-        printf("Error:%i: can't create function in local scope.\n", line);
+        log(string_format("Error:%i: can't create function in local scope.", line));
         return false;
     }
     vector<string> &currentScope = scope.back();
     for (const string &id : currentScope)
     {
         if (id == name) {
-            printf("Error:%i: identifier %s is already declared.\n", line, name.c_str());
+            log(string_format("Error:%i: identifier %s is already declared.", line, name.c_str()));
             return false;
         }
     }
@@ -118,7 +121,7 @@ bool SymbolTable::insertFunc(const string& name, int line, DataType returnType, 
     for (const pair<string, DataType>& p : parameterList)
     {
         if (!insertId(p.first, line, p.second, true)) {
-            printf("Error:%i:  multiple parameters with the same name %s.\n", line, p.first.c_str());
+            log(string_format("Error:%i:  multiple parameters with the same name %s.", line, p.first.c_str()));
             ret = false;
         }
         funcTable[name].push_back(p.second);
@@ -175,6 +178,8 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 
 void SymbolTable::print()
 {
+    freopen("table.txt","w",stdout);
+    
     cout << "--------------------------------------------------------------" << endl;
     cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;
     cout << "--------------------------------------------------------------" << endl;
@@ -207,6 +212,8 @@ void SymbolTable::print()
         }
     }
     cout << "--------------------------------------------------------------" << endl;
+
+    fclose (stdout);
 }
 
 bool SymbolTable::canBreak() const

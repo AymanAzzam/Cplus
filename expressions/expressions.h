@@ -7,7 +7,6 @@
 #include "../utilities.h"
 #include "../Node.h"
 #include "../Stmt.h"
-#include "../SubExpr/CondExpr.h"
 #include "../SymbolTable/SymbolTable.h"
 
 using namespace std;
@@ -23,9 +22,7 @@ class ExprNode: public Node {
             this->type = type; 
         }
 
-        virtual DataType getType() {
-            return type;
-        }
+        virtual DataType getType(){ return type; };
 
         virtual bool checkError(bool check_ini = true, bool check_cons = false) {return false;};
 
@@ -109,15 +106,22 @@ class IdentifierNode: public ExprNode {
             
             dec = symbolTable->lookupId(name, type, ini, con);
 
-            if(!dec)
-                printf("\nError in line %d: undeclared variable %s\n", \
-                        line, name.c_str());
-            else if(!ini && check_ini)
-                printf("\nError in line %d: uninitialized variable %s\n", \
-                        this->line, name.c_str());
-            else if(ini && con && check_cons)
-                printf("\nConstant Error in line %d: %s is constant\n", \
-                        this->line, name.c_str());
+            if(!dec){
+                log(string_format("Error in line %d: undeclared variable %s", \
+                        line, name.c_str()));
+                return true;
+            }
+            else if(!ini && check_ini) {
+                log(string_format("Error in line %d: uninitialized variable %s", \
+                        this->line, name.c_str()));
+                return true;
+            }
+            else if(ini && con && check_cons) {
+                log(string_format("Constant Error in line %d: %s is constant", \
+                        this->line, name.c_str()));
+                return true;
+            }
+            return false;
         }
 
         virtual string getName() {
@@ -125,9 +129,10 @@ class IdentifierNode: public ExprNode {
         };
 
         virtual void execute(){
-            if(checkError())
-                return;
+            if(checkError()){
+                return;}
                 
+            updateSymbolTable(name, true, true);
             pushToStack(name, getType());
         }
 };

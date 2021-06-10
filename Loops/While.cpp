@@ -16,19 +16,19 @@ void While::execute() {
     continueLabel.push(labelNumber++);
     breakLabel.push(labelNumber++);
 
-    writeAssembly(string_format("L%i:\n", continueLabel.top()));
+    writeAssembly(string_format("L%i:", continueLabel.top()));
     cond->execute();
-    writeAssembly(string_format("JZ L%i\n", breakLabel.top()));
+    writeAssembly(string_format("JZ L%i", breakLabel.top()));
     stmt->execute();
-    writeAssembly(string_format("JMP L%i\n", continueLabel.top()));
-    writeAssembly(string_format("L%i:\n", breakLabel.top()));
+    writeAssembly(string_format("JMP L%i", continueLabel.top()));
+    writeAssembly(string_format("L%i:", breakLabel.top()));
     
     continueLabel.pop();
     breakLabel.pop();
 
     vector<pair<string, int>> unused = sym->finishScope();
     for (auto u: unused) {
-        log(string_format("Warning:%i: Variable %s declared but not used.\n", u.second, u.first.c_str()));
+        log(string_format("Warning:%i: Variable %s declared but not used.", u.second, u.first.c_str()));
     }
 }
 

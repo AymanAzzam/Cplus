@@ -27,9 +27,9 @@ void LeftOpNode::execute() {
 
     left->execute();
     if(getType() != left->getType())
-        convtStack(left->getType(), getType());
+        convtStack(left->getType(), type);
     
-    updateSymbolTable(left->getName(), true, true);
+    // updateSymbolTable(left->getName(), true, true);
 
     pushToStack("1", _TYPE_INT);
     
@@ -39,16 +39,16 @@ void LeftOpNode::execute() {
     switch (opr)
     {
         case _INC_OPR:
-            writeAssembly(string_format("\tADD\n"));
+            writeAssembly(string_format("\tADD"));
             popFromStack(left->getName(), left->getType());
             return;
         case _DEC_OPR:
-            writeAssembly(string_format("\tSUB\n"));
+            writeAssembly(string_format("\tSUB"));
             popFromStack(left->getName(), left->getType());
             return;
     }
 
-    // printf("\nError occured in LeftOpNode::execute() in left_operand.cpp\n");
+    // printf("Error occured in LeftOpNode::execute() in left_operand.cpp");
 }
 
 LeftOpNode::~LeftOpNode() {

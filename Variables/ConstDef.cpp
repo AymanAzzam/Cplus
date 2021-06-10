@@ -14,15 +14,15 @@ void ConstDef::execute() {
         if (expr->getType() != getType()) {
             std::string exprType = typeToString(expr->getType()),
                         initType = typeToString(getType());
-            log(string_format("Warning:%i: Type mismatch, converting %s to %s.\n",
+            log(string_format("Warning:%i: Type mismatch, converting %s to %s.",
                                 lineno, exprType.c_str(), initType.c_str()));
-            writeAssembly(string_format("CVT %s %s", exprType.c_str(), initType.c_str()));
+            convtStack(expr->getType(), getType());
         }
         
-        writeAssembly(string_format("POP %s %s\n", typeToString(getType()).c_str(), name->getName().c_str()));
+        popFromStack(name->getName(), getType());
     }
     else {
-        log(string_format("Error:%i: Redeclaration of variable: const %s %s\n",
+        log(string_format("Error:%i: Redeclaration of variable: const %s %s",
                             lineno, typeToString(getType()).c_str(), name->getName().c_str()));
     }
 }

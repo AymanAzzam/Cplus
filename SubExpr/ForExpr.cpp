@@ -7,5 +7,5 @@ ForExpr::ForExpr(Node* rule) { //Expression
 
 void ForExpr::execute() {
     //expand->execute();
-    printf("-- placeholder for ForExpr\n");
+    printf("-- placeholder for ForExpr");
 }
