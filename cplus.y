@@ -9,8 +9,6 @@ extern FILE* yyin;
 
 #define YYDEBUG 1
 
-// Program* root = new Program();
-
 int yylex(void);
 void yyerror(const char *);
 %}
@@ -36,8 +34,6 @@ void yyerror(const char *);
     TypeNode* typeNode;
     ValueNode* valueNode;
     IdentifierNode* identifierNode;
-//     ForExpr* forExpr;
-//     EpsExpr* epsExpr;
     For* forLoop;
     While* whileLoop;
     DoWhile* doWhileLoop;
@@ -76,7 +72,7 @@ void yyerror(const char *);
 
 %nonassoc IFX
 %nonassoc ELSE
-%right EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ //"<<=" ">>=" "&="" "^=" "|="
+%right EQ PLUS_EQ MINUS_EQ DIV_EQ MULT_EQ MOD_EQ
 %left LOGICAL_OR
 %left LOGICAL_AND
 %left BIT_OR
@@ -87,32 +83,28 @@ void yyerror(const char *);
 %left SHL SHR
 %left ADD SUB
 %left MUL DIV REM
-%right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec  xd
-%left POST_SNGL     // postfix inc/dec xddd
+%right PRE_SNGL BIT_NOT LOGICAL_NOT U_PLUS U_MINUS  //unary+-, prefix inc/dec
+%left POST_SNGL     // postfix inc/dec
 
 %type <pgm> program root
 
-%type <intermediate> for_expr extended_for_expr
+// %type <intermediate> 
 
 %type <stmt> stmt no_scope_stmt no_scope_block bare_block
 %type <ifStmt> if_stmt
-// %type <condExpr> cond_expr
 %type <stmtList> stmt_list
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
-%type <exprNode> cond_expr expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <exprNode> for_expr extended_for_expr cond_expr expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 %type <typeNode> data_type TYPE_VOID
 %type <valueNode> literal
 %type <identifierNode> identifier
-// %type <forExpr> for_expr extended_for_expr
 %type <vDeclare> variable_declaration additional_declaration
 %type <vInit> variable_init additional_var_init
 %type <constant> const_init additional_const_init
-
 %type <multiVar> multi_var_definition
 %type <multiConst> multi_const_init
-
 %type <function> func
 %type <funcHeader> func_header
 %type <funcParameters> paramater parameter_decl

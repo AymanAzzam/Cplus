@@ -1,12 +1,12 @@
 #pragma once
-#include "../Node.h"
+#include "../expressions/expressions.h"
 #include "../Stmt.h"
 
 class For : public Stmt {
-    Node *f1, *f2, *f3;
+    ExprNode *pre, *cond, *post;
     Stmt* stmt;
 public:
-    For(Node* , Node*, Node*, Stmt*);
+    For(ExprNode*, ExprNode*, ExprNode*, Stmt*);
     void execute();
     ~For();
 };
