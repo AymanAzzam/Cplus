@@ -93,6 +93,8 @@ void FunctionCall::execute()
             }
             printf("CALL %s\n", funcIdentifier->getName().c_str());
         }
+    } else{
+        printf("Error:%i: Function %s doesn't exist.\n", lineNo, funcIdentifier->getName().c_str());
     }
 }
 
