@@ -28,8 +28,6 @@ void LeftOpNode::execute() {
     left->execute();
     if(getType() != left->getType())
         convtStack(left->getType(), type);
-    
-    // updateSymbolTable(left->getName(), true, true);
 
     pushToStack("1", _TYPE_INT);
     
@@ -47,8 +45,6 @@ void LeftOpNode::execute() {
             popFromStack(left->getName(), left->getType());
             return;
     }
-
-    // printf("Error occured in LeftOpNode::execute() in left_operand.cpp");
 }
 
 LeftOpNode::~LeftOpNode() {

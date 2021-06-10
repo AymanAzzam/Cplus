@@ -3,7 +3,7 @@
 #include "../utilities.h"
 #include "../SymbolTable/SymbolTable.h"
 
-While::While(Node* a, Node* s) {
+While::While(ExprNode* a, Stmt* s) {
     cond = a;
     stmt = s;
 }

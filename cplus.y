@@ -88,7 +88,7 @@ void yyerror(const char *);
 
 %type <pgm> program root
 
-%type <intermediate> for_expr extended_for_expr
+// %type <intermediate> 
 
 %type <stmt> stmt no_scope_stmt no_scope_block bare_block
 %type <ifStmt> if_stmt
@@ -96,7 +96,7 @@ void yyerror(const char *);
 %type <aCase> case_with_body default_with_body case default_case
 %type <cases> top_cases bottom_cases
 %type <switchStmt> switch_stmt
-%type <exprNode> cond_expr expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
+%type <exprNode> for_expr extended_for_expr cond_expr expr eps_expr arithmetic_expr assign_expr rel_expr bit_expr logic_expr single_opr_expr
 %type <typeNode> data_type TYPE_VOID
 %type <valueNode> literal
 %type <identifierNode> identifier

@@ -1,11 +1,12 @@
 #pragma once
-#include "../Node.h"
+#include "../expressions/expressions.h"
 #include "../Stmt.h"
 
 class DoWhile : public Stmt {
-    Node *stmt, *cond;
+    Stmt *stmt;
+    ExprNode *cond;
 public:
-    DoWhile(Node*, Node*);
+    DoWhile(Stmt*, ExprNode*);
     void execute();
     ~DoWhile();
 };

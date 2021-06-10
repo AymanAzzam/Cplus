@@ -9,6 +9,8 @@ SymbolTable *SymbolTable::symbolTable = nullptr;
 
 SymbolTable::SymbolTable()
 {
+    freopen("table.txt","w",stdout);
+    cout << "" ;
     scopeMask = 0;
     startScope(GLOBAL);
 }
@@ -177,7 +179,7 @@ string SymbolTable::scopeTypeEnumToString(ScopeType t)
 
 void SymbolTable::print()
 {
-    freopen("table.txt","w",stdout);
+    freopen("table.txt","a",stdout);
     cout << "Symbol Table at the end of " << scopeTypeEnumToString(static_cast<ScopeType>(scopeMask % 10)) << ".\n";
     cout << "--------------------------------------------------------------" << endl;
     cout << "|          |  Name          |  Type |    Scope       | Used  |" << endl;

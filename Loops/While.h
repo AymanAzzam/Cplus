@@ -1,11 +1,12 @@
 #pragma once
-#include "../Node.h"
+#include "../expressions/expressions.h"
 #include "../Stmt.h"
 
 class While : public Stmt {
-    Node *cond, *stmt;
+    ExprNode *cond;
+    Stmt *stmt;
 public:
-    While(Node*, Node*);
+    While(ExprNode*, Stmt*);
     void execute();
     ~While();
 };
