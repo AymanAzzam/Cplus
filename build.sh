@@ -11,7 +11,7 @@ lex cplus.l
 
 bison cplus.y -d
 
-mv cplus.tab.c mv cplus.tab.cpp
+mv cplus.tab.c cplus.tab.cpp
 
 mv lex.yy.c lex.yy.cpp
 
