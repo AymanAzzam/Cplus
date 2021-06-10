@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+
 class Window extends JFrame implements ActionListener {
     private JPanel leftPanel;
     private JPanel rightPanel;
@@ -18,6 +19,7 @@ class Window extends JFrame implements ActionListener {
     private JButton[] tabsButtons;
     private int currentTabIndex = 0;
     private JFileChooser fileChooser = new JFileChooser();
+    private static final boolean isWindows = System.getProperty("os.name").contains("Windows");
 
     Window() {
         setTitle("C+ Compiler");
@@ -92,7 +94,11 @@ class Window extends JFrame implements ActionListener {
         String source = sourceTextArea.getText();
         FileOperations.writeFile(new File("source.cp"), source);
         try {
-            new ProcessBuilder("cplus.exe", "source.cp").start().waitFor();
+            if (isWindows) {
+                new ProcessBuilder("cplus.exe", "source.cp").start().waitFor();
+            } else {
+                new ProcessBuilder("./cplus", "source.cp").start().waitFor();
+            }
             outputText[0] = FileOperations.readFile(new File("quad.txt"));
             outputText[1] = FileOperations.readFile(new File("table.txt"));
             outputText[2] = FileOperations.readFile(new File("log.txt"));
