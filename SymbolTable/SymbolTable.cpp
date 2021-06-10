@@ -10,7 +10,6 @@ ofstream SymbolTable::file;
 
 SymbolTable::SymbolTable()
 {
-    freopen("table.txt","w",stdout);
     cout << "" ;
     scopeMask = 0;
     file.open("table.txt");
