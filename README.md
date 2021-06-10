@@ -8,9 +8,15 @@ Compiler for C++ using Flex(Lex) and Bison(Yacc), that compiles:
 6. break, continue.
 
 ### Dependencies
-| JRE | Flex | Bison | Cmake | G++ |
+| JDK 11 | Flex | Bison | Cmake | G++ |
 | ------ | ------ | ------ | ------ | ------ |
 | User | Dev | Dev | Dev | Dev |
+
+### Compile a program using the GUI
+Double click on Executables/GUI.jar or run the following command from the current directory:
+```sh
+java -jar ./Executables/GUI.jar
+```
 
 ### Build Code to compile without GUI
 Run the following commands from the current directory:
