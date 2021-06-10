@@ -365,9 +365,8 @@ for_expr:   eps_expr            {$$ = $1;}
 %%
 
 void yyerror(const char *s) {
-
-// void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
+    log(s);
 }
 
 int main(int argc, char** argv) {

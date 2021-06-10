@@ -40,7 +40,6 @@ public:
             log(string_format("Error in line %d: case expression must be integer", line));
             return false;
         }
-//        TODO is Expression constant
         return true;
     }
 
