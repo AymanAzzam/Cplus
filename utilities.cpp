@@ -220,7 +220,6 @@ void writeAssembly(const string& s) {
 }
 
 bool updateSymbolTable(const string& name, bool init, bool use) {
-    log(string_format("~~~~%s updated~~~~\n", name.c_str()));
     SymbolTable *symbolTable = SymbolTable::GetInstance();
 
     return symbolTable->modifyId(name, init, use);
